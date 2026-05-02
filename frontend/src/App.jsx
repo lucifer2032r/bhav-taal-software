@@ -76,18 +76,18 @@ function App() {
       const passRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
       if (!passRegex.test(loginPass)) return setAuthMessage("❌ Password must be 8+ chars, uppercase, lowercase, number, special char.");
       try {
-        const res = await axios.post('https://bhav-taal-backend.onrender.com/api/register', { shopName: regShopName, username: loginUser, password: loginPass });
+        const res = await axios.post('https://bhav-taal-software.onrender.com/api/register', { shopName: regShopName, username: loginUser, password: loginPass });
         if (res.data.success) { setIsLoggedIn(true); setCurrentShopId(res.data.shop_id); setSubEndDate(res.data.subscription_end); fetchProfile(res.data.shop_id); fetchInventory(res.data.shop_id); fetchTransactions(res.data.shop_id); setActiveTab("ledger"); }
       } catch (err) { setAuthMessage(err.response ? err.response.data.message : "❌ Registration failed."); }
     } else {
       try {
-        const res = await axios.post('https://bhav-taal-backend.onrender.com/api/login', { username: loginUser, password: loginPass });
+        const res = await axios.post('https://bhav-taal-software.onrender.com/api/login', { username: loginUser, password: loginPass });
         if (res.data.success) { setIsLoggedIn(true); setCurrentShopId(res.data.shop_id); setSubEndDate(res.data.subscription_end); fetchProfile(res.data.shop_id); fetchInventory(res.data.shop_id); fetchTransactions(res.data.shop_id); setActiveTab("ledger"); }
       } catch (err) { setAuthMessage(err.response ? err.response.data.message : "❌ Invalid Credentials."); }
     }
   };
 
-  const handlePurchase = async (months) => { try { const res = await axios.post('https://bhav-taal-backend.onrender.com/api/subscribe', { shop_id: currentShopId, months }); setSubEndDate(res.data.new_end); setIsExpired(false); setActiveTab("ledger"); showMessage("🎉 Payment Successful!"); } catch (err) { showMessage("❌ Payment Failed."); } };
+  const handlePurchase = async (months) => { try { const res = await axios.post('https://bhav-taal-software.onrender.com/api/subscribe', { shop_id: currentShopId, months }); setSubEndDate(res.data.new_end); setIsExpired(false); setActiveTab("ledger"); showMessage("🎉 Payment Successful!"); } catch (err) { showMessage("❌ Payment Failed."); } };
 
   const handleAddToCart = (product) => { const existing = cart.find(c => c.product_id === product.product_id); if (existing) setCart(cart.map(c => c.product_id === product.product_id ? { ...c, qty: c.qty + 1 } : c)); else setCart([...cart, { ...product, qty: 1, rate: parseFloat(product.item_rate) }]); setSearchQuery(""); setIsSearchOpen(false); };
   const updateCartQty = (id, newQty) => { if (newQty < 1) return; setCart(cart.map(c => c.product_id === id ? { ...c, qty: parseInt(newQty) } : c)); };
@@ -99,11 +99,11 @@ function App() {
   let finalDiscount = 0; if (discountVal && parseFloat(discountVal) > 0) finalDiscount = discountType === 'percent' ? (grossTotal * (parseFloat(discountVal) / 100)) : parseFloat(discountVal);
   const finalTotalAmount = grossTotal - finalDiscount; const halfGst = totalGst / 2; const currentMargin = totalTaxable - totalPurchaseCost - finalDiscount;
 
-  const fetchProfile = async (id = currentShopId) => { if (!id) return; try { const res = await axios.get(`https://bhav-taal-backend.onrender.com/api/shop/${id}`); setProfile(res.data); } catch (e) {} };
-  const fetchInventory = async (id = currentShopId) => { if (!id) return; try { const res = await axios.get(`https://bhav-taal-backend.onrender.com/api/products/${id}`); setInventory(res.data); } catch (e) {} };
-  const fetchTransactions = async (id = currentShopId) => { if (!id) return; try { const res = await axios.get(`https://bhav-taal-backend.onrender.com/api/transactions/${id}`); setTransactions(res.data); } catch (e) {} };
+  const fetchProfile = async (id = currentShopId) => { if (!id) return; try { const res = await axios.get(`https://bhav-taal-software.onrender.com/api/shop/${id}`); setProfile(res.data); } catch (e) {} };
+  const fetchInventory = async (id = currentShopId) => { if (!id) return; try { const res = await axios.get(`https://bhav-taal-software.onrender.com/api/products/${id}`); setInventory(res.data); } catch (e) {} };
+  const fetchTransactions = async (id = currentShopId) => { if (!id) return; try { const res = await axios.get(`https://bhav-taal-software.onrender.com/api/transactions/${id}`); setTransactions(res.data); } catch (e) {} };
   const handleLogoUpload = (e) => { const file = e.target.files[0]; if (file) { const reader = new FileReader(); reader.onloadend = () => setProfile({ ...profile, logo_url: reader.result }); reader.readAsDataURL(file); } };
-  const saveProfile = async (e) => { e.preventDefault(); try { await axios.put(`https://bhav-taal-backend.onrender.com/api/shop/${currentShopId}`, profile); showMessage("✅ Profile Settings Updated!"); } catch (e) {} };
+  const saveProfile = async (e) => { e.preventDefault(); try { await axios.put(`https://bhav-taal-software.onrender.com/api/shop/${currentShopId}`, profile); showMessage("✅ Profile Settings Updated!"); } catch (e) {} };
   const triggerPrint = (invoiceNo, buyerName) => { const cleanBuyerName = buyerName ? buyerName.replace(/[^a-zA-Z0-9]/g, '_') : "Customer"; const originalTitle = document.title; document.title = `${invoiceNo}_to_${cleanBuyerName}`; setTimeout(() => { window.print(); document.title = originalTitle; }, 500); };
 
   const loadBillForEdit = (tx) => {
@@ -120,15 +120,15 @@ function App() {
       const currentReceiptData = { shopName: profile.shop_name, owner: profile.owner_name, address: profile.address, gstNum: profile.gst_number, logo: profile.logo_url, phone: profile.contact_number, email: profile.email, bank: profile.bank_name, acc: profile.account_no, ifsc: profile.ifsc_code, partyName, partyGst, transType, cartItems: cart.map(item => ({ product_id: item.product_id, name: `${item.name_english} (${item.name_regional})`, hsn: item.hsn_code, qty: item.qty, rate: item.rate, amount: (item.rate * item.qty) })), grossAmount: grossTotal, discount: finalDiscount, taxable: totalTaxable, totalGst: totalGst, cgst: halfGst, sgst: halfGst, finalTotal: finalTotalAmount, date: new Date().toLocaleDateString('en-IN') };
       const payload = { shop_id: currentShopId, party_name: partyName, transaction_type: transType, cart_items: cart, total_amount: finalTotalAmount, total_gst: totalGst, discount_amount: finalDiscount, receipt_details: currentReceiptData, status: billStatus, settlement_date: billStatus === 'Unsettled' ? settlementDate : "" };
       let response;
-      if (editBillId) { response = await axios.put(`https://bhav-taal-backend.onrender.com/api/billing/${editBillId}`, payload); setEditBillId(null); } else { response = await axios.post('https://bhav-taal-backend.onrender.com/api/billing', payload); }
+      if (editBillId) { response = await axios.put(`https://bhav-taal-software.onrender.com/api/billing/${editBillId}`, payload); setEditBillId(null); } else { response = await axios.post('https://bhav-taal-software.onrender.com/api/billing', payload); }
       setReceiptData(response.data.receipt); showMessage(`✅ Transaction saved successfully!`); setPartyName(""); setPartyGst(""); setCart([]); setDiscountVal(""); setSearchQuery(""); setBillStatus("Settled"); setSettlementDate(""); fetchInventory(); fetchTransactions(); triggerPrint(response.data.receipt.invoiceNo, response.data.receipt.partyName);
     } catch (error) { showMessage("❌ Error processing bill."); }
   };
 
   const handleReprint = (receiptDetailsStr) => { if (!receiptDetailsStr) return showMessage("❌ Old format bill. Data not available."); const data = typeof receiptDetailsStr === 'string' ? JSON.parse(receiptDetailsStr) : receiptDetailsStr; setReceiptData(data); triggerPrint(data.invoiceNo, data.partyName); };
-  const saveToVault = async (e) => { e.preventDefault(); try { await axios.post('https://bhav-taal-backend.onrender.com/api/products', { shop_id: currentShopId, name_english: englishName, name_regional: regionalName, current_stock: parseInt(stock), min_stock_alert: parseInt(minAlert), gst_rate: parseFloat(gst), hsn_code: hsnCode, item_rate: parseFloat(itemRate), purchase_price: parseFloat(purchasePrice), is_gst_inclusive: isGstInclusive }); showMessage("✅ Material added!"); setEnglishName(""); setRegionalName(""); setStock(""); setMinAlert(""); setGst(""); setHsnCode(""); setItemRate(""); setPurchasePrice(""); fetchInventory(); } catch (error) { showMessage("❌ Error saving product."); } };
-  const saveEdit = async (id) => { try { await axios.put(`https://bhav-taal-backend.onrender.com/api/products/${id}`, editData); showMessage("✅ Material updated!"); setEditingId(null); fetchInventory(); } catch (error) { showMessage("❌ Error updating."); } };
-  const deleteMaterial = async (id) => { if (window.confirm("Permanently delete this item?")) { try { await axios.delete(`https://bhav-taal-backend.onrender.com/api/products/${id}`); showMessage("🗑️ Material deleted."); fetchInventory(); } catch (error) {} } };
+  const saveToVault = async (e) => { e.preventDefault(); try { await axios.post('https://bhav-taal-software.onrender.com/api/products', { shop_id: currentShopId, name_english: englishName, name_regional: regionalName, current_stock: parseInt(stock), min_stock_alert: parseInt(minAlert), gst_rate: parseFloat(gst), hsn_code: hsnCode, item_rate: parseFloat(itemRate), purchase_price: parseFloat(purchasePrice), is_gst_inclusive: isGstInclusive }); showMessage("✅ Material added!"); setEnglishName(""); setRegionalName(""); setStock(""); setMinAlert(""); setGst(""); setHsnCode(""); setItemRate(""); setPurchasePrice(""); fetchInventory(); } catch (error) { showMessage("❌ Error saving product."); } };
+  const saveEdit = async (id) => { try { await axios.put(`https://bhav-taal-software.onrender.com/api/products/${id}`, editData); showMessage("✅ Material updated!"); setEditingId(null); fetchInventory(); } catch (error) { showMessage("❌ Error updating."); } };
+  const deleteMaterial = async (id) => { if (window.confirm("Permanently delete this item?")) { try { await axios.delete(`https://bhav-taal-software.onrender.com/api/products/${id}`); showMessage("🗑️ Material deleted."); fetchInventory(); } catch (error) {} } };
 
   const todayBillsCount = transactions.filter(tx => new Date(tx.transaction_date).toDateString() === new Date().toDateString()).length;
   const lowStockItems = inventory.filter(item => item.current_stock <= item.min_stock_alert);
