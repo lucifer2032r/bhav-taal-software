@@ -6,7 +6,12 @@ const app = express();
 const port = 3000;
 
 app.use(cors({ limit: '10mb' })); 
-app.use(express.json({ limit: '10mb' })); 
+app.use(express.json({ limit: '10mb' }));
+
+// --- HEALTH CHECK FOR CRON JOB ---
+app.get('/', (req, res) => {
+  res.status(200).send('Bhav taal backend is awake and running!');
+});
 
 const db = new Pool({
   connectionString: 'postgresql://neondb_owner:npg_9mbkZBO3GEpu@ep-twilight-poetry-an5yt2g3.c-6.us-east-1.aws.neon.tech/neondb?sslmode=require',
