@@ -4,14 +4,20 @@ import { ReactTransliterate } from 'react-transliterate';
 import "react-transliterate/dist/index.css";
 import { LayoutDashboard, ShoppingCart, PackageSearch, PlusCircle, LogOut, Menu, Moon, Sun, ChevronLeft, Edit3, Trash2, Printer, Search, Download, Settings, Image as ImageIcon, Percent, IndianRupee, X, AlertTriangle, Receipt, Box, Clock, CreditCard, CheckCircle2, Lock, Pencil, FileText, ArrowDownRight, ArrowUpRight } from 'lucide-react';
 
+// ==========================================
+// 🚀 CLOUD CONNECTION - PASTE RENDER URL BELOW
+// ==========================================
+const API_URL = "https://bhav-taal-software.onrender.com"; // Example: "https://bhav-taal-backend.onrender.com"
+
 function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false); const [isRegistering, setIsRegistering] = useState(false); const [currentShopId, setCurrentShopId] = useState(null); const [currentShopName, setCurrentShopName] = useState("");
+  const [isLoggedIn, setIsLoggedIn] = useState(false); const [isRegistering, setIsRegistering] = useState(false); const [currentShopId, setCurrentShopId] = useState(null); 
   const [loginUser, setLoginUser] = useState(""); const [loginPass, setLoginPass] = useState(""); const [confirmPass, setConfirmPass] = useState(""); const [regShopName, setRegShopName] = useState(""); const [authMessage, setAuthMessage] = useState("");
   const [isDarkMode, setIsDarkMode] = useState(false); const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   
-  const [subEndDate, setSubEndDate] = useState(null); const [timeLeftStr, setTimeLeftStr] = useState(""); const [timeColor, setTimeColor] = useState(""); const [isExpired, setIsExpired] = useState(false);
+  // RAGE-CLICK SHIELD STATE
+  const [isLoading, setIsLoading] = useState(false);
 
-  // DEFAULT TAB SET TO DASHBOARD (LEDGER)
+  const [subEndDate, setSubEndDate] = useState(null); const [timeLeftStr, setTimeLeftStr] = useState(""); const [timeColor, setTimeColor] = useState(""); const [isExpired, setIsExpired] = useState(false);
   const [activeTab, setActiveTab] = useState("ledger");
   
   const [inventory, setInventory] = useState([]); const [transactions, setTransactions] = useState([]); const [message, setMessage] = useState("");
@@ -23,7 +29,6 @@ function App() {
   const [englishName, setEnglishName] = useState(""); const [regionalName, setRegionalName] = useState(""); const [stock, setStock] = useState(""); const [minAlert, setMinAlert] = useState(""); const [gst, setGst] = useState(""); const [hsnCode, setHsnCode] = useState(""); 
   const [itemRate, setItemRate] = useState(""); const [purchasePrice, setPurchasePrice] = useState(""); const [isGstInclusive, setIsGstInclusive] = useState(true); const [language, setLanguage] = useState("gu");
   
-  // Cart & Khata
   const [cart, setCart] = useState([]); 
   const [partyName, setPartyName] = useState(""); const [partyGst, setPartyGst] = useState(""); const [transType, setTransType] = useState("SELL"); 
   const [billStatus, setBillStatus] = useState("Settled"); 
@@ -52,6 +57,11 @@ function App() {
     .soft-input:focus { box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2); border-color: ${t.primary} !important; }
     .react-transliterate-container { width: 100%; position: relative; } .react-transliterate-menu { background-color: ${t.card} !important; border: 1px solid ${t.border} !important; border-radius: 12px !important; box-shadow: 0 15px 50px -5px rgba(0,0,0,${isDarkMode ? '0.5' : '0.15'}) !important; padding: 8px !important; margin-top: 6px !important; z-index: 10000 !important; } .react-transliterate-menu-item { padding: 10px 16px !important; color: ${t.text} !important; border-radius: 8px !important; margin-bottom: 2px !important; transition: all 0.2s ease !important; font-size: 15px !important; background: transparent !important; } .react-transliterate-menu-item--active, .react-transliterate-menu-item:hover { background-color: ${t.primary}20 !important; color: ${t.primary} !important; font-weight: 600 !important; }
     .pdf-table { width: 100%; border-collapse: collapse; border: none; margin: 0; height: 100%; display: table; } .pdf-table th, .pdf-table td { border-left: 1px solid black; border-right: 1px solid black; padding: 6px 8px; font-size: 10pt; } .pdf-table th { font-weight: bold; text-align: center; border-top: 1px solid black; border-bottom: 1px solid black; }
+    
+    /* SHIELD ANIMATIONS */
+    .loader { width: 48px; height: 48px; border: 5px solid #FFF; border-bottom-color: transparent; border-radius: 50%; display: inline-block; box-sizing: border-box; animation: rotation 1s linear infinite; }
+    @keyframes rotation { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    .glass-overlay { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; background: rgba(0,0,0,0.5); backdrop-filter: blur(5px); z-index: 99999; display: flex; justify-content: center; align-items: center; flex-direction: column; gap: 15px; color: white; font-weight: bold; letter-spacing: 1px; }
   `;
 
   const showMessage = (msg) => { setMessage(msg); setTimeout(() => setMessage(""), 4000); };
@@ -70,24 +80,25 @@ function App() {
   }, [subEndDate, t]);
 
   const handleAuth = async (e) => {
-    e.preventDefault(); setAuthMessage("");
+    e.preventDefault(); setAuthMessage(""); setIsLoading(true);
     if (isRegistering) {
-      if (loginPass !== confirmPass) return setAuthMessage("❌ Passwords do not match!");
+      if (loginPass !== confirmPass) { setIsLoading(false); return setAuthMessage("❌ Passwords do not match!"); }
       const passRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-      if (!passRegex.test(loginPass)) return setAuthMessage("❌ Password must be 8+ chars, uppercase, lowercase, number, special char.");
+      if (!passRegex.test(loginPass)) { setIsLoading(false); return setAuthMessage("❌ Password must be 8+ chars, uppercase, lowercase, number, special char."); }
       try {
-        const res = await axios.post('https://bhav-taal-software.onrender.com/api/register', { shopName: regShopName, username: loginUser, password: loginPass });
+        const res = await axios.post(`${API_URL}/api/register`, { shopName: regShopName, username: loginUser, password: loginPass });
         if (res.data.success) { setIsLoggedIn(true); setCurrentShopId(res.data.shop_id); setSubEndDate(res.data.subscription_end); fetchProfile(res.data.shop_id); fetchInventory(res.data.shop_id); fetchTransactions(res.data.shop_id); setActiveTab("ledger"); }
       } catch (err) { setAuthMessage(err.response ? err.response.data.message : "❌ Registration failed."); }
     } else {
       try {
-        const res = await axios.post('https://bhav-taal-software.onrender.com/api/login', { username: loginUser, password: loginPass });
+        const res = await axios.post(`${API_URL}/api/login`, { username: loginUser, password: loginPass });
         if (res.data.success) { setIsLoggedIn(true); setCurrentShopId(res.data.shop_id); setSubEndDate(res.data.subscription_end); fetchProfile(res.data.shop_id); fetchInventory(res.data.shop_id); fetchTransactions(res.data.shop_id); setActiveTab("ledger"); }
       } catch (err) { setAuthMessage(err.response ? err.response.data.message : "❌ Invalid Credentials."); }
     }
+    setIsLoading(false);
   };
 
-  const handlePurchase = async (months) => { try { const res = await axios.post('https://bhav-taal-software.onrender.com/api/subscribe', { shop_id: currentShopId, months }); setSubEndDate(res.data.new_end); setIsExpired(false); setActiveTab("ledger"); showMessage("🎉 Payment Successful!"); } catch (err) { showMessage("❌ Payment Failed."); } };
+  const handlePurchase = async (months) => { setIsLoading(true); try { const res = await axios.post(`${API_URL}/api/subscribe`, { shop_id: currentShopId, months }); setSubEndDate(res.data.new_end); setIsExpired(false); setActiveTab("ledger"); showMessage("🎉 Payment Successful!"); } catch (err) { showMessage("❌ Payment Failed."); } setIsLoading(false); };
 
   const handleAddToCart = (product) => { const existing = cart.find(c => c.product_id === product.product_id); if (existing) setCart(cart.map(c => c.product_id === product.product_id ? { ...c, qty: c.qty + 1 } : c)); else setCart([...cart, { ...product, qty: 1, rate: parseFloat(product.item_rate) }]); setSearchQuery(""); setIsSearchOpen(false); };
   const updateCartQty = (id, newQty) => { if (newQty < 1) return; setCart(cart.map(c => c.product_id === id ? { ...c, qty: parseInt(newQty) } : c)); };
@@ -99,11 +110,11 @@ function App() {
   let finalDiscount = 0; if (discountVal && parseFloat(discountVal) > 0) finalDiscount = discountType === 'percent' ? (grossTotal * (parseFloat(discountVal) / 100)) : parseFloat(discountVal);
   const finalTotalAmount = grossTotal - finalDiscount; const halfGst = totalGst / 2; const currentMargin = totalTaxable - totalPurchaseCost - finalDiscount;
 
-  const fetchProfile = async (id = currentShopId) => { if (!id) return; try { const res = await axios.get(`https://bhav-taal-software.onrender.com/api/shop/${id}`); setProfile(res.data); } catch (e) {} };
-  const fetchInventory = async (id = currentShopId) => { if (!id) return; try { const res = await axios.get(`https://bhav-taal-software.onrender.com/api/products/${id}`); setInventory(res.data); } catch (e) {} };
-  const fetchTransactions = async (id = currentShopId) => { if (!id) return; try { const res = await axios.get(`https://bhav-taal-software.onrender.com/api/transactions/${id}`); setTransactions(res.data); } catch (e) {} };
+  const fetchProfile = async (id = currentShopId) => { if (!id) return; try { const res = await axios.get(`${API_URL}/api/shop/${id}`); setProfile(res.data); } catch (e) {} };
+  const fetchInventory = async (id = currentShopId) => { if (!id) return; try { const res = await axios.get(`${API_URL}/api/products/${id}`); setInventory(res.data); } catch (e) {} };
+  const fetchTransactions = async (id = currentShopId) => { if (!id) return; try { const res = await axios.get(`${API_URL}/api/transactions/${id}`); setTransactions(res.data); } catch (e) {} };
   const handleLogoUpload = (e) => { const file = e.target.files[0]; if (file) { const reader = new FileReader(); reader.onloadend = () => setProfile({ ...profile, logo_url: reader.result }); reader.readAsDataURL(file); } };
-  const saveProfile = async (e) => { e.preventDefault(); try { await axios.put(`https://bhav-taal-software.onrender.com/api/shop/${currentShopId}`, profile); showMessage("✅ Profile Settings Updated!"); } catch (e) {} };
+  const saveProfile = async (e) => { e.preventDefault(); setIsLoading(true); try { await axios.put(`${API_URL}/api/shop/${currentShopId}`, profile); showMessage("✅ Profile Settings Updated!"); } catch (e) {} setIsLoading(false); };
   const triggerPrint = (invoiceNo, buyerName) => { const cleanBuyerName = buyerName ? buyerName.replace(/[^a-zA-Z0-9]/g, '_') : "Customer"; const originalTitle = document.title; document.title = `${invoiceNo}_to_${cleanBuyerName}`; setTimeout(() => { window.print(); document.title = originalTitle; }, 500); };
 
   const loadBillForEdit = (tx) => {
@@ -116,22 +127,41 @@ function App() {
   const processBill = async (e) => {
     e.preventDefault(); if (cart.length === 0) return showMessage("❌ Cart is empty.");
     if (billStatus === 'Unsettled' && !partyName.trim()) return showMessage("❌ Party / Wholesaler Name required for Unsettled bills.");
+    
+    setIsLoading(true); // START SHIELD
+
     try {
       const currentReceiptData = { shopName: profile.shop_name, owner: profile.owner_name, address: profile.address, gstNum: profile.gst_number, logo: profile.logo_url, phone: profile.contact_number, email: profile.email, bank: profile.bank_name, acc: profile.account_no, ifsc: profile.ifsc_code, partyName, partyGst, transType, cartItems: cart.map(item => ({ product_id: item.product_id, name: `${item.name_english} (${item.name_regional})`, hsn: item.hsn_code, qty: item.qty, rate: item.rate, amount: (item.rate * item.qty) })), grossAmount: grossTotal, discount: finalDiscount, taxable: totalTaxable, totalGst: totalGst, cgst: halfGst, sgst: halfGst, finalTotal: finalTotalAmount, date: new Date().toLocaleDateString('en-IN') };
       const payload = { shop_id: currentShopId, party_name: partyName, transaction_type: transType, cart_items: cart, total_amount: finalTotalAmount, total_gst: totalGst, discount_amount: finalDiscount, receipt_details: currentReceiptData, status: billStatus, settlement_date: billStatus === 'Unsettled' ? settlementDate : "" };
       let response;
-      if (editBillId) { response = await axios.put(`https://bhav-taal-software.onrender.com/api/billing/${editBillId}`, payload); setEditBillId(null); } else { response = await axios.post('https://bhav-taal-software.onrender.com/api/billing', payload); }
+      if (editBillId) { response = await axios.put(`${API_URL}/api/billing/${editBillId}`, payload); setEditBillId(null); } else { response = await axios.post(`${API_URL}/api/billing`, payload); }
       setReceiptData(response.data.receipt); showMessage(`✅ Transaction saved successfully!`); setPartyName(""); setPartyGst(""); setCart([]); setDiscountVal(""); setSearchQuery(""); setBillStatus("Settled"); setSettlementDate(""); fetchInventory(); fetchTransactions(); triggerPrint(response.data.receipt.invoiceNo, response.data.receipt.partyName);
-    } catch (error) { showMessage("❌ Error processing bill."); }
+    } catch (error) { 
+      showMessage("❌ Error processing bill."); 
+    } finally {
+      setIsLoading(false); // END SHIELD
+    }
   };
 
   const handleReprint = (receiptDetailsStr) => { if (!receiptDetailsStr) return showMessage("❌ Old format bill. Data not available."); const data = typeof receiptDetailsStr === 'string' ? JSON.parse(receiptDetailsStr) : receiptDetailsStr; setReceiptData(data); triggerPrint(data.invoiceNo, data.partyName); };
-  const saveToVault = async (e) => { e.preventDefault(); try { await axios.post('https://bhav-taal-software.onrender.com/api/products', { shop_id: currentShopId, name_english: englishName, name_regional: regionalName, current_stock: parseInt(stock), min_stock_alert: parseInt(minAlert), gst_rate: parseFloat(gst), hsn_code: hsnCode, item_rate: parseFloat(itemRate), purchase_price: parseFloat(purchasePrice), is_gst_inclusive: isGstInclusive }); showMessage("✅ Material added!"); setEnglishName(""); setRegionalName(""); setStock(""); setMinAlert(""); setGst(""); setHsnCode(""); setItemRate(""); setPurchasePrice(""); fetchInventory(); } catch (error) { showMessage("❌ Error saving product."); } };
-  const saveEdit = async (id) => { try { await axios.put(`https://bhav-taal-software.onrender.com/api/products/${id}`, editData); showMessage("✅ Material updated!"); setEditingId(null); fetchInventory(); } catch (error) { showMessage("❌ Error updating."); } };
-  const deleteMaterial = async (id) => { if (window.confirm("Permanently delete this item?")) { try { await axios.delete(`https://bhav-taal-software.onrender.com/api/products/${id}`); showMessage("🗑️ Material deleted."); fetchInventory(); } catch (error) {} } };
+  
+  const saveToVault = async (e) => { 
+    e.preventDefault(); 
+    setIsLoading(true); 
+    try { 
+      await axios.post(`${API_URL}/api/products`, { shop_id: currentShopId, name_english: englishName, name_regional: regionalName, current_stock: parseInt(stock), min_stock_alert: parseInt(minAlert), gst_rate: parseFloat(gst), hsn_code: hsnCode, item_rate: parseFloat(itemRate), purchase_price: parseFloat(purchasePrice), is_gst_inclusive: isGstInclusive }); 
+      showMessage("✅ Material added!"); setEnglishName(""); setRegionalName(""); setStock(""); setMinAlert(""); setGst(""); setHsnCode(""); setItemRate(""); setPurchasePrice(""); fetchInventory(); 
+    } catch (error) { 
+      showMessage("❌ Error saving product."); 
+    } finally {
+      setIsLoading(false);
+    }
+  };
+  
+  const saveEdit = async (id) => { setIsLoading(true); try { await axios.put(`${API_URL}/api/products/${id}`, editData); showMessage("✅ Material updated!"); setEditingId(null); fetchInventory(); } catch (error) { showMessage("❌ Error updating."); } setIsLoading(false); };
+  const deleteMaterial = async (id) => { if (window.confirm("Permanently delete this item?")) { setIsLoading(true); try { await axios.delete(`${API_URL}/api/products/${id}`); showMessage("🗑️ Material deleted."); fetchInventory(); } catch (error) {} setIsLoading(false); } };
 
-  const todayBillsCount = transactions.filter(tx => new Date(tx.transaction_date).toDateString() === new Date().toDateString()).length;
-  const lowStockItems = inventory.filter(item => item.current_stock <= item.min_stock_alert);
+  // --- BULLETPROOF HSN & ALPHABETICAL SORTING ENGINE ---
   const sortedInventory = [...inventory].sort((a, b) => { const hsnA = (a.hsn_code || "").toString().trim(); const hsnB = (b.hsn_code || "").toString().trim(); if (hsnA && hsnB) { if (hsnA !== hsnB) { return hsnA.localeCompare(hsnB, undefined, { numeric: true }); } } if (hsnA && !hsnB) return -1; if (!hsnA && hsnB) return 1; const nameA = (a.name_english || "").toString().toLowerCase().trim(); const nameB = (b.name_english || "").toString().toLowerCase().trim(); return nameA.localeCompare(nameB); });
   const filteredInventory = sortedInventory.filter(item => item.name_english.toLowerCase().includes(searchQuery.toLowerCase()) || item.name_regional.includes(searchQuery));
   const filteredCategories = businessCategories.filter(cat => cat.toLowerCase().includes(categorySearch.toLowerCase()));
@@ -152,6 +182,8 @@ function App() {
   const totalToReceive = unsettledBills.filter(tx => tx.transaction_type === 'SELL').reduce((sum, tx) => sum + parseFloat(tx.total_amount), 0);
   const totalToPay = unsettledBills.filter(tx => tx.transaction_type === 'PURCH').reduce((sum, tx) => sum + parseFloat(tx.total_amount), 0);
   const duePaymentsCount = unsettledBills.filter(tx => tx.settlement_date && new Date(tx.settlement_date) <= todayObj).length;
+  const todayBillsCount = transactions.filter(tx => new Date(tx.transaction_date).toDateString() === new Date().toDateString()).length;
+  const lowStockItems = inventory.filter(item => item.current_stock <= item.min_stock_alert);
 
   const inputStyle = { width: '100%', padding: '12px 16px', borderRadius: '12px', border: `1px solid ${t.border}`, backgroundColor: t.inputBg, color: t.text, fontSize: '15px', outline: 'none', transition: 'all 0.2s', marginTop: '6px' };
   const cardStyle = { backgroundColor: t.card, borderRadius: '20px', padding: '30px', boxShadow: '0 10px 40px -10px rgba(0,0,0,0.08)', border: `1px solid ${t.border}`, position: 'relative' };
@@ -168,7 +200,7 @@ function App() {
         <form onSubmit={handleAuth} style={{ ...cardStyle, width: '400px' }}>
           <div style={{ textAlign: 'center', marginBottom: '30px' }}>
             <div style={{ width: '70px', height: '70px', borderRadius: '16px', overflow: 'hidden', margin: '0 auto 15px auto', boxShadow: '0 4px 10px rgba(0,0,0,0.1)' }}>
-              <img src="/bhav-taal_logo1.png" alt="Bhav taal Logo" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              <img src="/bhav-taal_logo1.jpg" alt="Bhav taal Logo" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
             </div>
             <h2 style={{ color: t.text, margin: '0 0 5px 0', fontSize: '28px' }}>Bhav taal</h2>
             <p style={{ color: t.textMuted, margin: 0, fontSize: '15px' }}>{isRegistering ? "Create a New Business" : "Secure License Gateway"}</p>
@@ -178,10 +210,18 @@ function App() {
           <div style={{ marginBottom: '15px' }}><label style={labelStyle}>Username</label><input type="text" required value={loginUser} onChange={(e) => setLoginUser(e.target.value)} className="soft-input" style={inputStyle} /></div>
           <div style={{ marginBottom: isRegistering ? '15px' : '30px' }}><label style={labelStyle}>Password</label><input type="password" required value={loginPass} onChange={(e) => setLoginPass(e.target.value)} className="soft-input" style={inputStyle} /></div>
           {isRegistering && (<div style={{ marginBottom: '30px' }}><label style={labelStyle}>Confirm Password</label><input type="password" required value={confirmPass} onChange={(e) => setConfirmPass(e.target.value)} className="soft-input" style={inputStyle} /></div>)}
-          <button type="submit" style={btnPrimary}>{isRegistering ? "Start 7-Day Free Trial" : "Authenticate User"}</button>
+          <button type="submit" disabled={isLoading} style={{ ...btnPrimary, opacity: isLoading ? 0.7 : 1 }}>{isRegistering ? "Start 7-Day Free Trial" : "Authenticate User"}</button>
           <div style={{ textAlign: 'center', marginTop: '20px' }}><button type="button" onClick={() => { setIsRegistering(!isRegistering); setAuthMessage(""); }} style={{ background: 'none', border: 'none', color: t.primary, fontWeight: '600', cursor: 'pointer', fontSize: '14px' }}>{isRegistering ? "Already have an account? Log In" : "Don't have an account? Sign Up"}</button></div>
         </form>
         <div style={{ position: 'absolute', bottom: '20px', color: t.textMuted, fontSize: '13px', fontWeight: '600' }}>©Developed by Lakshyadeepsinh Chauhan</div>
+        
+        {/* SHIELD */}
+        {isLoading && (
+          <div className="glass-overlay">
+            <span className="loader"></span>
+            <div>Authenticating...</div>
+          </div>
+        )}
       </div>
     );
   }
@@ -194,7 +234,7 @@ function App() {
 
       <div className="no-print" style={{ width: isSidebarOpen ? '260px' : '80px', backgroundColor: t.sidebar, borderRight: `1px solid ${t.border}`, display: 'flex', flexDirection: 'column', transition: 'width 0.3s cubic-bezier(0.4, 0, 0.2, 1)', zIndex: 10 }}>
         <div style={{ padding: '24px', display: 'flex', alignItems: 'center', justifyContent: isSidebarOpen ? 'space-between' : 'center', borderBottom: `1px solid ${t.border}` }}>
-          {isSidebarOpen && <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}><img src="/bhav-taal_logo1.png" alt="Logo" style={{ width: '32px', height: '32px', borderRadius: '6px', objectFit: 'cover' }} /><h2 style={{ margin: 0, fontSize: '20px', color: t.primary }}>Bhav taal</h2></div>}
+          {isSidebarOpen && <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}><img src="/bhav-taal_logo1.jpg" alt="Logo" style={{ width: '32px', height: '32px', borderRadius: '6px', objectFit: 'cover' }} /><h2 style={{ margin: 0, fontSize: '20px', color: t.primary }}>Bhav taal</h2></div>}
           <button onClick={() => setIsSidebarOpen(!isSidebarOpen)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: t.textMuted, padding: '5px' }}><Menu size={24} /></button>
         </div>
         
@@ -290,7 +330,7 @@ function App() {
                   <p style={{ margin: 0, color: t.textMuted, fontSize: '13px', fontWeight: '600', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: '8px' }}><PackageSearch size={16}/> Quick Action</p>
                   <h3 style={{ margin: '10px 0 0 0', color: t.primary, fontSize: '22px', display: 'flex', alignItems: 'center', gap: '8px' }}>Manage Inventory <ChevronLeft style={{ transform: 'rotate(180deg)' }} size={20}/></h3>
                 </div>
-                <div style={{ backgroundColor: t.card, padding: '20px', borderRadius: '20px', border: `1px solid ${t.border}`, boxShadow: '0 4px 15px rgba(0,0,0,0.03)', borderBottom: `4px solid ${t.success}` }}><p style={{ margin: 0, color: t.textMuted, fontSize: '13px', fontWeight: '600', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: '8px' }}><Receipt size={16}/> Bills Today</p><h3 style={{ margin: '10px 0 0 0', color: t.text, fontSize: '28px' }}>{transactions.filter(tx => new Date(tx.transaction_date).toDateString() === new Date().toDateString()).length}</h3></div>
+                <div style={{ backgroundColor: t.card, padding: '20px', borderRadius: '20px', border: `1px solid ${t.border}`, boxShadow: '0 4px 15px rgba(0,0,0,0.03)', borderBottom: `4px solid ${t.success}` }}><p style={{ margin: 0, color: t.textMuted, fontSize: '13px', fontWeight: '600', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: '8px' }}><Receipt size={16}/> Bills Today</p><h3 style={{ margin: '10px 0 0 0', color: t.text, fontSize: '28px' }}>{todayBillsCount}</h3></div>
                 <div style={{ backgroundColor: t.card, padding: '20px', borderRadius: '20px', border: `1px solid ${t.border}`, boxShadow: '0 4px 15px rgba(0,0,0,0.03)', borderBottom: `4px solid ${t.textMuted}` }}><p style={{ margin: 0, color: t.textMuted, fontSize: '13px', fontWeight: '600', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: '8px' }}><Box size={16}/> Total Materials</p><h3 style={{ margin: '10px 0 0 0', color: t.text, fontSize: '28px' }}>{inventory.length}</h3></div>
                 <div style={{ backgroundColor: t.card, padding: '20px', borderRadius: '20px', border: `1px solid ${t.border}`, boxShadow: '0 4px 15px rgba(0,0,0,0.03)', borderBottom: `4px solid ${t.success}` }}><p style={{ margin: 0, color: t.textMuted, fontSize: '13px', fontWeight: '600', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: '8px' }}><ArrowDownRight size={16}/> To Receive (Khata)</p><h3 style={{ margin: '10px 0 0 0', color: t.success, fontSize: '28px' }}>₹{totalToReceive.toFixed(2)}</h3></div>
                 <div style={{ backgroundColor: t.card, padding: '20px', borderRadius: '20px', border: `1px solid ${t.border}`, boxShadow: '0 4px 15px rgba(0,0,0,0.03)', borderBottom: `4px solid ${t.danger}` }}><p style={{ margin: 0, color: t.textMuted, fontSize: '13px', fontWeight: '600', textTransform: 'uppercase', display: 'flex', alignItems: 'center', gap: '8px' }}><ArrowUpRight size={16}/> To Pay (Payables)</p><h3 style={{ margin: '10px 0 0 0', color: t.danger, fontSize: '28px' }}>₹{totalToPay.toFixed(2)}</h3></div>
@@ -451,7 +491,7 @@ function App() {
                   <div style={{ fontSize: '36px', fontWeight: 'bold', color: t.primary }}>₹{finalTotalAmount.toFixed(2)}</div>
                   <div style={{ fontSize: '12px', color: t.textMuted, marginTop: '5px' }}>(Gross: ₹{grossTotal.toFixed(2)} | Taxable: ₹{totalTaxable.toFixed(2)} | CGST: ₹{halfGst.toFixed(2)} | SGST: ₹{halfGst.toFixed(2)})</div>
                 </div>
-                <button type="submit" style={btnPrimary}><Printer size={20}/> {editBillId ? "Save Changes & Re-Print" : "Generate Multi-Item Invoice"}</button>
+                <button type="submit" disabled={isLoading} style={{ ...btnPrimary, opacity: isLoading ? 0.7 : 1 }}><Printer size={20}/> {editBillId ? "Save Changes & Re-Print" : "Generate Multi-Item Invoice"}</button>
                 {editBillId && (
                   <button type="button" onClick={() => { setEditBillId(null); setCart([]); setPartyName(""); setDiscountVal(""); setBillStatus("Settled"); setSettlementDate(""); }} style={{ width: '100%', marginTop: '10px', padding: '10px', background: 'transparent', border: `1px solid ${t.textMuted}`, borderRadius: '12px', color: t.textMuted, cursor: 'pointer', fontWeight: 'bold' }}>Cancel Editing</button>
                 )}
@@ -525,7 +565,7 @@ function App() {
                     <div><label style={labelStyle}>Initial Stock</label><input type="number" required value={stock} onChange={(e) => setStock(e.target.value)} className="soft-input" style={inputStyle} /></div>
                     <div><label style={labelStyle}>Alert Below</label><input type="number" required value={minAlert} onChange={(e) => setMinAlert(e.target.value)} className="soft-input" style={inputStyle} /></div>
                  </div>
-                 <button type="submit" style={btnPrimary}>Save to Vault</button>
+                 <button type="submit" disabled={isLoading} style={{ ...btnPrimary, opacity: isLoading ? 0.7 : 1 }}>Save to Vault</button>
               </form>
             </div>
           )}
@@ -589,6 +629,15 @@ function App() {
           ))}
         </div>
       )}
+
+      {/* RAGE-CLICK SHIELD */}
+      {isLoading && (
+        <div className="glass-overlay">
+          <span className="loader"></span>
+          <div>Processing Task... Please Wait</div>
+        </div>
+      )}
+
     </div>
   );
 }
