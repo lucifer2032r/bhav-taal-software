@@ -200,7 +200,7 @@ function App() {
         <form onSubmit={handleAuth} style={{ ...cardStyle, width: '400px' }}>
           <div style={{ textAlign: 'center', marginBottom: '30px' }}>
             <div style={{ width: '70px', height: '70px', borderRadius: '16px', overflow: 'hidden', margin: '0 auto 15px auto', boxShadow: '0 4px 10px rgba(0,0,0,0.1)' }}>
-              <img src="/bhav-taal_logo1.jpg" alt="Bhav taal Logo" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              <img src="/bhav-taal_logo1.png" alt="Bhav taal Logo" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
             </div>
             <h2 style={{ color: t.text, margin: '0 0 5px 0', fontSize: '28px' }}>Bhav taal</h2>
             <p style={{ color: t.textMuted, margin: 0, fontSize: '15px' }}>{isRegistering ? "Create a New Business" : "Secure License Gateway"}</p>
@@ -234,7 +234,7 @@ function App() {
 
       <div className="no-print" style={{ width: isSidebarOpen ? '260px' : '80px', backgroundColor: t.sidebar, borderRight: `1px solid ${t.border}`, display: 'flex', flexDirection: 'column', transition: 'width 0.3s cubic-bezier(0.4, 0, 0.2, 1)', zIndex: 10 }}>
         <div style={{ padding: '24px', display: 'flex', alignItems: 'center', justifyContent: isSidebarOpen ? 'space-between' : 'center', borderBottom: `1px solid ${t.border}` }}>
-          {isSidebarOpen && <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}><img src="/bhav-taal_logo1.jpg" alt="Logo" style={{ width: '32px', height: '32px', borderRadius: '6px', objectFit: 'cover' }} /><h2 style={{ margin: 0, fontSize: '20px', color: t.primary }}>Bhav taal</h2></div>}
+          {isSidebarOpen && <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}><img src="/bhav-taal_logo1.png" alt="Logo" style={{ width: '32px', height: '32px', borderRadius: '6px', objectFit: 'cover' }} /><h2 style={{ margin: 0, fontSize: '20px', color: t.primary }}>Bhav taal</h2></div>}
           <button onClick={() => setIsSidebarOpen(!isSidebarOpen)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: t.textMuted, padding: '5px' }}><Menu size={24} /></button>
         </div>
         
