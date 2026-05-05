@@ -7,7 +7,7 @@ app.use(cors());
 app.use(express.json({ limit: '50mb' }));
 
 const db = new Pool({
-  connectionString: process.env.DATABASE_URL || 'postgresql://neondb_owner:npg_9mbkZBO3GEpu@ep-twilight-poetry-an5yt2g3.c-6.us-east-1.aws.neon.tech/neondb?sslmode=require',
+  connectionString: process.env.DATABASE_URL || 'postgresql://neondb_owner:npg_9mbkZBO3GEpu@ep-twilight-poetry-an5yt2g3.c-6.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require',
   ssl: { rejectUnauthorized: false }
 });
 
