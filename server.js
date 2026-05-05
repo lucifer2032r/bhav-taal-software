@@ -9,8 +9,15 @@ app.use(cors({ limit: '10mb' }));
 app.use(express.json({ limit: '10mb' }));
 
 // --- HEALTH CHECK FOR CRON JOB ---
-app.get('/', (req, res) => {
-  res.status(200).send('Bhav taal backend is awake and running!');
+// --- DEEP WAKE FOR CRON JOB (Wakes Render + Neon) ---
+app.get('/api/keepalive', async (req, res) => {
+  try {
+    // This tiny query forces the Neon database to stay awake!
+    await db.query('SELECT 1'); 
+    res.status(200).send('Deep Wake Successful: Render & Neon are awake.');
+  } catch (err) {
+    res.status(500).send('Deep Wake Failed.');
+  }
 });
 
 const db = new Pool({
