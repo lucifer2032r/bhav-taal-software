@@ -7,7 +7,7 @@ import { LayoutDashboard, ShoppingCart, PackageSearch, PlusCircle, LogOut, Menu,
 // ==========================================
 // 🚀 CLOUD CONNECTION - PASTE RENDER URL BELOW
 // ==========================================
-const API_URL = "https://bhav-taal-software.onrender.com"; // Example: "https://bhav-taal-backend.onrender.com"
+const API_URL = "https://bhav-taal-software.onrender.com"; 
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false); const [isRegistering, setIsRegistering] = useState(false); const [currentShopId, setCurrentShopId] = useState(null); 
@@ -43,7 +43,8 @@ function App() {
   const t = isDarkMode ? { bg: '#0f172a', sidebar: '#1e293b', card: '#1e293b', text: '#f8fafc', textMuted: '#94a3b8', border: '#334155', primary: '#818cf8', inputBg: '#0f172a', success: '#10b981', danger: '#ef4444', warning: '#f39c12' } : { bg: '#f1f5f9', sidebar: '#ffffff', card: '#ffffff', text: '#0f172a', textMuted: '#64748b', border: '#e2e8f0', primary: '#6366f1', inputBg: '#f8fafc', success: '#10b981', danger: '#ef4444', warning: '#f39c12' };
 
   const globalStyles = `
-    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Montserrat:wght@800&display=swap');
+    
     :root, #root { max-width: 100vw !important; width: 100vw !important; margin: 0 !important; padding: 0 !important; text-align: left !important; }
     body { display: block !important; margin: 0 !important; padding: 0 !important; font-family: 'Inter', sans-serif; overflow: hidden; width: 100vw; height: 100vh; background-color: ${t.bg} !important; }
     * { box-sizing: border-box; }
@@ -128,7 +129,7 @@ function App() {
     e.preventDefault(); if (cart.length === 0) return showMessage("❌ Cart is empty.");
     if (billStatus === 'Unsettled' && !partyName.trim()) return showMessage("❌ Party / Wholesaler Name required for Unsettled bills.");
     
-    setIsLoading(true); // START SHIELD
+    setIsLoading(true);
 
     try {
       const currentReceiptData = { shopName: profile.shop_name, owner: profile.owner_name, address: profile.address, gstNum: profile.gst_number, logo: profile.logo_url, phone: profile.contact_number, email: profile.email, bank: profile.bank_name, acc: profile.account_no, ifsc: profile.ifsc_code, partyName, partyGst, transType, cartItems: cart.map(item => ({ product_id: item.product_id, name: `${item.name_english} (${item.name_regional})`, hsn: item.hsn_code, qty: item.qty, rate: item.rate, amount: (item.rate * item.qty) })), grossAmount: grossTotal, discount: finalDiscount, taxable: totalTaxable, totalGst: totalGst, cgst: halfGst, sgst: halfGst, finalTotal: finalTotalAmount, date: new Date().toLocaleDateString('en-IN') };
@@ -139,7 +140,7 @@ function App() {
     } catch (error) { 
       showMessage("❌ Error processing bill."); 
     } finally {
-      setIsLoading(false); // END SHIELD
+      setIsLoading(false);
     }
   };
 
@@ -199,10 +200,15 @@ function App() {
         <style>{globalStyles}</style>
         <form onSubmit={handleAuth} style={{ ...cardStyle, width: '400px' }}>
           <div style={{ textAlign: 'center', marginBottom: '30px' }}>
-            <div style={{ width: '70px', height: '70px', borderRadius: '16px', overflow: 'hidden', margin: '0 auto 15px auto', boxShadow: '0 4px 10px rgba(0,0,0,0.1)' }}>
-              <img src="/bhav-taal_logo1.png" alt="Bhav taal Logo" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+            <div style={{ width: '75px', height: '75px', borderRadius: '16px', overflow: 'hidden', margin: '0 auto 15px auto', boxShadow: '0 4px 10px rgba(0,0,0,0.1)' }}>
+              <img src="/bhav-taal_logo1.jpg" alt="Bhav taal Logo" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
             </div>
-            <h2 style={{ color: t.text, margin: '0 0 5px 0', fontSize: '28px' }}>Bhav taal</h2>
+            
+            {/* BRANDED LOGIN HEADER */}
+            <h2 style={{ margin: '0 0 5px 0', fontSize: '28px', fontFamily: "'Montserrat', sans-serif", fontWeight: '800', letterSpacing: '0.5px' }}>
+              <span style={{ color: isDarkMode ? '#f8fafc' : '#0b3858' }}>BHAV</span><span style={{ color: '#26a69a' }}>-TAAL</span>
+            </h2>
+            
             <p style={{ color: t.textMuted, margin: 0, fontSize: '15px' }}>{isRegistering ? "Create a New Business" : "Secure License Gateway"}</p>
           </div>
           {authMessage && <div style={{ backgroundColor: `${t.danger}20`, color: t.danger, padding: '12px', borderRadius: '10px', marginBottom: '20px', textAlign: 'center', fontSize: '14px', fontWeight: '500' }}>{authMessage}</div>}
@@ -234,7 +240,17 @@ function App() {
 
       <div className="no-print" style={{ width: isSidebarOpen ? '260px' : '80px', backgroundColor: t.sidebar, borderRight: `1px solid ${t.border}`, display: 'flex', flexDirection: 'column', transition: 'width 0.3s cubic-bezier(0.4, 0, 0.2, 1)', zIndex: 10 }}>
         <div style={{ padding: '24px', display: 'flex', alignItems: 'center', justifyContent: isSidebarOpen ? 'space-between' : 'center', borderBottom: `1px solid ${t.border}` }}>
-          {isSidebarOpen && <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}><img src="/bhav-taal_logo1.png" alt="Logo" style={{ width: '32px', height: '32px', borderRadius: '6px', objectFit: 'cover' }} /><h2 style={{ margin: 0, fontSize: '20px', color: t.primary }}>Bhav taal</h2></div>}
+          
+          {/* BRANDED SIDEBAR HEADER */}
+          {isSidebarOpen && (
+            <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+              <img src="/bhav-taal_logo1.jpg" alt="Logo" style={{ width: '36px', height: '36px', borderRadius: '6px', objectFit: 'cover' }} />
+              <h2 style={{ margin: 0, fontSize: '22px', fontFamily: "'Montserrat', sans-serif", fontWeight: '800', letterSpacing: '0.5px' }}>
+                <span style={{ color: isDarkMode ? '#f8fafc' : '#0b3858' }}>BHAV</span><span style={{ color: '#26a69a' }}>-TAAL</span>
+              </h2>
+            </div>
+          )}
+          
           <button onClick={() => setIsSidebarOpen(!isSidebarOpen)} style={{ background: 'none', border: 'none', cursor: 'pointer', color: t.textMuted, padding: '5px' }}><Menu size={24} /></button>
         </div>
         
@@ -318,7 +334,7 @@ function App() {
                     </div>
                   )}
                 </div>
-                <button type="submit" style={btnPrimary}>Save Business Profile</button>
+                <button type="submit" disabled={isLoading} style={{ ...btnPrimary, opacity: isLoading ? 0.7 : 1 }}>Save Business Profile</button>
               </form>
             </div>
           )}
@@ -517,7 +533,7 @@ function App() {
                               <td style={{ padding: '10px' }}><input type="number" step="0.01" value={editData.item_rate} onChange={(e) => setEditData({...editData, item_rate: e.target.value})} className="soft-input" style={{...inputStyle, padding:'8px', width:'80px', margin:0}} /></td>
                               <td style={{ padding: '10px' }}><input type="number" value={editData.current_stock} onChange={(e) => setEditData({...editData, current_stock: e.target.value})} className="soft-input" style={{...inputStyle, padding:'8px', width:'60px', margin:0}} /></td>
                               <td style={{ padding: '10px' }}><input type="number" value={editData.min_stock_alert} onChange={(e) => setEditData({...editData, min_stock_alert: e.target.value})} className="soft-input" style={{...inputStyle, padding:'8px', width:'60px', margin:0}} /></td>
-                              <td style={{ padding: '10px', textAlign: 'right' }}><button onClick={() => saveEdit(item.product_id)} style={{ padding: '8px 12px', backgroundColor: t.success, color: 'white', borderRadius: '8px', border: 'none', cursor: 'pointer', marginRight: '8px' }}>Save</button><button onClick={() => setEditingId(null)} style={{ padding: '8px 12px', backgroundColor: t.textMuted, color: 'white', borderRadius: '8px', border: 'none', cursor: 'pointer' }}>Cancel</button></td>
+                              <td style={{ padding: '10px', textAlign: 'right' }}><button onClick={() => saveEdit(item.product_id)} disabled={isLoading} style={{ padding: '8px 12px', backgroundColor: t.success, color: 'white', borderRadius: '8px', border: 'none', cursor: 'pointer', marginRight: '8px', opacity: isLoading ? 0.7 : 1 }}>Save</button><button onClick={() => setEditingId(null)} style={{ padding: '8px 12px', backgroundColor: t.textMuted, color: 'white', borderRadius: '8px', border: 'none', cursor: 'pointer' }}>Cancel</button></td>
                             </>
                           ) : (
                             <>
@@ -577,6 +593,14 @@ function App() {
         </div>
       </div>
 
+      {/* RAGE-CLICK SHIELD */}
+      {isLoading && (
+        <div className="glass-overlay">
+          <span className="loader"></span>
+          <div>Processing Task... Please Wait</div>
+        </div>
+      )}
+
       {receiptData && (
         <div className="print-only" style={{ color: 'black', fontFamily: 'Arial, sans-serif' }}>
           {printChunks.map((chunk, index) => (
@@ -629,15 +653,6 @@ function App() {
           ))}
         </div>
       )}
-
-      {/* RAGE-CLICK SHIELD */}
-      {isLoading && (
-        <div className="glass-overlay">
-          <span className="loader"></span>
-          <div>Processing Task... Please Wait</div>
-        </div>
-      )}
-
     </div>
   );
 }
