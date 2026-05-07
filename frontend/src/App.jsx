@@ -7,7 +7,7 @@ import { LayoutDashboard, ShoppingCart, PackageSearch, PlusCircle, LogOut, Menu,
 // ==========================================
 // 🚀 CLOUD CONNECTION - PASTE RENDER URL BELOW
 // ==========================================
-const API_URL = "https://bhav-taal-software.onrender.com"; 
+const API_URL = "https://PASTE_YOUR_RENDER_URL_HERE.onrender.com"; 
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false); const [isRegistering, setIsRegistering] = useState(false); const [currentShopId, setCurrentShopId] = useState(null); 
@@ -201,7 +201,7 @@ function App() {
         <form onSubmit={handleAuth} style={{ ...cardStyle, width: '400px' }}>
           <div style={{ textAlign: 'center', marginBottom: '30px' }}>
             <div style={{ width: '75px', height: '75px', borderRadius: '16px', overflow: 'hidden', margin: '0 auto 15px auto', boxShadow: '0 4px 10px rgba(0,0,0,0.1)' }}>
-              <img src="/bhav-taal_logo1.jpg" alt="Bhav taal Logo" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
+              <img src="/bhav-taal_logo1.png" alt="Bhav taal Logo" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
             </div>
             
             {/* BRANDED LOGIN HEADER */}
@@ -244,7 +244,7 @@ function App() {
           {/* BRANDED SIDEBAR HEADER */}
           {isSidebarOpen && (
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-              <img src="/bhav-taal_logo1.jpg" alt="Logo" style={{ width: '36px', height: '36px', borderRadius: '6px', objectFit: 'cover' }} />
+              <img src="/bhav-taal_logo1.png" alt="Logo" style={{ width: '36px', height: '36px', borderRadius: '6px', objectFit: 'cover' }} />
               <h2 style={{ margin: 0, fontSize: '22px', fontFamily: "'Montserrat', sans-serif", fontWeight: '800', letterSpacing: '0.5px' }}>
                 <span style={{ color: isDarkMode ? '#f8fafc' : '#0b3858' }}>BHAV</span><span style={{ color: '#26a69a' }}>-TAAL</span>
               </h2>
