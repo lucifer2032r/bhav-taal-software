@@ -245,7 +245,7 @@ function App() {
           {isSidebarOpen && (
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
               <img src="/bhav-taal_logo1.png" alt="Logo" style={{ width: '36px', height: '36px', borderRadius: '6px', objectFit: 'cover' }} />
-              <h2 style={{ margin: 0, fontSize: '22px', fontFamily: "'Montserrat', sans-serif", fontWeight: '800', letterSpacing: '0.5px' }}>
+              <h2 style={{ margin: 0, fontSize: '16px', fontFamily: "'Montserrat', sans-serif", fontWeight: '800', letterSpacing: '0.5px' }}>
                 <span style={{ color: isDarkMode ? '#f8fafc' : '#0b3858' }}>BHAV</span><span style={{ color: '#26a69a' }}>-TAAL</span>
               </h2>
             </div>
