@@ -7,7 +7,7 @@ import { LayoutDashboard, ShoppingCart, PackageSearch, PlusCircle, LogOut, Menu,
 // ==========================================
 // 🚀 CLOUD CONNECTION - PASTE RENDER URL BELOW
 // ==========================================
-const API_URL = "https://PASTE_YOUR_RENDER_URL_HERE.onrender.com"; 
+const API_URL = "https://bhav-taal-software.onrender.com"; 
 
 function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(false); const [isRegistering, setIsRegistering] = useState(false); const [currentShopId, setCurrentShopId] = useState(null); 
