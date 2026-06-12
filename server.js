@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors');
 const { Pool } = require('pg');
+const nodemailer = require('nodemailer');
 
 const app = express();
 app.use(cors());
@@ -9,6 +10,18 @@ app.use(express.json({ limit: '50mb' }));
 const db = new Pool({
   connectionString: process.env.DATABASE_URL || 'postgresql://neondb_owner:npg_9mbkZBO3GEpu@ep-twilight-poetry-an5yt2g3.c-6.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require',
   ssl: { rejectUnauthorized: false }
+});
+
+// ==========================================
+// ✉️ EMAIL CONFIGURATION (NODEMAILER)
+// ==========================================
+// REPLACE WITH YOUR ACTUAL GMAIL AND THE 16-LETTER APP PASSWORD
+const transporter = nodemailer.createTransport({
+  service: 'gmail',
+  auth: {
+    user: 'bhav.taal.manager@gmail.com', // <-- PASTE YOUR GMAIL HERE
+    pass: 'imqqunpawixvtjfg' // <-- PASTE YOUR APP PASSWORD HERE (No spaces)
+  }
 });
 
 // ==========================================
@@ -24,28 +37,83 @@ app.get('/api/keepalive', async (req, res) => {
 });
 
 // ==========================================
-// AUTH & SUBSCRIPTION
+// 🔐 AUTHENTICATION, OTP & SUBSCRIPTION
 // ==========================================
-app.post('/api/register', async (req, res) => {
-  const { shopName, username, password } = req.body;
+
+// 1. Send OTP (For Registration OR Forgot Password)
+app.post('/api/send-otp', async (req, res) => {
+  const { email, type } = req.body; // type will be 'register' or 'forgot'
+  
   try {
-    const existing = await db.query('SELECT * FROM shops WHERE username = $1', [username]);
-    if (existing.rows.length > 0) return res.status(400).json({ success: false, message: "Username exists" });
+    const shopRes = await db.query('SELECT * FROM shops WHERE email = $1', [email]);
+    
+    if (type === 'register' && shopRes.rows.length > 0) {
+      return res.status(400).json({ success: false, message: "This email is already registered." });
+    }
+    if (type === 'forgot' && shopRes.rows.length === 0) {
+      return res.status(400).json({ success: false, message: "Email not found in our system." });
+    }
 
-    // 7-day trial
-    const subEnd = new Date();
-    subEnd.setDate(subEnd.getDate() + 7);
+    // Generate 6 digit OTP
+    const otp = Math.floor(100000 + Math.random() * 900000).toString();
+    const expires_at = new Date(Date.now() + 10 * 60000); // Expires in 10 minutes
 
-    const result = await db.query(
-      'INSERT INTO shops (shop_name, username, password, subscription_end) VALUES ($1, $2, $3, $4) RETURNING shop_id, subscription_end',
-      [shopName, username, password, subEnd]
+    // Save OTP to database (Updates it if they ask for a new one)
+    await db.query(
+      `INSERT INTO otps (email, otp, expires_at) VALUES ($1, $2, $3)
+       ON CONFLICT (email) DO UPDATE SET otp = $2, expires_at = $3`,
+      [email, otp, expires_at]
     );
-    res.json({ success: true, shop_id: result.rows[0].shop_id, subscription_end: result.rows[0].subscription_end });
+
+    // Send the Email
+    await transporter.sendMail({
+      from: '"Bhav-Taal Security" <no-reply@bhav-taal.com>',
+      to: email,
+      subject: type === 'register' ? 'Your Bhav-Taal Verification Code' : 'Bhav-Taal Password Reset OTP',
+      html: `<h2>Hello!</h2><p>Your 6-digit verification code is: <b style="font-size:24px; color:#6366f1;">${otp}</b></p><p>This code will expire in 10 minutes.</p>`
+    });
+
+    res.json({ success: true, message: "OTP sent successfully!" });
   } catch (err) {
-    res.status(500).json({ success: false, message: "Server error" });
+    res.status(500).json({ success: false, message: "Failed to send email. Check your email credentials." });
   }
 });
 
+// 2. Register (Now requires OTP)
+app.post('/api/register', async (req, res) => {
+  const { shopName, username, password, email, phone, otp } = req.body;
+  
+  try {
+    // A. Check OTP
+    const otpRes = await db.query('SELECT * FROM otps WHERE email = $1 AND otp = $2', [email, otp]);
+    if (otpRes.rows.length === 0) return res.status(400).json({ success: false, message: "Invalid OTP Code." });
+    if (new Date(otpRes.rows[0].expires_at) < new Date()) return res.status(400).json({ success: false, message: "OTP has expired. Request a new one." });
+
+    // B. Check if Username Exists
+    const existingUser = await db.query('SELECT * FROM shops WHERE username = $1', [username]);
+    if (existingUser.rows.length > 0) return res.status(400).json({ success: false, message: "Username already taken." });
+
+    // C. Create Account
+    const subEnd = new Date();
+    subEnd.setDate(subEnd.getDate() + 7); // 7-day trial
+
+    const result = await db.query(
+      'INSERT INTO shops (shop_name, username, password, email, contact_number, subscription_end) VALUES ($1, $2, $3, $4, $5, $6) RETURNING shop_id, subscription_end',
+      [shopName, username, password, email, phone, subEnd]
+    );
+
+    // D. Delete the OTP so it can't be reused
+    await db.query('DELETE FROM otps WHERE email = $1', [email]);
+
+    res.json({ success: true, shop_id: result.rows[0].shop_id, subscription_end: result.rows[0].subscription_end });
+  } catch (err) {
+    // If database constraint fails (like unique email)
+    if (err.code === '23505') return res.status(400).json({ success: false, message: "Email or Username already exists." });
+    res.status(500).json({ success: false, message: "Server error during registration." });
+  }
+});
+
+// 3. Login
 app.post('/api/login', async (req, res) => {
   const { username, password } = req.body;
   try {
@@ -55,6 +123,47 @@ app.post('/api/login', async (req, res) => {
   } catch (err) {
     res.status(500).json({ success: false, message: "Server error" });
   }
+});
+
+// 4. Verify OTP for Forgot Password (before showing reset options)
+app.post('/api/verify-forgot-otp', async (req, res) => {
+  const { email, otp } = req.body;
+  try {
+    const otpRes = await db.query('SELECT * FROM otps WHERE email = $1 AND otp = $2', [email, otp]);
+    if (otpRes.rows.length === 0) return res.status(400).json({ success: false, message: "Invalid OTP Code." });
+    if (new Date(otpRes.rows[0].expires_at) < new Date()) return res.status(400).json({ success: false, message: "OTP has expired." });
+    res.json({ success: true, message: "OTP Verified." });
+  } catch (err) { res.status(500).json({ success: false, message: "Error verifying OTP" }); }
+});
+
+// 5. Reveal Password
+app.post('/api/reveal-password', async (req, res) => {
+  const { email, otp } = req.body;
+  try {
+    // Double check OTP just to be secure
+    const otpRes = await db.query('SELECT * FROM otps WHERE email = $1 AND otp = $2', [email, otp]);
+    if (otpRes.rows.length === 0) return res.status(400).json({ success: false, message: "Security check failed." });
+
+    const userRes = await db.query('SELECT password FROM shops WHERE email = $1', [email]);
+    await db.query('DELETE FROM otps WHERE email = $1', [email]); // Clean up OTP
+
+    res.json({ success: true, password: userRes.rows[0].password });
+  } catch (err) { res.status(500).json({ success: false, message: "Failed to reveal password." }); }
+});
+
+// 6. Reset Password
+app.post('/api/reset-password', async (req, res) => {
+  const { email, newPassword, otp } = req.body;
+  try {
+    // Double check OTP
+    const otpRes = await db.query('SELECT * FROM otps WHERE email = $1 AND otp = $2', [email, otp]);
+    if (otpRes.rows.length === 0) return res.status(400).json({ success: false, message: "Security check failed." });
+
+    await db.query('UPDATE shops SET password = $1 WHERE email = $2', [newPassword, email]);
+    await db.query('DELETE FROM otps WHERE email = $1', [email]); // Clean up OTP
+
+    res.json({ success: true, message: "Password updated successfully." });
+  } catch (err) { res.status(500).json({ success: false, message: "Failed to reset password." }); }
 });
 
 app.post('/api/subscribe', async (req, res) => {
@@ -67,9 +176,7 @@ app.post('/api/subscribe', async (req, res) => {
 
     await db.query('UPDATE shops SET subscription_end = $1 WHERE shop_id = $2', [currentEnd, shop_id]);
     res.json({ success: true, new_end: currentEnd });
-  } catch (err) {
-    res.status(500).json({ success: false, message: "Subscription failed" });
-  }
+  } catch (err) { res.status(500).json({ success: false, message: "Subscription failed" }); }
 });
 
 // ==========================================
@@ -145,18 +252,15 @@ app.get('/api/transactions/:shopId', async (req, res) => {
 app.post('/api/billing', async (req, res) => {
   const { shop_id, party_name, transaction_type, cart_items, total_amount, total_gst, discount_amount, receipt_details, status, settlement_date } = req.body;
   try {
-    // 1. Save Transaction
     const tx = await db.query(
       `INSERT INTO transactions (shop_id, party_name, transaction_type, total_amount, gst_amount, discount_amount, receipt_details, status, settlement_date) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING transaction_id`,
       [shop_id, party_name, transaction_type, total_amount, total_gst, discount_amount, receipt_details, status, settlement_date || null]
     );
     
-    // 2. Add Invoice Number to Receipt Data
     const invoiceNo = `INV-${tx.rows[0].transaction_id}`;
     receipt_details.invoiceNo = invoiceNo;
     await db.query(`UPDATE transactions SET receipt_details = $1 WHERE transaction_id = $2`, [receipt_details, tx.rows[0].transaction_id]);
 
-    // 3. Update Inventory Stock
     for (const item of cart_items) {
       if (transaction_type === 'SELL') {
         await db.query('UPDATE products SET current_stock = current_stock - $1 WHERE product_id = $2', [item.qty, item.product_id]);
@@ -175,8 +279,6 @@ app.put('/api/billing/:id', async (req, res) => {
   const txId = req.params.id;
 
   try {
-    // --- 1. REVERT THE OLD INVENTORY ---
-    // Fetch the previous version of this transaction from the database
     const oldTx = await db.query('SELECT transaction_type, receipt_details FROM transactions WHERE transaction_id = $1', [txId]);
     
     if (oldTx.rows.length > 0 && oldTx.rows[0].receipt_details && oldTx.rows[0].receipt_details.cartItems) {
@@ -184,22 +286,17 @@ app.put('/api/billing/:id', async (req, res) => {
       const oldCart = oldTx.rows[0].receipt_details.cartItems;
       
       for (const item of oldCart) {
-        // If the old bill was a SELL, we add the stock back. If it was a PURCH, we remove it.
         const qtyChange = oldType === 'SELL' ? item.qty : -item.qty;
         await db.query('UPDATE products SET current_stock = current_stock + $1 WHERE product_id = $2', [qtyChange, item.product_id]);
       }
     }
 
-    // --- 2. APPLY THE NEW INVENTORY ---
-    // Now apply the updated cart quantities to the inventory
     for (const item of cart_items) {
-      // If the new bill is a SELL, we remove stock. If it's a PURCH, we add it.
       const qtyChange = transaction_type === 'SELL' ? -item.qty : item.qty;
       await db.query('UPDATE products SET current_stock = current_stock + $1 WHERE product_id = $2', [qtyChange, item.product_id]);
     }
 
-    // --- 3. SAVE THE UPDATED BILL ---
-    receipt_details.invoiceNo = `INV-${txId}`; // Re-apply ID as invoice
+    receipt_details.invoiceNo = `INV-${txId}`; 
     await db.query(
       `UPDATE transactions SET party_name=$1, transaction_type=$2, total_amount=$3, gst_amount=$4, discount_amount=$5, receipt_details=$6, status=$7, settlement_date=$8 WHERE transaction_id=$9`,
       [party_name, transaction_type, total_amount, total_gst, discount_amount, receipt_details, status, settlement_date || null, txId]
