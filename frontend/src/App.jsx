@@ -15,14 +15,10 @@ const API_URL = "https://bhav-taal-software.onrender.com";
 const translations = {
   en: {
     login_title: "Secure License Gateway", reg_title: "Create a New Business", biz_name: "Business Name", user: "Username", pass: "Password", conf_pass: "Confirm Password", btn_trial: "Start 7-Day Free Trial", btn_auth: "Authenticate User", switch_login: "Already have an account? Log In", switch_reg: "Don't have an account? Sign Up", dev: "©Developed by Lakshyadeepsinh Chauhan", auth_wait: "Authenticating...", license_exp: "License Expired", nav_dash: "Dashboard", nav_pos: "Point of Sale", nav_inv: "Inventory", nav_add: "Add Material", nav_shop: "Shop Settings", valid_until: "License Valid Until", upgrade_plan: "Upgrade Plan", alert_due: "Alert: You have {count} Party Payments that are DUE TODAY or OVERDUE!", system_online: "System Online", quick_act: "Quick Action", manage_inv: "Manage Inventory", bills_today: "Bills Today", tot_mat: "Total Materials", to_recv: "To Receive (Khata)", to_pay: "To Pay (Payables)", stock_alerts: "Stock Alerts", all_opt: "All optimal!", left: "Left", alert_at: "Alert at", unsettled_bills: "Unsettled Bills", no_pending: "No pending payments!", due: "Due", recent_tx: "Recent Transactions", date: "Date", party: "Party", status: "Status", total: "Total", actions: "Actions", no_tx: "No transactions yet.", edit: "Edit", print: "Print", old_bill: "Old Bill", warning_gst: "⚠️ Warning: You have not set your GST Number.", live_margin: "Live Margin", checkout: "Checkout Terminal", editing_bill: "Editing Bill", tx_type: "Transaction Type", sell: "SELL (Customer)", purch: "PURCHASE (Wholesaler)", cust_name: "Customer Name", wholesaler_name: "Wholesaler Name", cust_gst: "Customer GSTIN (Optional)", whole_gst: "Wholesaler GSTIN (Optional)", pay_from_cust: "Payment from Customer", pay_to_whole: "Payment to Wholesaler", settled: "Settled (Paid)", unsettled_recv: "Unsettled (Khata / To Receive)", unsettled_pay: "Unsettled (Due / To Pay)", promised_date: "Promised Settlement Date (Optional)", search_add: "Search & Add Material to Cart", kb_mode: "Keyboard", item: "Item", rate: "Rate (₹)", qty: "Qty", amount: "Amount", cart_empty: "Cart is empty.", discount: "Apply Overall Discount (Optional)", final_pay: "Final Amount Payable", tot_pay: "Total Amount to Pay", gst_inc: "(GST Inc.)", gross: "Gross", taxable: "Taxable", btn_save_print: "Save Changes & Re-Print", btn_gen_inv: "Generate Multi-Item Invoice", cancel_edit: "Cancel Editing", inv_mgmt: "Inventory Management", btn_add_new: "+ Add New Item", mat_hsn: "Material (HSN Sorted)", purch_rs: "Purch. (₹)", sell_rs: "Sell Rate (₹)", stock: "Stock", alert: "Alert", btn_save: "Save", btn_cancel: "Cancel", new_mat: "New Material", kb_en: "English (Standard)", kb_gu: "Gujarati (Phonetic Magic)", mat_en: "Material Name (English)", mat_gu: "Regional Name (Gujarati)", pricing: "Pricing & Taxation", rate_inc_gst: "Rate Includes GST?", yes_inc: "Yes (Inclusive)", no_exc: "No (Exclusive)", gst_pct: "GST / Tax (%)", hsn_code: "HSN / SAC Code", stock_ctrl: "Stock Control", init_stock: "Initial Stock", alert_below: "Alert Below", btn_vault: "Save to Vault", biz_prof: "Business Profile Setup", biz_logo: "Business Logo (Optional)", gen_info: "General Information", gst_comp: "GST Number (Compulsory)", owner_name: "Owner Name", address: "Address", contact: "Contact Number", email: "Email Address", bank_details: "Bank Details (Printed on Bill)", bank_name: "Bank Name", ac_no: "A/C Number", ifsc: "IFSC Code", biz_cat: "Business Category", btn_save_prof: "Save Business Profile", choose_plan: "Choose Your License Plan", sub_subtitle: "Secure, full-stack POS and Inventory management for your business.", monthly: "Monthly Plan", half_yearly: "Half-Yearly", yearly: "Yearly Plan", most_pop: "MOST POPULAR", sub_month: "Subscribe Monthly", sub_6mo: "Subscribe for 6 Months", sub_yr: "Subscribe Yearly", secured_by: "Payments secured by Razorpay", processing: "Processing Task... Please Wait",
-    
-    // NEW AUTH TRANSLATIONS
     email_req: "Email Address", phone_req: "Phone Number", get_otp: "Get OTP to Register", enter_otp: "Enter 6-Digit OTP", verify_reg: "Verify OTP & Start Trial", forgot_pass: "Forgot Password?", forgot_title: "Account Recovery", send_recovery: "Send Recovery OTP", verify_recovery: "Verify OTP", opt_reveal: "Reveal Password", opt_reset: "Create New Password", new_pass: "New Password", update_pass: "Update Password", back_login: "Back to Login", pass_hide: "Password hiding in", your_pass: "Your password is:"
   },
   gu: {
     login_title: "સુરક્ષિત લાયસન્સ ગેટવે", reg_title: "નવો વ્યાપાર બનાવો", biz_name: "વ્યાપારનું નામ", user: "યુઝરનેમ", pass: "પાસવર્ડ", conf_pass: "પાસવર્ડ કન્ફર્મ કરો", btn_trial: "7-દિવસની ફ્રી ટ્રાયલ શરૂ કરો", btn_auth: "લોગિન કરો", switch_login: "પહેલેથી એકાઉન્ટ છે? લોગિન કરો", switch_reg: "એકાઉન્ટ નથી? નવું બનાવો", dev: "©લક્ષ્યદીપસિંહ ચૌહાણ દ્વારા નિર્મિત", auth_wait: "પ્રમાણિત કરી રહ્યા છીએ...", license_exp: "લાયસન્સ સમાપ્ત", nav_dash: "ડેશબોર્ડ", nav_pos: "પોઇન્ટ ઓફ સેલ (બિલિંગ)", nav_inv: "ઇન્વેન્ટરી (સ્ટોક)", nav_add: "નવો માલ ઉમેરો", nav_shop: "દુકાન સેટિંગ્સ", valid_until: "લાયસન્સની માન્યતા", upgrade_plan: "પ્લાન અપગ્રેડ કરો", alert_due: "એલર્ટ: તમારી પાસે {count} પાર્ટીના પેમેન્ટ આજે બાકી છે!", system_online: "સિસ્ટમ ઓનલાઇન", quick_act: "ઝડપી ક્રિયા", manage_inv: "ઇન્વેન્ટરી મેનેજ કરો", bills_today: "આજના બિલ", tot_mat: "કુલ માલ", to_recv: "લેવાના બાકી (ખાતા)", to_pay: "ચૂકવવાના બાકી", stock_alerts: "સ્ટોક એલર્ટ્સ", all_opt: "બધું બરાબર છે!", left: "બાકી", alert_at: "એલર્ટ:", unsettled_bills: "બાકી બિલ", no_pending: "કોઈ બાકી ચૂકવણી નથી!", due: "બાકી:", recent_tx: "તાજેતરના વ્યવહારો", date: "તારીખ", party: "પાર્ટી", status: "સ્થિતિ", total: "કુલ", actions: "ક્રિયાઓ", no_tx: "કોઈ વ્યવહારો નથી.", edit: "એડિટ", print: "પ્રિન્ટ", old_bill: "જૂનું બિલ", warning_gst: "⚠️ ચેતવણી: તમે તમારો GST નંબર સેટ કર્યો નથી.", live_margin: "લાઇવ માર્જિન", checkout: "બિલિંગ ટર્મિનલ", editing_bill: "બિલ એડિટ થઈ રહ્યું છે", tx_type: "વ્યવહારનો પ્રકાર", sell: "વેચાણ (ગ્રાહકને)", purch: "ખરીદી (વેપારી પાસેથી)", cust_name: "ગ્રાહકનું નામ", wholesaler_name: "વેપારીનું નામ", cust_gst: "ગ્રાહકનો GSTIN (વૈકલ્પિક)", whole_gst: "વેપારીનો GSTIN (વૈકલ્પિક)", pay_from_cust: "ગ્રાહક તરફથી ચૂકવણી", pay_to_whole: "વેપારીને ચૂકવણી", settled: "ચૂકવેલ (જમા)", unsettled_recv: "બાકી (લેવાના)", unsettled_pay: "બાકી (ચૂકવવાના)", promised_date: "ચૂકવણીની તારીખ (વૈકલ્પિક)", search_add: "માલ શોધો અને બિલમાં ઉમેરો", kb_mode: "કીબોર્ડ", item: "વસ્તુ", rate: "ભાવ (₹)", qty: "જથ્થો", amount: "રકમ", cart_empty: "કાર્ટ ખાલી છે.", discount: "કુલ ડિસ્કાઉન્ટ (વૈકલ્પિક)", final_pay: "ચૂકવવાપાત્ર અંતિમ રકમ", tot_pay: "કુલ ચૂકવવાની રકમ", gst_inc: "(GST સાથે)", gross: "કુલ", taxable: "કરપાત્ર", btn_save_print: "સાચવો અને પ્રિન્ટ કરો", btn_gen_inv: "બિલ બનાવો", cancel_edit: "એડિટિંગ રદ કરો", inv_mgmt: "ઇન્વેન્ટરી મેનેજમેન્ટ", btn_add_new: "+ નવી વસ્તુ ઉમેરો", mat_hsn: "વસ્તુ (HSN પ્રમાણે)", purch_rs: "ખરીદ કિંમત (₹)", sell_rs: "વેચાણ કિંમત (₹)", stock: "સ્ટોક", alert: "એલર્ટ", btn_save: "સાચવો", btn_cancel: "રદ કરો", new_mat: "નવી વસ્તુ", kb_en: "અંગ્રેજી (સામાન્ય)", kb_gu: "ગુજરાતી (ફોનેટિક)", mat_en: "વસ્તુનું નામ (અંગ્રેજી)", mat_gu: "વસ્તુનું નામ (ગુજરાતી)", pricing: "કિંમત અને ટેક્સ", rate_inc_gst: "શું ભાવમાં GST શામેલ છે?", yes_inc: "હા (શામેલ છે)", no_exc: "ના (શામેલ નથી)", gst_pct: "GST / ટેક્સ (%)", hsn_code: "HSN / SAC કોડ", stock_ctrl: "સ્ટોક કંટ્રોલ", init_stock: "શરૂઆતનો સ્ટોક", alert_below: "સ્ટોક એલર્ટ", btn_vault: "સાચવો", biz_prof: "વ્યાપાર પ્રોફાઇલ સેટઅપ", biz_logo: "વ્યાપારનો લોગો (વૈકલ્પિક)", gen_info: "સામાન્ય માહિતી", gst_comp: "GST નંબર (ફરજિયાત)", owner_name: "માલિકનું નામ", address: "સરનામું", contact: "સંપર્ક નંબર", email: "ઈમેલ આઈડી", bank_details: "બેંકની વિગતો (બિલ પર છાપવા માટે)", bank_name: "બેંકનું નામ", ac_no: "એકાઉન્ટ નંબર", ifsc: "IFSC કોડ", biz_cat: "વ્યાપારની શ્રેણી", btn_save_prof: "પ્રોફાઇલ સાચવો", choose_plan: "તમારો લાયસન્સ પ્લાન પસંદ કરો", sub_subtitle: "તમારા વ્યવસાય માટે સુરક્ષિત POS અને ઇન્વેન્ટરી મેનેજમેન્ટ.", monthly: "માસિક પ્લાન", half_yearly: "અર્ધ-વાર્ષિક", yearly: "વાર્ષિક પ્લાન", most_pop: "સૌથી લોકપ્રિય", sub_month: "માસિક સબ્સ્ક્રાઇબ કરો", sub_6mo: "6 મહિના માટે સબ્સ્ક્રાઇબ કરો", sub_yr: "વાર્ષિક સબ્સ્ક્રાઇબ કરો", secured_by: "Razorpay દ્વારા સુરક્ષિત", processing: "પ્રક્રિયા ચાલુ છે... કૃપા કરીને રાહ જુઓ",
-    
-    // NEW AUTH TRANSLATIONS
     email_req: "ઈમેલ આઈડી", phone_req: "ફોન નંબર", get_otp: "OTP મેળવો", enter_otp: "6-અંકનો OTP દાખલ કરો", verify_reg: "ચકાસો અને નોંધણી કરો", forgot_pass: "પાસવર્ડ ભૂલી ગયા છો?", forgot_title: "એકાઉન્ટ પુનઃપ્રાપ્તિ", send_recovery: "OTP મોકલો", verify_recovery: "OTP ચકાસો", opt_reveal: "પાસવર્ડ બતાવો", opt_reset: "નવો પાસવર્ડ બનાવો", new_pass: "નવો પાસવર્ડ", update_pass: "પાસવર્ડ અપડેટ કરો", back_login: "લોગિન પર પાછા ફરો", pass_hide: "પાસવર્ડ છુપાઈ જશે", your_pass: "તમારો પાસવર્ડ છે:"
   }
 };
@@ -113,8 +109,8 @@ function App() {
       const timerId = setTimeout(() => setRevealTimer(revealTimer - 1), 1000);
       return () => clearTimeout(timerId);
     } else if (revealTimer === 0 && revealedPass !== "") {
-      setRevealedPass(""); // Wipe password automatically
-      setAuthMode("login"); // Kick to login screen for safety
+      setRevealedPass(""); 
+      setAuthMode("login"); 
       setAuthMessage("Session timed out for security.");
     }
   }, [revealTimer, revealedPass]);
@@ -163,7 +159,9 @@ function App() {
   };
 
   const handleRegisterVerify = async (e) => {
-    e.preventDefault(); setAuthMessage(""); setAuthSuccess(""); setIsLoading(true);
+    e.preventDefault(); setAuthMessage(""); setAuthSuccess(""); 
+    if (otpToken.length < 6) return setAuthMessage("❌ Please enter all 6 digits.");
+    setIsLoading(true);
     try {
       const res = await axios.post(`${API_URL}/api/register`, { shopName: regShopName, username: loginUser, password: loginPass, email: regEmail, phone: regPhone, otp: otpToken });
       if (res.data.success) { setIsLoggedIn(true); setCurrentShopId(res.data.shop_id); setSubEndDate(res.data.subscription_end); fetchProfile(res.data.shop_id); fetchInventory(res.data.shop_id); fetchTransactions(res.data.shop_id); setActiveTab("ledger"); }
@@ -181,7 +179,9 @@ function App() {
   };
 
   const handleForgotVerifyOtp = async (e) => {
-    e.preventDefault(); setAuthMessage(""); setAuthSuccess(""); setIsLoading(true);
+    e.preventDefault(); setAuthMessage(""); setAuthSuccess(""); 
+    if (otpToken.length < 6) return setAuthMessage("❌ Please enter all 6 digits.");
+    setIsLoading(true);
     try {
       const res = await axios.post(`${API_URL}/api/verify-forgot-otp`, { email: regEmail, otp: otpToken });
       if (res.data.success) { setForgotStep(3); setAuthSuccess("✅ OTP Verified! Choose an option below."); }
@@ -388,7 +388,20 @@ function App() {
                 <div style={{ fontWeight: 'bold' }}>OTP Sent to {regEmail}</div>
                 <div style={{ fontSize: '12px', color: t.textMuted }}>Please check your inbox and spam folder.</div>
               </div>
-              <div style={{ marginBottom: '30px' }}><label style={labelStyle}>{tText('enter_otp')}</label><input type="text" required value={otpToken} onChange={(e) => setOtpToken(e.target.value)} placeholder="123456" className="soft-input" style={{ ...inputStyle, textAlign: 'center', fontSize: '24px', letterSpacing: '5px' }} maxLength="6" /></div>
+
+              {/* INVISIBLE OVERLAY OTP INPUT */}
+              <div style={{ marginBottom: '30px', textAlign: 'center' }}>
+                <label style={{...labelStyle, display: 'block', marginBottom: '15px'}}>{tText('enter_otp')}</label>
+                <div style={{ position: 'relative', display: 'flex', justifyContent: 'center', gap: '10px' }}>
+                  {[0, 1, 2, 3, 4, 5].map(i => (
+                    <div key={i} style={{ width: '45px', height: '55px', backgroundColor: t.inputBg, border: `2px solid ${otpToken.length === i ? t.primary : t.border}`, borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '24px', fontWeight: 'bold', color: otpToken[i] ? t.text : t.textMuted, transition: 'all 0.2s', boxShadow: otpToken.length === i ? `0 0 0 3px ${t.primary}20` : 'none' }}>
+                      {otpToken[i] || '-'}
+                    </div>
+                  ))}
+                  <input type="text" value={otpToken} onChange={(e) => setOtpToken(e.target.value.replace(/[^0-9]/g, '').slice(0, 6))} style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', opacity: 0, cursor: 'text', zIndex: 10 }} autoFocus />
+                </div>
+              </div>
+
               <button type="submit" disabled={isLoading} style={{ ...btnPrimary, opacity: isLoading ? 0.7 : 1 }}>{tText('verify_reg')}</button>
               <div style={{ textAlign: 'center', marginTop: '20px' }}><button type="button" onClick={() => setRegStep(1)} style={{ background: 'none', border: 'none', color: t.textMuted, cursor: 'pointer', fontSize: '14px' }}>Go Back</button></div>
             </form>
@@ -406,7 +419,20 @@ function App() {
           {authMode === 'forgot' && forgotStep === 2 && (
             <form onSubmit={handleForgotVerifyOtp}>
               <div style={{ backgroundColor: `${t.primary}10`, border: `1px solid ${t.primary}40`, padding: '15px', borderRadius: '12px', marginBottom: '20px', textAlign: 'center', color: t.text }}><div style={{ fontWeight: 'bold' }}>Recovery OTP Sent to {regEmail}</div></div>
-              <div style={{ marginBottom: '30px' }}><label style={labelStyle}>{tText('enter_otp')}</label><input type="text" required value={otpToken} onChange={(e) => setOtpToken(e.target.value)} placeholder="123456" className="soft-input" style={{ ...inputStyle, textAlign: 'center', fontSize: '24px', letterSpacing: '5px' }} maxLength="6" /></div>
+              
+              {/* INVISIBLE OVERLAY OTP INPUT */}
+              <div style={{ marginBottom: '30px', textAlign: 'center' }}>
+                <label style={{...labelStyle, display: 'block', marginBottom: '15px'}}>{tText('enter_otp')}</label>
+                <div style={{ position: 'relative', display: 'flex', justifyContent: 'center', gap: '10px' }}>
+                  {[0, 1, 2, 3, 4, 5].map(i => (
+                    <div key={i} style={{ width: '45px', height: '55px', backgroundColor: t.inputBg, border: `2px solid ${otpToken.length === i ? t.primary : t.border}`, borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '24px', fontWeight: 'bold', color: otpToken[i] ? t.text : t.textMuted, transition: 'all 0.2s', boxShadow: otpToken.length === i ? `0 0 0 3px ${t.primary}20` : 'none' }}>
+                      {otpToken[i] || '-'}
+                    </div>
+                  ))}
+                  <input type="text" value={otpToken} onChange={(e) => setOtpToken(e.target.value.replace(/[^0-9]/g, '').slice(0, 6))} style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', opacity: 0, cursor: 'text', zIndex: 10 }} autoFocus />
+                </div>
+              </div>
+
               <button type="submit" disabled={isLoading} style={{ ...btnPrimary, opacity: isLoading ? 0.7 : 1 }}>{tText('verify_recovery')}</button>
               <div style={{ textAlign: 'center', marginTop: '20px' }}><button type="button" onClick={() => setForgotStep(1)} style={{ background: 'none', border: 'none', color: t.textMuted, cursor: 'pointer', fontSize: '14px' }}>Go Back</button></div>
             </form>
