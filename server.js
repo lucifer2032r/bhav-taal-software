@@ -171,13 +171,40 @@ app.post('/api/billing', async (req, res) => {
 });
 
 app.put('/api/billing/:id', async (req, res) => {
-  const { party_name, transaction_type, total_amount, total_gst, discount_amount, receipt_details, status, settlement_date } = req.body;
+  const { party_name, transaction_type, cart_items, total_amount, total_gst, discount_amount, receipt_details, status, settlement_date } = req.body;
+  const txId = req.params.id;
+
   try {
-    receipt_details.invoiceNo = `INV-${req.params.id}`; // Re-apply ID as invoice
+    // --- 1. REVERT THE OLD INVENTORY ---
+    // Fetch the previous version of this transaction from the database
+    const oldTx = await db.query('SELECT transaction_type, receipt_details FROM transactions WHERE transaction_id = $1', [txId]);
+    
+    if (oldTx.rows.length > 0 && oldTx.rows[0].receipt_details && oldTx.rows[0].receipt_details.cartItems) {
+      const oldType = oldTx.rows[0].transaction_type;
+      const oldCart = oldTx.rows[0].receipt_details.cartItems;
+      
+      for (const item of oldCart) {
+        // If the old bill was a SELL, we add the stock back. If it was a PURCH, we remove it.
+        const qtyChange = oldType === 'SELL' ? item.qty : -item.qty;
+        await db.query('UPDATE products SET current_stock = current_stock + $1 WHERE product_id = $2', [qtyChange, item.product_id]);
+      }
+    }
+
+    // --- 2. APPLY THE NEW INVENTORY ---
+    // Now apply the updated cart quantities to the inventory
+    for (const item of cart_items) {
+      // If the new bill is a SELL, we remove stock. If it's a PURCH, we add it.
+      const qtyChange = transaction_type === 'SELL' ? -item.qty : item.qty;
+      await db.query('UPDATE products SET current_stock = current_stock + $1 WHERE product_id = $2', [qtyChange, item.product_id]);
+    }
+
+    // --- 3. SAVE THE UPDATED BILL ---
+    receipt_details.invoiceNo = `INV-${txId}`; // Re-apply ID as invoice
     await db.query(
       `UPDATE transactions SET party_name=$1, transaction_type=$2, total_amount=$3, gst_amount=$4, discount_amount=$5, receipt_details=$6, status=$7, settlement_date=$8 WHERE transaction_id=$9`,
-      [party_name, transaction_type, total_amount, total_gst, discount_amount, receipt_details, status, settlement_date || null, req.params.id]
+      [party_name, transaction_type, total_amount, total_gst, discount_amount, receipt_details, status, settlement_date || null, txId]
     );
+
     res.json({ success: true, receipt: receipt_details });
   } catch (err) { 
     res.status(500).json({ error: err.message }); 
