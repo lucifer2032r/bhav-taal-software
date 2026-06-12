@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { ReactTransliterate } from 'react-transliterate';
 import "react-transliterate/dist/index.css";
-import { LayoutDashboard, ShoppingCart, PackageSearch, PlusCircle, LogOut, Menu, Moon, Sun, ChevronLeft, Edit3, Trash2, Printer, Search, Download, Settings, Image as ImageIcon, Percent, IndianRupee, X, AlertTriangle, Receipt, Box, Clock, CreditCard, CheckCircle2, Lock, Pencil, FileText, ArrowDownRight, ArrowUpRight, Globe } from 'lucide-react';
+import { LayoutDashboard, ShoppingCart, PackageSearch, PlusCircle, LogOut, Menu, Moon, Sun, ChevronLeft, Edit3, Trash2, Printer, Search, Download, Settings, Image as ImageIcon, Percent, IndianRupee, X, AlertTriangle, Receipt, Box, Clock, CreditCard, CheckCircle2, Lock, Pencil, FileText, ArrowDownRight, ArrowUpRight, Globe, Eye, EyeOff } from 'lucide-react';
 
 // ==========================================
 // 🚀 CLOUD CONNECTION - PASTE RENDER URL BELOW
@@ -26,6 +26,9 @@ function App() {
   const [loginUser, setLoginUser] = useState(""); const [loginPass, setLoginPass] = useState(""); const [confirmPass, setConfirmPass] = useState(""); const [regShopName, setRegShopName] = useState(""); const [authMessage, setAuthMessage] = useState("");
   const [isDarkMode, setIsDarkMode] = useState(false); const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   
+  // PASSWORD TOGGLE STATE
+  const [showPassword, setShowPassword] = useState(false);
+
   // UI LANGUAGE STATE (English or Gujarati)
   const [uiLang, setUiLang] = useState("en");
   const tText = (key) => translations[uiLang]?.[key] || translations['en'][key] || key;
@@ -236,8 +239,29 @@ function App() {
           {authMessage && <div style={{ backgroundColor: `${t.danger}20`, color: t.danger, padding: '12px', borderRadius: '10px', marginBottom: '20px', textAlign: 'center', fontSize: '14px', fontWeight: '500' }}>{authMessage}</div>}
           {isRegistering && (<div style={{ marginBottom: '15px' }}><label style={labelStyle}>{tText('biz_name')}</label><input type="text" required value={regShopName} onChange={(e) => setRegShopName(e.target.value)} className="soft-input" style={inputStyle} /></div>)}
           <div style={{ marginBottom: '15px' }}><label style={labelStyle}>{tText('user')}</label><input type="text" required value={loginUser} onChange={(e) => setLoginUser(e.target.value)} className="soft-input" style={inputStyle} /></div>
-          <div style={{ marginBottom: isRegistering ? '15px' : '30px' }}><label style={labelStyle}>{tText('pass')}</label><input type="password" required value={loginPass} onChange={(e) => setLoginPass(e.target.value)} className="soft-input" style={inputStyle} /></div>
-          {isRegistering && (<div style={{ marginBottom: '30px' }}><label style={labelStyle}>{tText('conf_pass')}</label><input type="password" required value={confirmPass} onChange={(e) => setConfirmPass(e.target.value)} className="soft-input" style={inputStyle} /></div>)}
+          
+          <div style={{ marginBottom: isRegistering ? '15px' : '30px', position: 'relative' }}>
+            <label style={labelStyle}>{tText('pass')}</label>
+            <div style={{ position: 'relative' }}>
+              <input type={showPassword ? "text" : "password"} required value={loginPass} onChange={(e) => setLoginPass(e.target.value)} className="soft-input" style={{ ...inputStyle, paddingRight: '40px' }} />
+              <button type="button" onClick={() => setShowPassword(!showPassword)} style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: t.textMuted, padding: 0, display: 'flex' }}>
+                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+              </button>
+            </div>
+          </div>
+
+          {isRegistering && (
+            <div style={{ marginBottom: '30px', position: 'relative' }}>
+              <label style={labelStyle}>{tText('conf_pass')}</label>
+              <div style={{ position: 'relative' }}>
+                <input type={showPassword ? "text" : "password"} required value={confirmPass} onChange={(e) => setConfirmPass(e.target.value)} className="soft-input" style={{ ...inputStyle, paddingRight: '40px' }} />
+                <button type="button" onClick={() => setShowPassword(!showPassword)} style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: t.textMuted, padding: 0, display: 'flex' }}>
+                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                </button>
+              </div>
+            </div>
+          )}
+
           <button type="submit" disabled={isLoading} style={{ ...btnPrimary, opacity: isLoading ? 0.7 : 1 }}>{isRegistering ? tText('btn_trial') : tText('btn_auth')}</button>
           <div style={{ textAlign: 'center', marginTop: '20px' }}><button type="button" onClick={() => { setIsRegistering(!isRegistering); setAuthMessage(""); }} style={{ background: 'none', border: 'none', color: t.primary, fontWeight: '600', cursor: 'pointer', fontSize: '14px' }}>{isRegistering ? tText('switch_login') : tText('switch_reg')}</button></div>
         </form>
