@@ -7,7 +7,7 @@ import { LayoutDashboard, ShoppingCart, PackageSearch, PlusCircle, LogOut, Menu,
 // ==========================================
 // 🚀 CLOUD CONNECTION - PASTE RENDER URL BELOW
 // ==========================================
-const API_URL = "https://PASTE_YOUR_RENDER_URL_HERE.onrender.com"; 
+const API_URL = "https://bhav-taal-software.onrender.com"; 
 
 // ==========================================
 // 🌐 TRANSLATION DICTIONARY
