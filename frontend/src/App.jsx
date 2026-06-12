@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { ReactTransliterate } from 'react-transliterate';
 import "react-transliterate/dist/index.css";
-import { LayoutDashboard, ShoppingCart, PackageSearch, PlusCircle, LogOut, Menu, Moon, Sun, ChevronLeft, Edit3, Trash2, Printer, Search, Download, Settings, Image as ImageIcon, Percent, IndianRupee, X, AlertTriangle, Receipt, Box, Clock, CreditCard, CheckCircle2, Lock, Pencil, FileText, ArrowDownRight, ArrowUpRight, Globe, Eye, EyeOff } from 'lucide-react';
+import { LayoutDashboard, ShoppingCart, PackageSearch, PlusCircle, LogOut, Menu, Moon, Sun, ChevronLeft, Edit3, Trash2, Printer, Search, Download, Settings, Image as ImageIcon, Percent, IndianRupee, X, AlertTriangle, Receipt, Box, Clock, CreditCard, CheckCircle2, Lock, Pencil, FileText, ArrowDownRight, ArrowUpRight, Globe, Eye, EyeOff, Mail, ShieldAlert, KeyRound } from 'lucide-react';
 
 // ==========================================
 // 🚀 CLOUD CONNECTION - PASTE RENDER URL BELOW
@@ -14,21 +14,42 @@ const API_URL = "https://bhav-taal-software.onrender.com";
 // ==========================================
 const translations = {
   en: {
-    login_title: "Secure License Gateway", reg_title: "Create a New Business", biz_name: "Business Name", user: "Username", pass: "Password", conf_pass: "Confirm Password", btn_trial: "Start 7-Day Free Trial", btn_auth: "Authenticate User", switch_login: "Already have an account? Log In", switch_reg: "Don't have an account? Sign Up", dev: "©Developed by Lakshyadeepsinh Chauhan", auth_wait: "Authenticating...", license_exp: "License Expired", nav_dash: "Dashboard", nav_pos: "Point of Sale", nav_inv: "Inventory", nav_add: "Add Material", nav_shop: "Shop Settings", valid_until: "License Valid Until", upgrade_plan: "Upgrade Plan", alert_due: "Alert: You have {count} Party Payments that are DUE TODAY or OVERDUE!", system_online: "System Online", quick_act: "Quick Action", manage_inv: "Manage Inventory", bills_today: "Bills Today", tot_mat: "Total Materials", to_recv: "To Receive (Khata)", to_pay: "To Pay (Payables)", stock_alerts: "Stock Alerts", all_opt: "All optimal!", left: "Left", alert_at: "Alert at", unsettled_bills: "Unsettled Bills", no_pending: "No pending payments!", due: "Due", recent_tx: "Recent Transactions", date: "Date", party: "Party", status: "Status", total: "Total", actions: "Actions", no_tx: "No transactions yet.", edit: "Edit", print: "Print", old_bill: "Old Bill", warning_gst: "⚠️ Warning: You have not set your GST Number.", live_margin: "Live Margin", checkout: "Checkout Terminal", editing_bill: "Editing Bill", tx_type: "Transaction Type", sell: "SELL (Customer)", purch: "PURCHASE (Wholesaler)", cust_name: "Customer Name", wholesaler_name: "Wholesaler Name", cust_gst: "Customer GSTIN (Optional)", whole_gst: "Wholesaler GSTIN (Optional)", pay_from_cust: "Payment from Customer", pay_to_whole: "Payment to Wholesaler", settled: "Settled (Paid)", unsettled_recv: "Unsettled (Khata / To Receive)", unsettled_pay: "Unsettled (Due / To Pay)", promised_date: "Promised Settlement Date (Optional)", search_add: "Search & Add Material to Cart", kb_mode: "Keyboard", item: "Item", rate: "Rate (₹)", qty: "Qty", amount: "Amount", cart_empty: "Cart is empty.", discount: "Apply Overall Discount (Optional)", final_pay: "Final Amount Payable", tot_pay: "Total Amount to Pay", gst_inc: "(GST Inc.)", gross: "Gross", taxable: "Taxable", btn_save_print: "Save Changes & Re-Print", btn_gen_inv: "Generate Multi-Item Invoice", cancel_edit: "Cancel Editing", inv_mgmt: "Inventory Management", btn_add_new: "+ Add New Item", mat_hsn: "Material (HSN Sorted)", purch_rs: "Purch. (₹)", sell_rs: "Sell Rate (₹)", stock: "Stock", alert: "Alert", btn_save: "Save", btn_cancel: "Cancel", new_mat: "New Material", kb_en: "English (Standard)", kb_gu: "Gujarati (Phonetic Magic)", mat_en: "Material Name (English)", mat_gu: "Regional Name (Gujarati)", pricing: "Pricing & Taxation", rate_inc_gst: "Rate Includes GST?", yes_inc: "Yes (Inclusive)", no_exc: "No (Exclusive)", gst_pct: "GST / Tax (%)", hsn_code: "HSN / SAC Code", stock_ctrl: "Stock Control", init_stock: "Initial Stock", alert_below: "Alert Below", btn_vault: "Save to Vault", biz_prof: "Business Profile Setup", biz_logo: "Business Logo (Optional)", gen_info: "General Information", gst_comp: "GST Number (Compulsory)", owner_name: "Owner Name", address: "Address", contact: "Contact Number", email: "Email Address", bank_details: "Bank Details (Printed on Bill)", bank_name: "Bank Name", ac_no: "A/C Number", ifsc: "IFSC Code", biz_cat: "Business Category", btn_save_prof: "Save Business Profile", choose_plan: "Choose Your License Plan", sub_subtitle: "Secure, full-stack POS and Inventory management for your business.", monthly: "Monthly Plan", half_yearly: "Half-Yearly", yearly: "Yearly Plan", most_pop: "MOST POPULAR", sub_month: "Subscribe Monthly", sub_6mo: "Subscribe for 6 Months", sub_yr: "Subscribe Yearly", secured_by: "Payments secured by Razorpay", processing: "Processing Task... Please Wait"
+    login_title: "Secure License Gateway", reg_title: "Create a New Business", biz_name: "Business Name", user: "Username", pass: "Password", conf_pass: "Confirm Password", btn_trial: "Start 7-Day Free Trial", btn_auth: "Authenticate User", switch_login: "Already have an account? Log In", switch_reg: "Don't have an account? Sign Up", dev: "©Developed by Lakshyadeepsinh Chauhan", auth_wait: "Authenticating...", license_exp: "License Expired", nav_dash: "Dashboard", nav_pos: "Point of Sale", nav_inv: "Inventory", nav_add: "Add Material", nav_shop: "Shop Settings", valid_until: "License Valid Until", upgrade_plan: "Upgrade Plan", alert_due: "Alert: You have {count} Party Payments that are DUE TODAY or OVERDUE!", system_online: "System Online", quick_act: "Quick Action", manage_inv: "Manage Inventory", bills_today: "Bills Today", tot_mat: "Total Materials", to_recv: "To Receive (Khata)", to_pay: "To Pay (Payables)", stock_alerts: "Stock Alerts", all_opt: "All optimal!", left: "Left", alert_at: "Alert at", unsettled_bills: "Unsettled Bills", no_pending: "No pending payments!", due: "Due", recent_tx: "Recent Transactions", date: "Date", party: "Party", status: "Status", total: "Total", actions: "Actions", no_tx: "No transactions yet.", edit: "Edit", print: "Print", old_bill: "Old Bill", warning_gst: "⚠️ Warning: You have not set your GST Number.", live_margin: "Live Margin", checkout: "Checkout Terminal", editing_bill: "Editing Bill", tx_type: "Transaction Type", sell: "SELL (Customer)", purch: "PURCHASE (Wholesaler)", cust_name: "Customer Name", wholesaler_name: "Wholesaler Name", cust_gst: "Customer GSTIN (Optional)", whole_gst: "Wholesaler GSTIN (Optional)", pay_from_cust: "Payment from Customer", pay_to_whole: "Payment to Wholesaler", settled: "Settled (Paid)", unsettled_recv: "Unsettled (Khata / To Receive)", unsettled_pay: "Unsettled (Due / To Pay)", promised_date: "Promised Settlement Date (Optional)", search_add: "Search & Add Material to Cart", kb_mode: "Keyboard", item: "Item", rate: "Rate (₹)", qty: "Qty", amount: "Amount", cart_empty: "Cart is empty.", discount: "Apply Overall Discount (Optional)", final_pay: "Final Amount Payable", tot_pay: "Total Amount to Pay", gst_inc: "(GST Inc.)", gross: "Gross", taxable: "Taxable", btn_save_print: "Save Changes & Re-Print", btn_gen_inv: "Generate Multi-Item Invoice", cancel_edit: "Cancel Editing", inv_mgmt: "Inventory Management", btn_add_new: "+ Add New Item", mat_hsn: "Material (HSN Sorted)", purch_rs: "Purch. (₹)", sell_rs: "Sell Rate (₹)", stock: "Stock", alert: "Alert", btn_save: "Save", btn_cancel: "Cancel", new_mat: "New Material", kb_en: "English (Standard)", kb_gu: "Gujarati (Phonetic Magic)", mat_en: "Material Name (English)", mat_gu: "Regional Name (Gujarati)", pricing: "Pricing & Taxation", rate_inc_gst: "Rate Includes GST?", yes_inc: "Yes (Inclusive)", no_exc: "No (Exclusive)", gst_pct: "GST / Tax (%)", hsn_code: "HSN / SAC Code", stock_ctrl: "Stock Control", init_stock: "Initial Stock", alert_below: "Alert Below", btn_vault: "Save to Vault", biz_prof: "Business Profile Setup", biz_logo: "Business Logo (Optional)", gen_info: "General Information", gst_comp: "GST Number (Compulsory)", owner_name: "Owner Name", address: "Address", contact: "Contact Number", email: "Email Address", bank_details: "Bank Details (Printed on Bill)", bank_name: "Bank Name", ac_no: "A/C Number", ifsc: "IFSC Code", biz_cat: "Business Category", btn_save_prof: "Save Business Profile", choose_plan: "Choose Your License Plan", sub_subtitle: "Secure, full-stack POS and Inventory management for your business.", monthly: "Monthly Plan", half_yearly: "Half-Yearly", yearly: "Yearly Plan", most_pop: "MOST POPULAR", sub_month: "Subscribe Monthly", sub_6mo: "Subscribe for 6 Months", sub_yr: "Subscribe Yearly", secured_by: "Payments secured by Razorpay", processing: "Processing Task... Please Wait",
+    
+    // NEW AUTH TRANSLATIONS
+    email_req: "Email Address", phone_req: "Phone Number", get_otp: "Get OTP to Register", enter_otp: "Enter 6-Digit OTP", verify_reg: "Verify OTP & Start Trial", forgot_pass: "Forgot Password?", forgot_title: "Account Recovery", send_recovery: "Send Recovery OTP", verify_recovery: "Verify OTP", opt_reveal: "Reveal Password", opt_reset: "Create New Password", new_pass: "New Password", update_pass: "Update Password", back_login: "Back to Login", pass_hide: "Password hiding in", your_pass: "Your password is:"
   },
   gu: {
-    login_title: "સુરક્ષિત લાયસન્સ ગેટવે", reg_title: "નવો વ્યાપાર બનાવો", biz_name: "વ્યાપારનું નામ", user: "યુઝરનેમ", pass: "પાસવર્ડ", conf_pass: "પાસવર્ડ કન્ફર્મ કરો", btn_trial: "7-દિવસની ફ્રી ટ્રાયલ શરૂ કરો", btn_auth: "લોગિન કરો", switch_login: "પહેલેથી એકાઉન્ટ છે? લોગિન કરો", switch_reg: "એકાઉન્ટ નથી? નવું બનાવો", dev: "©લક્ષ્યદીપસિંહ ચૌહાણ દ્વારા નિર્મિત", auth_wait: "પ્રમાણિત કરી રહ્યા છીએ...", license_exp: "લાયસન્સ સમાપ્ત", nav_dash: "ડેશબોર્ડ", nav_pos: "પોઇન્ટ ઓફ સેલ (બિલિંગ)", nav_inv: "ઇન્વેન્ટરી (સ્ટોક)", nav_add: "નવો માલ ઉમેરો", nav_shop: "દુકાન સેટિંગ્સ", valid_until: "લાયસન્સની માન્યતા", upgrade_plan: "પ્લાન અપગ્રેડ કરો", alert_due: "એલર્ટ: તમારી પાસે {count} પાર્ટીના પેમેન્ટ આજે બાકી છે!", system_online: "સિસ્ટમ ઓનલાઇન", quick_act: "ઝડપી ક્રિયા", manage_inv: "ઇન્વેન્ટરી મેનેજ કરો", bills_today: "આજના બિલ", tot_mat: "કુલ માલ", to_recv: "લેવાના બાકી (ખાતા)", to_pay: "ચૂકવવાના બાકી", stock_alerts: "સ્ટોક એલર્ટ્સ", all_opt: "બધું બરાબર છે!", left: "બાકી", alert_at: "એલર્ટ:", unsettled_bills: "બાકી બિલ", no_pending: "કોઈ બાકી ચૂકવણી નથી!", due: "બાકી:", recent_tx: "તાજેતરના વ્યવહારો", date: "તારીખ", party: "પાર્ટી", status: "સ્થિતિ", total: "કુલ", actions: "ક્રિયાઓ", no_tx: "કોઈ વ્યવહારો નથી.", edit: "એડિટ", print: "પ્રિન્ટ", old_bill: "જૂનું બિલ", warning_gst: "⚠️ ચેતવણી: તમે તમારો GST નંબર સેટ કર્યો નથી.", live_margin: "લાઇવ માર્જિન", checkout: "બિલિંગ ટર્મિનલ", editing_bill: "બિલ એડિટ થઈ રહ્યું છે", tx_type: "વ્યવહારનો પ્રકાર", sell: "વેચાણ (ગ્રાહકને)", purch: "ખરીદી (વેપારી પાસેથી)", cust_name: "ગ્રાહકનું નામ", wholesaler_name: "વેપારીનું નામ", cust_gst: "ગ્રાહકનો GSTIN (વૈકલ્પિક)", whole_gst: "વેપારીનો GSTIN (વૈકલ્પિક)", pay_from_cust: "ગ્રાહક તરફથી ચૂકવણી", pay_to_whole: "વેપારીને ચૂકવણી", settled: "ચૂકવેલ (જમા)", unsettled_recv: "બાકી (લેવાના)", unsettled_pay: "બાકી (ચૂકવવાના)", promised_date: "ચૂકવણીની તારીખ (વૈકલ્પિક)", search_add: "માલ શોધો અને બિલમાં ઉમેરો", kb_mode: "કીબોર્ડ", item: "વસ્તુ", rate: "ભાવ (₹)", qty: "જથ્થો", amount: "રકમ", cart_empty: "કાર્ટ ખાલી છે.", discount: "કુલ ડિસ્કાઉન્ટ (વૈકલ્પિક)", final_pay: "ચૂકવવાપાત્ર અંતિમ રકમ", tot_pay: "કુલ ચૂકવવાની રકમ", gst_inc: "(GST સાથે)", gross: "કુલ", taxable: "કરપાત્ર", btn_save_print: "સાચવો અને પ્રિન્ટ કરો", btn_gen_inv: "બિલ બનાવો", cancel_edit: "એડિટિંગ રદ કરો", inv_mgmt: "ઇન્વેન્ટરી મેનેજમેન્ટ", btn_add_new: "+ નવી વસ્તુ ઉમેરો", mat_hsn: "વસ્તુ (HSN પ્રમાણે)", purch_rs: "ખરીદ કિંમત (₹)", sell_rs: "વેચાણ કિંમત (₹)", stock: "સ્ટોક", alert: "એલર્ટ", btn_save: "સાચવો", btn_cancel: "રદ કરો", new_mat: "નવી વસ્તુ", kb_en: "અંગ્રેજી (સામાન્ય)", kb_gu: "ગુજરાતી (ફોનેટિક)", mat_en: "વસ્તુનું નામ (અંગ્રેજી)", mat_gu: "વસ્તુનું નામ (ગુજરાતી)", pricing: "કિંમત અને ટેક્સ", rate_inc_gst: "શું ભાવમાં GST શામેલ છે?", yes_inc: "હા (શામેલ છે)", no_exc: "ના (શામેલ નથી)", gst_pct: "GST / ટેક્સ (%)", hsn_code: "HSN / SAC કોડ", stock_ctrl: "સ્ટોક કંટ્રોલ", init_stock: "શરૂઆતનો સ્ટોક", alert_below: "સ્ટોક એલર્ટ", btn_vault: "સાચવો", biz_prof: "વ્યાપાર પ્રોફાઇલ સેટઅપ", biz_logo: "વ્યાપારનો લોગો (વૈકલ્પિક)", gen_info: "સામાન્ય માહિતી", gst_comp: "GST નંબર (ફરજિયાત)", owner_name: "માલિકનું નામ", address: "સરનામું", contact: "સંપર્ક નંબર", email: "ઈમેલ આઈડી", bank_details: "બેંકની વિગતો (બિલ પર છાપવા માટે)", bank_name: "બેંકનું નામ", ac_no: "એકાઉન્ટ નંબર", ifsc: "IFSC કોડ", biz_cat: "વ્યાપારની શ્રેણી", btn_save_prof: "પ્રોફાઇલ સાચવો", choose_plan: "તમારો લાયસન્સ પ્લાન પસંદ કરો", sub_subtitle: "તમારા વ્યવસાય માટે સુરક્ષિત POS અને ઇન્વેન્ટરી મેનેજમેન્ટ.", monthly: "માસિક પ્લાન", half_yearly: "અર્ધ-વાર્ષિક", yearly: "વાર્ષિક પ્લાન", most_pop: "સૌથી લોકપ્રિય", sub_month: "માસિક સબ્સ્ક્રાઇબ કરો", sub_6mo: "6 મહિના માટે સબ્સ્ક્રાઇબ કરો", sub_yr: "વાર્ષિક સબ્સ્ક્રાઇબ કરો", secured_by: "Razorpay દ્વારા સુરક્ષિત", processing: "પ્રક્રિયા ચાલુ છે... કૃપા કરીને રાહ જુઓ"
+    login_title: "સુરક્ષિત લાયસન્સ ગેટવે", reg_title: "નવો વ્યાપાર બનાવો", biz_name: "વ્યાપારનું નામ", user: "યુઝરનેમ", pass: "પાસવર્ડ", conf_pass: "પાસવર્ડ કન્ફર્મ કરો", btn_trial: "7-દિવસની ફ્રી ટ્રાયલ શરૂ કરો", btn_auth: "લોગિન કરો", switch_login: "પહેલેથી એકાઉન્ટ છે? લોગિન કરો", switch_reg: "એકાઉન્ટ નથી? નવું બનાવો", dev: "©લક્ષ્યદીપસિંહ ચૌહાણ દ્વારા નિર્મિત", auth_wait: "પ્રમાણિત કરી રહ્યા છીએ...", license_exp: "લાયસન્સ સમાપ્ત", nav_dash: "ડેશબોર્ડ", nav_pos: "પોઇન્ટ ઓફ સેલ (બિલિંગ)", nav_inv: "ઇન્વેન્ટરી (સ્ટોક)", nav_add: "નવો માલ ઉમેરો", nav_shop: "દુકાન સેટિંગ્સ", valid_until: "લાયસન્સની માન્યતા", upgrade_plan: "પ્લાન અપગ્રેડ કરો", alert_due: "એલર્ટ: તમારી પાસે {count} પાર્ટીના પેમેન્ટ આજે બાકી છે!", system_online: "સિસ્ટમ ઓનલાઇન", quick_act: "ઝડપી ક્રિયા", manage_inv: "ઇન્વેન્ટરી મેનેજ કરો", bills_today: "આજના બિલ", tot_mat: "કુલ માલ", to_recv: "લેવાના બાકી (ખાતા)", to_pay: "ચૂકવવાના બાકી", stock_alerts: "સ્ટોક એલર્ટ્સ", all_opt: "બધું બરાબર છે!", left: "બાકી", alert_at: "એલર્ટ:", unsettled_bills: "બાકી બિલ", no_pending: "કોઈ બાકી ચૂકવણી નથી!", due: "બાકી:", recent_tx: "તાજેતરના વ્યવહારો", date: "તારીખ", party: "પાર્ટી", status: "સ્થિતિ", total: "કુલ", actions: "ક્રિયાઓ", no_tx: "કોઈ વ્યવહારો નથી.", edit: "એડિટ", print: "પ્રિન્ટ", old_bill: "જૂનું બિલ", warning_gst: "⚠️ ચેતવણી: તમે તમારો GST નંબર સેટ કર્યો નથી.", live_margin: "લાઇવ માર્જિન", checkout: "બિલિંગ ટર્મિનલ", editing_bill: "બિલ એડિટ થઈ રહ્યું છે", tx_type: "વ્યવહારનો પ્રકાર", sell: "વેચાણ (ગ્રાહકને)", purch: "ખરીદી (વેપારી પાસેથી)", cust_name: "ગ્રાહકનું નામ", wholesaler_name: "વેપારીનું નામ", cust_gst: "ગ્રાહકનો GSTIN (વૈકલ્પિક)", whole_gst: "વેપારીનો GSTIN (વૈકલ્પિક)", pay_from_cust: "ગ્રાહક તરફથી ચૂકવણી", pay_to_whole: "વેપારીને ચૂકવણી", settled: "ચૂકવેલ (જમા)", unsettled_recv: "બાકી (લેવાના)", unsettled_pay: "બાકી (ચૂકવવાના)", promised_date: "ચૂકવણીની તારીખ (વૈકલ્પિક)", search_add: "માલ શોધો અને બિલમાં ઉમેરો", kb_mode: "કીબોર્ડ", item: "વસ્તુ", rate: "ભાવ (₹)", qty: "જથ્થો", amount: "રકમ", cart_empty: "કાર્ટ ખાલી છે.", discount: "કુલ ડિસ્કાઉન્ટ (વૈકલ્પિક)", final_pay: "ચૂકવવાપાત્ર અંતિમ રકમ", tot_pay: "કુલ ચૂકવવાની રકમ", gst_inc: "(GST સાથે)", gross: "કુલ", taxable: "કરપાત્ર", btn_save_print: "સાચવો અને પ્રિન્ટ કરો", btn_gen_inv: "બિલ બનાવો", cancel_edit: "એડિટિંગ રદ કરો", inv_mgmt: "ઇન્વેન્ટરી મેનેજમેન્ટ", btn_add_new: "+ નવી વસ્તુ ઉમેરો", mat_hsn: "વસ્તુ (HSN પ્રમાણે)", purch_rs: "ખરીદ કિંમત (₹)", sell_rs: "વેચાણ કિંમત (₹)", stock: "સ્ટોક", alert: "એલર્ટ", btn_save: "સાચવો", btn_cancel: "રદ કરો", new_mat: "નવી વસ્તુ", kb_en: "અંગ્રેજી (સામાન્ય)", kb_gu: "ગુજરાતી (ફોનેટિક)", mat_en: "વસ્તુનું નામ (અંગ્રેજી)", mat_gu: "વસ્તુનું નામ (ગુજરાતી)", pricing: "કિંમત અને ટેક્સ", rate_inc_gst: "શું ભાવમાં GST શામેલ છે?", yes_inc: "હા (શામેલ છે)", no_exc: "ના (શામેલ નથી)", gst_pct: "GST / ટેક્સ (%)", hsn_code: "HSN / SAC કોડ", stock_ctrl: "સ્ટોક કંટ્રોલ", init_stock: "શરૂઆતનો સ્ટોક", alert_below: "સ્ટોક એલર્ટ", btn_vault: "સાચવો", biz_prof: "વ્યાપાર પ્રોફાઇલ સેટઅપ", biz_logo: "વ્યાપારનો લોગો (વૈકલ્પિક)", gen_info: "સામાન્ય માહિતી", gst_comp: "GST નંબર (ફરજિયાત)", owner_name: "માલિકનું નામ", address: "સરનામું", contact: "સંપર્ક નંબર", email: "ઈમેલ આઈડી", bank_details: "બેંકની વિગતો (બિલ પર છાપવા માટે)", bank_name: "બેંકનું નામ", ac_no: "એકાઉન્ટ નંબર", ifsc: "IFSC કોડ", biz_cat: "વ્યાપારની શ્રેણી", btn_save_prof: "પ્રોફાઇલ સાચવો", choose_plan: "તમારો લાયસન્સ પ્લાન પસંદ કરો", sub_subtitle: "તમારા વ્યવસાય માટે સુરક્ષિત POS અને ઇન્વેન્ટરી મેનેજમેન્ટ.", monthly: "માસિક પ્લાન", half_yearly: "અર્ધ-વાર્ષિક", yearly: "વાર્ષિક પ્લાન", most_pop: "સૌથી લોકપ્રિય", sub_month: "માસિક સબ્સ્ક્રાઇબ કરો", sub_6mo: "6 મહિના માટે સબ્સ્ક્રાઇબ કરો", sub_yr: "વાર્ષિક સબ્સ્ક્રાઇબ કરો", secured_by: "Razorpay દ્વારા સુરક્ષિત", processing: "પ્રક્રિયા ચાલુ છે... કૃપા કરીને રાહ જુઓ",
+    
+    // NEW AUTH TRANSLATIONS
+    email_req: "ઈમેલ આઈડી", phone_req: "ફોન નંબર", get_otp: "OTP મેળવો", enter_otp: "6-અંકનો OTP દાખલ કરો", verify_reg: "ચકાસો અને નોંધણી કરો", forgot_pass: "પાસવર્ડ ભૂલી ગયા છો?", forgot_title: "એકાઉન્ટ પુનઃપ્રાપ્તિ", send_recovery: "OTP મોકલો", verify_recovery: "OTP ચકાસો", opt_reveal: "પાસવર્ડ બતાવો", opt_reset: "નવો પાસવર્ડ બનાવો", new_pass: "નવો પાસવર્ડ", update_pass: "પાસવર્ડ અપડેટ કરો", back_login: "લોગિન પર પાછા ફરો", pass_hide: "પાસવર્ડ છુપાઈ જશે", your_pass: "તમારો પાસવર્ડ છે:"
   }
 };
 
 function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false); const [isRegistering, setIsRegistering] = useState(false); const [currentShopId, setCurrentShopId] = useState(null); 
-  const [loginUser, setLoginUser] = useState(""); const [loginPass, setLoginPass] = useState(""); const [confirmPass, setConfirmPass] = useState(""); const [regShopName, setRegShopName] = useState(""); const [authMessage, setAuthMessage] = useState("");
+  const [isLoggedIn, setIsLoggedIn] = useState(false); const [currentShopId, setCurrentShopId] = useState(null); 
+  
+  // === NEW AUTHENTICATION STATE ===
+  const [authMode, setAuthMode] = useState("login"); // 'login', 'register', 'forgot'
+  const [authMessage, setAuthMessage] = useState("");
+  const [authSuccess, setAuthSuccess] = useState("");
+  const [showPassword, setShowPassword] = useState(false);
+  
+  // Registration Data
+  const [regShopName, setRegShopName] = useState(""); const [loginUser, setLoginUser] = useState(""); 
+  const [regEmail, setRegEmail] = useState(""); const [regPhone, setRegPhone] = useState("");
+  const [loginPass, setLoginPass] = useState(""); const [confirmPass, setConfirmPass] = useState(""); 
+  const [regStep, setRegStep] = useState(1); // 1 = Details form, 2 = Verify OTP
+  const [otpToken, setOtpToken] = useState("");
+  
+  // Forgot Password Data
+  const [forgotStep, setForgotStep] = useState(1); // 1: email, 2: otp, 3: options, 4: reset, 5: reveal
+  const [revealedPass, setRevealedPass] = useState("");
+  const [revealTimer, setRevealTimer] = useState(0);
+
   const [isDarkMode, setIsDarkMode] = useState(false); const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   
-  // PASSWORD TOGGLE STATE
-  const [showPassword, setShowPassword] = useState(false);
-
   // UI LANGUAGE STATE (English or Gujarati)
   const [uiLang, setUiLang] = useState("en");
   const tText = (key) => translations[uiLang]?.[key] || translations['en'][key] || key;
@@ -86,6 +107,18 @@ function App() {
 
   const showMessage = (msg) => { setMessage(msg); setTimeout(() => setMessage(""), 4000); };
 
+  // --- REVEAL PASSWORD TIMER ---
+  useEffect(() => {
+    if (revealTimer > 0) {
+      const timerId = setTimeout(() => setRevealTimer(revealTimer - 1), 1000);
+      return () => clearTimeout(timerId);
+    } else if (revealTimer === 0 && revealedPass !== "") {
+      setRevealedPass(""); // Wipe password automatically
+      setAuthMode("login"); // Kick to login screen for safety
+      setAuthMessage("Session timed out for security.");
+    }
+  }, [revealTimer, revealedPass]);
+
   useEffect(() => {
     if (!subEndDate) return;
     const interval = setInterval(() => {
@@ -99,27 +132,90 @@ function App() {
     return () => clearInterval(interval);
   }, [subEndDate, t]);
 
-  const handleAuth = async (e) => {
-    e.preventDefault(); setAuthMessage(""); setIsLoading(true);
-    if (isRegistering) {
-      if (loginPass !== confirmPass) { setIsLoading(false); return setAuthMessage("❌ Passwords do not match!"); }
-      const passRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
-      if (!passRegex.test(loginPass)) { setIsLoading(false); return setAuthMessage("❌ Password must be 8+ chars, uppercase, lowercase, number, special char."); }
-      try {
-        const res = await axios.post(`${API_URL}/api/register`, { shopName: regShopName, username: loginUser, password: loginPass });
-        if (res.data.success) { setIsLoggedIn(true); setCurrentShopId(res.data.shop_id); setSubEndDate(res.data.subscription_end); fetchProfile(res.data.shop_id); fetchInventory(res.data.shop_id); fetchTransactions(res.data.shop_id); setActiveTab("ledger"); }
-      } catch (err) { setAuthMessage(err.response ? err.response.data.message : "❌ Registration failed."); }
-    } else {
-      try {
-        const res = await axios.post(`${API_URL}/api/login`, { username: loginUser, password: loginPass });
-        if (res.data.success) { setIsLoggedIn(true); setCurrentShopId(res.data.shop_id); setSubEndDate(res.data.subscription_end); fetchProfile(res.data.shop_id); fetchInventory(res.data.shop_id); fetchTransactions(res.data.shop_id); setActiveTab("ledger"); }
-      } catch (err) { setAuthMessage(err.response ? err.response.data.message : "❌ Invalid Credentials."); }
-    }
+  // ==========================================
+  // AUTHENTICATION HANDLERS
+  // ==========================================
+  const resetAuthStates = () => {
+    setAuthMessage(""); setAuthSuccess(""); setRegStep(1); setForgotStep(1); setOtpToken(""); setRevealedPass(""); setRevealTimer(0);
+  };
+
+  const handleLogin = async (e) => {
+    e.preventDefault(); setAuthMessage(""); setAuthSuccess(""); setIsLoading(true);
+    try {
+      const res = await axios.post(`${API_URL}/api/login`, { username: loginUser, password: loginPass });
+      if (res.data.success) { setIsLoggedIn(true); setCurrentShopId(res.data.shop_id); setSubEndDate(res.data.subscription_end); fetchProfile(res.data.shop_id); fetchInventory(res.data.shop_id); fetchTransactions(res.data.shop_id); setActiveTab("ledger"); }
+    } catch (err) { setAuthMessage(err.response ? err.response.data.message : "❌ Invalid Credentials."); }
     setIsLoading(false);
   };
 
-  const handlePurchase = async (months) => { setIsLoading(true); try { const res = await axios.post(`${API_URL}/api/subscribe`, { shop_id: currentShopId, months }); setSubEndDate(res.data.new_end); setIsExpired(false); setActiveTab("ledger"); showMessage("🎉 Payment Successful!"); } catch (err) { showMessage("❌ Payment Failed."); } setIsLoading(false); };
+  const handleRegisterRequestOtp = async (e) => {
+    e.preventDefault(); setAuthMessage(""); setAuthSuccess(""); 
+    if (loginPass !== confirmPass) return setAuthMessage("❌ Passwords do not match!");
+    const passRegex = /^(?=.*[a-z])(?=.*[A-Z])(?=.*\d)(?=.*[@$!%*?&])[A-Za-z\d@$!%*?&]{8,}$/;
+    if (!passRegex.test(loginPass)) return setAuthMessage("❌ Password must be 8+ chars, uppercase, lowercase, number, special char.");
+    
+    setIsLoading(true);
+    try {
+      const res = await axios.post(`${API_URL}/api/send-otp`, { email: regEmail, type: 'register' });
+      if (res.data.success) { setRegStep(2); setAuthSuccess("✅ OTP sent to your email!"); }
+    } catch (err) { setAuthMessage(err.response ? err.response.data.message : "❌ Failed to send OTP."); }
+    setIsLoading(false);
+  };
 
+  const handleRegisterVerify = async (e) => {
+    e.preventDefault(); setAuthMessage(""); setAuthSuccess(""); setIsLoading(true);
+    try {
+      const res = await axios.post(`${API_URL}/api/register`, { shopName: regShopName, username: loginUser, password: loginPass, email: regEmail, phone: regPhone, otp: otpToken });
+      if (res.data.success) { setIsLoggedIn(true); setCurrentShopId(res.data.shop_id); setSubEndDate(res.data.subscription_end); fetchProfile(res.data.shop_id); fetchInventory(res.data.shop_id); fetchTransactions(res.data.shop_id); setActiveTab("ledger"); }
+    } catch (err) { setAuthMessage(err.response ? err.response.data.message : "❌ Registration failed."); }
+    setIsLoading(false);
+  };
+
+  const handleForgotSendOtp = async (e) => {
+    e.preventDefault(); setAuthMessage(""); setAuthSuccess(""); setIsLoading(true);
+    try {
+      const res = await axios.post(`${API_URL}/api/send-otp`, { email: regEmail, type: 'forgot' });
+      if (res.data.success) { setForgotStep(2); setAuthSuccess("✅ Recovery OTP sent to your email!"); }
+    } catch (err) { setAuthMessage(err.response ? err.response.data.message : "❌ Failed to send OTP."); }
+    setIsLoading(false);
+  };
+
+  const handleForgotVerifyOtp = async (e) => {
+    e.preventDefault(); setAuthMessage(""); setAuthSuccess(""); setIsLoading(true);
+    try {
+      const res = await axios.post(`${API_URL}/api/verify-forgot-otp`, { email: regEmail, otp: otpToken });
+      if (res.data.success) { setForgotStep(3); setAuthSuccess("✅ OTP Verified! Choose an option below."); }
+    } catch (err) { setAuthMessage(err.response ? err.response.data.message : "❌ Invalid OTP."); }
+    setIsLoading(false);
+  };
+
+  const handleRevealPassword = async () => {
+    setAuthMessage(""); setAuthSuccess(""); setIsLoading(true);
+    try {
+      const res = await axios.post(`${API_URL}/api/reveal-password`, { email: regEmail, otp: otpToken });
+      if (res.data.success) { setForgotStep(5); setRevealedPass(res.data.password); setRevealTimer(20); }
+    } catch (err) { setAuthMessage("❌ Failed to reveal password."); }
+    setIsLoading(false);
+  };
+
+  const handleResetPassword = async (e) => {
+    e.preventDefault(); setAuthMessage(""); setAuthSuccess("");
+    if (loginPass !== confirmPass) return setAuthMessage("❌ Passwords do not match!");
+    setIsLoading(true);
+    try {
+      const res = await axios.post(`${API_URL}/api/reset-password`, { email: regEmail, newPassword: loginPass, otp: otpToken });
+      if (res.data.success) { 
+        setAuthMode("login"); resetAuthStates(); setLoginPass(""); setConfirmPass("");
+        setAuthSuccess("✅ Password updated successfully! Please log in."); 
+      }
+    } catch (err) { setAuthMessage("❌ Failed to reset password."); }
+    setIsLoading(false);
+  };
+
+  // ==========================================
+  // DASHBOARD HANDLERS (Untouched)
+  // ==========================================
+  const handlePurchase = async (months) => { setIsLoading(true); try { const res = await axios.post(`${API_URL}/api/subscribe`, { shop_id: currentShopId, months }); setSubEndDate(res.data.new_end); setIsExpired(false); setActiveTab("ledger"); showMessage("🎉 Payment Successful!"); } catch (err) { showMessage("❌ Payment Failed."); } setIsLoading(false); };
   const handleAddToCart = (product) => { const existing = cart.find(c => c.product_id === product.product_id); if (existing) setCart(cart.map(c => c.product_id === product.product_id ? { ...c, qty: c.qty + 1 } : c)); else setCart([...cart, { ...product, qty: 1, rate: parseFloat(product.item_rate) }]); setSearchQuery(""); setIsSearchOpen(false); };
   const updateCartQty = (id, newQty) => { if (newQty < 1) return; setCart(cart.map(c => c.product_id === id ? { ...c, qty: parseInt(newQty) } : c)); };
   const updateCartRate = (id, newRate) => { setCart(cart.map(c => c.product_id === id ? { ...c, rate: parseFloat(newRate) || 0 } : c)); };
@@ -147,35 +243,24 @@ function App() {
   const processBill = async (e) => {
     e.preventDefault(); if (cart.length === 0) return showMessage("❌ Cart is empty.");
     if (billStatus === 'Unsettled' && !partyName.trim()) return showMessage("❌ Party / Wholesaler Name required for Unsettled bills.");
-    
     setIsLoading(true);
-
     try {
       const currentReceiptData = { shopName: profile.shop_name, owner: profile.owner_name, address: profile.address, gstNum: profile.gst_number, logo: profile.logo_url, phone: profile.contact_number, email: profile.email, bank: profile.bank_name, acc: profile.account_no, ifsc: profile.ifsc_code, partyName, partyGst, transType, cartItems: cart.map(item => ({ product_id: item.product_id, name: `${item.name_english} (${item.name_regional})`, hsn: item.hsn_code, qty: item.qty, rate: item.rate, amount: (item.rate * item.qty) })), grossAmount: grossTotal, discount: finalDiscount, taxable: totalTaxable, totalGst: totalGst, cgst: halfGst, sgst: halfGst, finalTotal: finalTotalAmount, date: new Date().toLocaleDateString('en-IN') };
       const payload = { shop_id: currentShopId, party_name: partyName, transaction_type: transType, cart_items: cart, total_amount: finalTotalAmount, total_gst: totalGst, discount_amount: finalDiscount, receipt_details: currentReceiptData, status: billStatus, settlement_date: billStatus === 'Unsettled' ? settlementDate : "" };
       let response;
       if (editBillId) { response = await axios.put(`${API_URL}/api/billing/${editBillId}`, payload); setEditBillId(null); } else { response = await axios.post(`${API_URL}/api/billing`, payload); }
       setReceiptData(response.data.receipt); showMessage(`✅ Transaction saved successfully!`); setPartyName(""); setPartyGst(""); setCart([]); setDiscountVal(""); setSearchQuery(""); setBillStatus("Settled"); setSettlementDate(""); fetchInventory(); fetchTransactions(); triggerPrint(response.data.receipt.invoiceNo, response.data.receipt.partyName);
-    } catch (error) { 
-      showMessage("❌ Error processing bill."); 
-    } finally {
-      setIsLoading(false);
-    }
+    } catch (error) { showMessage("❌ Error processing bill."); } finally { setIsLoading(false); }
   };
 
   const handleReprint = (receiptDetailsStr) => { if (!receiptDetailsStr) return showMessage("❌ Old format bill. Data not available."); const data = typeof receiptDetailsStr === 'string' ? JSON.parse(receiptDetailsStr) : receiptDetailsStr; setReceiptData(data); triggerPrint(data.invoiceNo, data.partyName); };
   
   const saveToVault = async (e) => { 
-    e.preventDefault(); 
-    setIsLoading(true); 
+    e.preventDefault(); setIsLoading(true); 
     try { 
       await axios.post(`${API_URL}/api/products`, { shop_id: currentShopId, name_english: englishName, name_regional: regionalName, current_stock: parseInt(stock), min_stock_alert: parseInt(minAlert), gst_rate: parseFloat(gst), hsn_code: hsnCode, item_rate: parseFloat(itemRate), purchase_price: parseFloat(purchasePrice), is_gst_inclusive: isGstInclusive }); 
       showMessage("✅ Material added!"); setEnglishName(""); setRegionalName(""); setStock(""); setMinAlert(""); setGst(""); setHsnCode(""); setItemRate(""); setPurchasePrice(""); fetchInventory(); 
-    } catch (error) { 
-      showMessage("❌ Error saving product."); 
-    } finally {
-      setIsLoading(false);
-    }
+    } catch (error) { showMessage("❌ Error saving product."); } finally { setIsLoading(false); }
   };
   
   const saveEdit = async (id) => { setIsLoading(true); try { await axios.put(`${API_URL}/api/products/${id}`, editData); showMessage("✅ Material updated!"); setEditingId(null); fetchInventory(); } catch (error) { showMessage("❌ Error updating."); } setIsLoading(false); };
@@ -212,6 +297,9 @@ function App() {
   const chunkArray = (arr, size) => { const chunked = []; for (let i = 0; i < arr.length; i += size) { chunked.push(arr.slice(i, i + size)); } return chunked; };
   const printChunks = receiptData && receiptData.cartItems ? chunkArray(receiptData.cartItems, 25) : [];
 
+  // ==========================================
+  // AUTHENTICATION SCREEN RENDER
+  // ==========================================
   if (!isLoggedIn) {
     return (
       <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', height: '100vh', width: '100vw', backgroundColor: t.bg, fontFamily: "'Inter', sans-serif", transition: 'all 0.3s', position: 'relative' }}>
@@ -224,47 +312,148 @@ function App() {
           </button>
         </div>
 
-        <form onSubmit={handleAuth} style={{ ...cardStyle, width: '400px' }}>
+        <div style={{ ...cardStyle, width: '450px' }}>
           <div style={{ textAlign: 'center', marginBottom: '30px' }}>
             <div style={{ width: '75px', height: '75px', borderRadius: '16px', overflow: 'hidden', margin: '0 auto 15px auto', boxShadow: '0 4px 10px rgba(0,0,0,0.1)' }}>
               <img src="/bhav-taal_logo1.png" alt="Bhav taal Logo" style={{ width: '100%', height: '100%', objectFit: 'cover' }} />
             </div>
-            
             <h2 style={{ margin: '0 0 5px 0', fontSize: '28px', fontFamily: "'Montserrat', sans-serif", fontWeight: '800', letterSpacing: '0.5px' }}>
               <span style={{ color: isDarkMode ? '#f8fafc' : '#0b3858' }}>BHAV</span><span style={{ color: '#26a69a' }}>-TAAL</span>
             </h2>
-            
-            <p style={{ color: t.textMuted, margin: 0, fontSize: '15px' }}>{isRegistering ? tText('reg_title') : tText('login_title')}</p>
-          </div>
-          {authMessage && <div style={{ backgroundColor: `${t.danger}20`, color: t.danger, padding: '12px', borderRadius: '10px', marginBottom: '20px', textAlign: 'center', fontSize: '14px', fontWeight: '500' }}>{authMessage}</div>}
-          {isRegistering && (<div style={{ marginBottom: '15px' }}><label style={labelStyle}>{tText('biz_name')}</label><input type="text" required value={regShopName} onChange={(e) => setRegShopName(e.target.value)} className="soft-input" style={inputStyle} /></div>)}
-          <div style={{ marginBottom: '15px' }}><label style={labelStyle}>{tText('user')}</label><input type="text" required value={loginUser} onChange={(e) => setLoginUser(e.target.value)} className="soft-input" style={inputStyle} /></div>
-          
-          <div style={{ marginBottom: isRegistering ? '15px' : '30px', position: 'relative' }}>
-            <label style={labelStyle}>{tText('pass')}</label>
-            <div style={{ position: 'relative' }}>
-              <input type={showPassword ? "text" : "password"} required value={loginPass} onChange={(e) => setLoginPass(e.target.value)} className="soft-input" style={{ ...inputStyle, paddingRight: '40px' }} />
-              <button type="button" onClick={() => setShowPassword(!showPassword)} style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: t.textMuted, padding: 0, display: 'flex' }}>
-                {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-              </button>
-            </div>
+            <p style={{ color: t.textMuted, margin: 0, fontSize: '15px' }}>
+              {authMode === 'login' && tText('login_title')}
+              {authMode === 'register' && tText('reg_title')}
+              {authMode === 'forgot' && tText('forgot_title')}
+            </p>
           </div>
 
-          {isRegistering && (
-            <div style={{ marginBottom: '30px', position: 'relative' }}>
-              <label style={labelStyle}>{tText('conf_pass')}</label>
-              <div style={{ position: 'relative' }}>
-                <input type={showPassword ? "text" : "password"} required value={confirmPass} onChange={(e) => setConfirmPass(e.target.value)} className="soft-input" style={{ ...inputStyle, paddingRight: '40px' }} />
-                <button type="button" onClick={() => setShowPassword(!showPassword)} style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: t.textMuted, padding: 0, display: 'flex' }}>
-                  {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
-                </button>
+          {authMessage && <div style={{ backgroundColor: `${t.danger}20`, color: t.danger, padding: '12px', borderRadius: '10px', marginBottom: '20px', textAlign: 'center', fontSize: '14px', fontWeight: '500' }}>{authMessage}</div>}
+          {authSuccess && <div style={{ backgroundColor: `${t.success}20`, color: t.success, padding: '12px', borderRadius: '10px', marginBottom: '20px', textAlign: 'center', fontSize: '14px', fontWeight: '500' }}>{authSuccess}</div>}
+
+          {/* === LOGIN MODE === */}
+          {authMode === 'login' && (
+            <form onSubmit={handleLogin}>
+              <div style={{ marginBottom: '15px' }}><label style={labelStyle}>{tText('user')}</label><input type="text" required value={loginUser} onChange={(e) => setLoginUser(e.target.value)} className="soft-input" style={inputStyle} /></div>
+              <div style={{ marginBottom: '15px', position: 'relative' }}>
+                <label style={labelStyle}>{tText('pass')}</label>
+                <div style={{ position: 'relative' }}>
+                  <input type={showPassword ? "text" : "password"} required value={loginPass} onChange={(e) => setLoginPass(e.target.value)} className="soft-input" style={{ ...inputStyle, paddingRight: '40px' }} />
+                  <button type="button" onClick={() => setShowPassword(!showPassword)} style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: t.textMuted, padding: 0, display: 'flex' }}>
+                    {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                  </button>
+                </div>
               </div>
+              <div style={{ textAlign: 'right', marginBottom: '30px' }}>
+                <button type="button" onClick={() => { setAuthMode('forgot'); resetAuthStates(); }} style={{ background: 'none', border: 'none', color: t.primary, fontSize: '13px', cursor: 'pointer', fontWeight: '600' }}>{tText('forgot_pass')}</button>
+              </div>
+              <button type="submit" disabled={isLoading} style={{ ...btnPrimary, opacity: isLoading ? 0.7 : 1 }}>{tText('btn_auth')}</button>
+              <div style={{ textAlign: 'center', marginTop: '20px' }}><button type="button" onClick={() => { setAuthMode('register'); resetAuthStates(); }} style={{ background: 'none', border: 'none', color: t.primary, fontWeight: '600', cursor: 'pointer', fontSize: '14px' }}>{tText('switch_reg')}</button></div>
+            </form>
+          )}
+
+          {/* === REGISTER MODE === */}
+          {authMode === 'register' && regStep === 1 && (
+            <form onSubmit={handleRegisterRequestOtp}>
+              <div style={{ marginBottom: '15px' }}><label style={labelStyle}>{tText('biz_name')}</label><input type="text" required value={regShopName} onChange={(e) => setRegShopName(e.target.value)} className="soft-input" style={inputStyle} /></div>
+              <div style={{ marginBottom: '15px' }}><label style={labelStyle}>{tText('user')}</label><input type="text" required value={loginUser} onChange={(e) => setLoginUser(e.target.value)} className="soft-input" style={inputStyle} /></div>
+              
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px', marginBottom: '15px' }}>
+                <div><label style={labelStyle}>{tText('email_req')}</label><input type="email" required value={regEmail} onChange={(e) => setRegEmail(e.target.value)} className="soft-input" style={inputStyle} /></div>
+                <div><label style={labelStyle}>{tText('phone_req')}</label><input type="tel" required value={regPhone} onChange={(e) => setRegPhone(e.target.value)} className="soft-input" style={inputStyle} /></div>
+              </div>
+
+              <div style={{ marginBottom: '15px', position: 'relative' }}>
+                <label style={labelStyle}>{tText('pass')}</label>
+                <div style={{ position: 'relative' }}>
+                  <input type={showPassword ? "text" : "password"} required value={loginPass} onChange={(e) => setLoginPass(e.target.value)} className="soft-input" style={{ ...inputStyle, paddingRight: '40px' }} />
+                  <button type="button" onClick={() => setShowPassword(!showPassword)} style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: t.textMuted, padding: 0, display: 'flex' }}>{showPassword ? <EyeOff size={20} /> : <Eye size={20} />}</button>
+                </div>
+              </div>
+              <div style={{ marginBottom: '30px', position: 'relative' }}>
+                <label style={labelStyle}>{tText('conf_pass')}</label>
+                <div style={{ position: 'relative' }}>
+                  <input type={showPassword ? "text" : "password"} required value={confirmPass} onChange={(e) => setConfirmPass(e.target.value)} className="soft-input" style={{ ...inputStyle, paddingRight: '40px' }} />
+                </div>
+              </div>
+
+              <button type="submit" disabled={isLoading} style={{ ...btnPrimary, opacity: isLoading ? 0.7 : 1 }}><Mail size={20}/> {tText('get_otp')}</button>
+              <div style={{ textAlign: 'center', marginTop: '20px' }}><button type="button" onClick={() => { setAuthMode('login'); resetAuthStates(); }} style={{ background: 'none', border: 'none', color: t.primary, fontWeight: '600', cursor: 'pointer', fontSize: '14px' }}>{tText('switch_login')}</button></div>
+            </form>
+          )}
+
+          {authMode === 'register' && regStep === 2 && (
+            <form onSubmit={handleRegisterVerify}>
+              <div style={{ backgroundColor: `${t.primary}10`, border: `1px solid ${t.primary}40`, padding: '15px', borderRadius: '12px', marginBottom: '20px', textAlign: 'center', color: t.text }}>
+                <Mail color={t.primary} size={30} style={{ marginBottom: '10px' }} />
+                <div style={{ fontWeight: 'bold' }}>OTP Sent to {regEmail}</div>
+                <div style={{ fontSize: '12px', color: t.textMuted }}>Please check your inbox and spam folder.</div>
+              </div>
+              <div style={{ marginBottom: '30px' }}><label style={labelStyle}>{tText('enter_otp')}</label><input type="text" required value={otpToken} onChange={(e) => setOtpToken(e.target.value)} placeholder="123456" className="soft-input" style={{ ...inputStyle, textAlign: 'center', fontSize: '24px', letterSpacing: '5px' }} maxLength="6" /></div>
+              <button type="submit" disabled={isLoading} style={{ ...btnPrimary, opacity: isLoading ? 0.7 : 1 }}>{tText('verify_reg')}</button>
+              <div style={{ textAlign: 'center', marginTop: '20px' }}><button type="button" onClick={() => setRegStep(1)} style={{ background: 'none', border: 'none', color: t.textMuted, cursor: 'pointer', fontSize: '14px' }}>Go Back</button></div>
+            </form>
+          )}
+
+          {/* === FORGOT PASSWORD MODE === */}
+          {authMode === 'forgot' && forgotStep === 1 && (
+            <form onSubmit={handleForgotSendOtp}>
+              <div style={{ marginBottom: '30px' }}><label style={labelStyle}>{tText('email_req')}</label><input type="email" required value={regEmail} onChange={(e) => setRegEmail(e.target.value)} className="soft-input" style={inputStyle} /></div>
+              <button type="submit" disabled={isLoading} style={{ ...btnPrimary, opacity: isLoading ? 0.7 : 1 }}><ShieldAlert size={20}/> {tText('send_recovery')}</button>
+              <div style={{ textAlign: 'center', marginTop: '20px' }}><button type="button" onClick={() => { setAuthMode('login'); resetAuthStates(); }} style={{ background: 'none', border: 'none', color: t.textMuted, cursor: 'pointer', fontSize: '14px' }}>{tText('back_login')}</button></div>
+            </form>
+          )}
+
+          {authMode === 'forgot' && forgotStep === 2 && (
+            <form onSubmit={handleForgotVerifyOtp}>
+              <div style={{ backgroundColor: `${t.primary}10`, border: `1px solid ${t.primary}40`, padding: '15px', borderRadius: '12px', marginBottom: '20px', textAlign: 'center', color: t.text }}><div style={{ fontWeight: 'bold' }}>Recovery OTP Sent to {regEmail}</div></div>
+              <div style={{ marginBottom: '30px' }}><label style={labelStyle}>{tText('enter_otp')}</label><input type="text" required value={otpToken} onChange={(e) => setOtpToken(e.target.value)} placeholder="123456" className="soft-input" style={{ ...inputStyle, textAlign: 'center', fontSize: '24px', letterSpacing: '5px' }} maxLength="6" /></div>
+              <button type="submit" disabled={isLoading} style={{ ...btnPrimary, opacity: isLoading ? 0.7 : 1 }}>{tText('verify_recovery')}</button>
+              <div style={{ textAlign: 'center', marginTop: '20px' }}><button type="button" onClick={() => setForgotStep(1)} style={{ background: 'none', border: 'none', color: t.textMuted, cursor: 'pointer', fontSize: '14px' }}>Go Back</button></div>
+            </form>
+          )}
+
+          {authMode === 'forgot' && forgotStep === 3 && (
+            <div>
+               <div style={{ marginBottom: '20px', textAlign: 'center', color: t.textMuted, fontSize: '14px' }}>Identity verified. What would you like to do?</div>
+               <div style={{ display: 'flex', flexDirection: 'column', gap: '15px' }}>
+                 <button onClick={handleRevealPassword} disabled={isLoading} style={{ padding: '15px', backgroundColor: t.bg, border: `2px dashed ${t.primary}`, borderRadius: '12px', color: t.primary, fontWeight: 'bold', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px' }}><Eye size={20}/> {tText('opt_reveal')}</button>
+                 <button onClick={() => setForgotStep(4)} style={{ padding: '15px', backgroundColor: t.primary, border: 'none', borderRadius: '12px', color: 'white', fontWeight: 'bold', cursor: 'pointer', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '10px' }}><KeyRound size={20}/> {tText('opt_reset')}</button>
+               </div>
             </div>
           )}
 
-          <button type="submit" disabled={isLoading} style={{ ...btnPrimary, opacity: isLoading ? 0.7 : 1 }}>{isRegistering ? tText('btn_trial') : tText('btn_auth')}</button>
-          <div style={{ textAlign: 'center', marginTop: '20px' }}><button type="button" onClick={() => { setIsRegistering(!isRegistering); setAuthMessage(""); }} style={{ background: 'none', border: 'none', color: t.primary, fontWeight: '600', cursor: 'pointer', fontSize: '14px' }}>{isRegistering ? tText('switch_login') : tText('switch_reg')}</button></div>
-        </form>
+          {authMode === 'forgot' && forgotStep === 4 && (
+            <form onSubmit={handleResetPassword}>
+              <div style={{ marginBottom: '15px', position: 'relative' }}>
+                <label style={labelStyle}>{tText('new_pass')}</label>
+                <div style={{ position: 'relative' }}>
+                  <input type={showPassword ? "text" : "password"} required value={loginPass} onChange={(e) => setLoginPass(e.target.value)} className="soft-input" style={{ ...inputStyle, paddingRight: '40px' }} />
+                  <button type="button" onClick={() => setShowPassword(!showPassword)} style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: t.textMuted, padding: 0, display: 'flex' }}>{showPassword ? <EyeOff size={20} /> : <Eye size={20} />}</button>
+                </div>
+              </div>
+              <div style={{ marginBottom: '30px', position: 'relative' }}>
+                <label style={labelStyle}>{tText('conf_pass')}</label>
+                <div style={{ position: 'relative' }}>
+                  <input type={showPassword ? "text" : "password"} required value={confirmPass} onChange={(e) => setConfirmPass(e.target.value)} className="soft-input" style={{ ...inputStyle, paddingRight: '40px' }} />
+                </div>
+              </div>
+              <button type="submit" disabled={isLoading} style={{ ...btnPrimary, opacity: isLoading ? 0.7 : 1 }}>{tText('update_pass')}</button>
+            </form>
+          )}
+
+          {authMode === 'forgot' && forgotStep === 5 && (
+            <div style={{ textAlign: 'center' }}>
+               <div style={{ backgroundColor: t.bg, border: `1px solid ${t.border}`, padding: '20px', borderRadius: '12px', marginBottom: '20px' }}>
+                 <div style={{ color: t.textMuted, fontSize: '14px', marginBottom: '10px' }}>{tText('your_pass')}</div>
+                 <div style={{ fontSize: '24px', fontWeight: 'bold', color: t.primary, letterSpacing: '2px' }}>{revealedPass}</div>
+               </div>
+               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', color: t.danger, fontWeight: 'bold', fontSize: '15px' }}>
+                 <Clock size={18}/> {tText('pass_hide')} {revealTimer}s
+               </div>
+            </div>
+          )}
+
+        </div>
         <div style={{ position: 'absolute', bottom: '20px', color: t.textMuted, fontSize: '13px', fontWeight: '600' }}>{tText('dev')}</div>
         
         {/* SHIELD */}
@@ -278,6 +467,9 @@ function App() {
     );
   }
 
+  // ==========================================
+  // DASHBOARD SCREEN RENDER (Untouched)
+  // ==========================================
   return (
     <div style={{ display: 'flex', height: '100vh', width: '100vw', backgroundColor: t.bg, color: t.text, transition: 'all 0.3s' }}>
       <style>{globalStyles}</style>
@@ -320,7 +512,6 @@ function App() {
           )}
           {isSidebarOpen && (<button onClick={() => setActiveTab("subscribe")} style={{ width: '100%', padding: '10px', backgroundColor: t.primary, color: 'white', borderRadius: '8px', border: 'none', fontWeight: 'bold', cursor: 'pointer', fontSize: '13px' }}>{tText('upgrade_plan')}</button>)}
           <div style={{ display: 'flex', gap: '10px', justifyContent: isSidebarOpen ? 'space-between' : 'center' }}>
-            {/* UI LANGUAGE TOGGLE */}
             <button onClick={() => setUiLang(uiLang === 'en' ? 'gu' : 'en')} style={{ background: 'none', border: 'none', color: t.textMuted, cursor: 'pointer', padding: '5px', display: 'flex', flexDirection: 'column', alignItems: 'center' }}>
               <Globe size={20} />
               {isSidebarOpen && <span style={{ fontSize: '9px', fontWeight: 'bold', marginTop: '2px' }}>{uiLang.toUpperCase()}</span>}
