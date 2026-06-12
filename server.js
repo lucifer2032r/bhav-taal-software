@@ -17,7 +17,7 @@ const db = new Pool({
 // ==========================================
 // ⚠️ IMPORTANT: CHANGE THESE TO YOUR BREVO DETAILS
 const SENDER_EMAIL = "ae7d0d001@smtp-brevo.com"; 
-const BREVO_SMTP_KEY = "xsmtpsib-c1e47ad49a278377ec04d390f8a250aa32f1eb5fbba2d5990033df01f0a78559-Vw1JyLKreJUS0RWR"; 
+const BREVO_SMTP_KEY = "8MVkxIfRwC75UaAZ"; 
 
 const transporter = nodemailer.createTransport({
   host: 'smtp-relay.brevo.com',
