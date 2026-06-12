@@ -240,7 +240,6 @@ function App() {
     const loadedCart = tx.receipt_details.cartItems.map(ci => { const invItem = inventory.find(i => i.product_id === ci.product_id); return invItem ? { ...invItem, qty: ci.qty, rate: ci.rate } : { product_id: ci.product_id, name_english: ci.name.split(' (')[0], name_regional: "", qty: ci.qty, rate: ci.rate, gst_rate: 0, purchase_price: 0, is_gst_inclusive: true }; });
     setCart(loadedCart); setPartyName(tx.party_name); setPartyGst(tx.receipt_details.partyGst || ""); setTransType(tx.transaction_type); setDiscountVal(tx.discount_amount || ""); setDiscountType("flat");
     setBillStatus(tx.status || "Settled"); setSettlementDate(tx.settlement_date ? tx.settlement_date.split('T')[0] : "");
-    // Load old GST bill status if it exists, otherwise default to true
     setIsGstBill(tx.receipt_details.isGstBill !== false);
     setEditBillId(tx.transaction_id); setActiveTab("billing"); showMessage("✏️ Bill loaded. Khata details and stock will update upon saving.");
   };
@@ -272,7 +271,7 @@ function App() {
   const deleteMaterial = async (id) => { if (window.confirm("Permanently delete this item?")) { setIsLoading(true); try { await axios.delete(`${API_URL}/api/products/${id}`); showMessage("🗑️ Material deleted."); fetchInventory(); } catch (error) {} setIsLoading(false); } };
 
   // ==========================================
-  // UPDATED: INVENTORY SEARCH (NOW INCLUDES HSN)
+  // INVENTORY SEARCH (INCLUDES HSN)
   // ==========================================
   const sortedInventory = [...inventory].sort((a, b) => { const hsnA = (a.hsn_code || "").toString().trim(); const hsnB = (b.hsn_code || "").toString().trim(); if (hsnA && hsnB) { if (hsnA !== hsnB) { return hsnA.localeCompare(hsnB, undefined, { numeric: true }); } } if (hsnA && !hsnB) return -1; if (!hsnA && hsnB) return 1; const nameA = (a.name_english || "").toString().toLowerCase().trim(); const nameB = (b.name_english || "").toString().toLowerCase().trim(); return nameA.localeCompare(nameB); });
   const filteredInventory = sortedInventory.filter(item => 
@@ -402,6 +401,7 @@ function App() {
                 <div style={{ fontSize: '12px', color: t.textMuted }}>Please check your inbox and spam folder.</div>
               </div>
 
+              {/* INVISIBLE OVERLAY OTP INPUT */}
               <div style={{ marginBottom: '30px', textAlign: 'center' }}>
                 <label style={{...labelStyle, display: 'block', marginBottom: '15px'}}>{tText('enter_otp')}</label>
                 <div style={{ position: 'relative', display: 'flex', justifyContent: 'center', gap: '10px' }}>
@@ -432,6 +432,7 @@ function App() {
             <form onSubmit={handleForgotVerifyOtp}>
               <div style={{ backgroundColor: `${t.primary}10`, border: `1px solid ${t.primary}40`, padding: '15px', borderRadius: '12px', marginBottom: '20px', textAlign: 'center', color: t.text }}><div style={{ fontWeight: 'bold' }}>Recovery OTP Sent to {regEmail}</div></div>
               
+              {/* INVISIBLE OVERLAY OTP INPUT */}
               <div style={{ marginBottom: '30px', textAlign: 'center' }}>
                 <label style={{...labelStyle, display: 'block', marginBottom: '15px'}}>{tText('enter_otp')}</label>
                 <div style={{ position: 'relative', display: 'flex', justifyContent: 'center', gap: '10px' }}>
@@ -714,22 +715,24 @@ function App() {
               {isGstBill && !profile.gst_number && <div style={{ backgroundColor: `${t.danger}20`, color: t.danger, padding: '15px', borderRadius: '12px', marginBottom: '20px', fontWeight: '600', textAlign: 'center' }}>{tText('warning_gst')}</div>}
               
               <form onSubmit={processBill} style={cardStyle}>
-                <div style={{ position: 'absolute', top: '25px', right: '30px', backgroundColor: `${t.success}15`, color: t.success, border: `1px solid ${t.success}50`, padding: '8px 16px', borderRadius: '20px', fontWeight: 'bold', fontSize: '14px', display: 'flex', alignItems: 'center', gap: '6px' }}>{tText('live_margin')}: ₹{currentMargin.toFixed(2)}</div>
-
                 <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '30px' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
                     <ShoppingCart color={t.primary} size={28}/>
                     <h2 style={{ margin: 0, color: t.text }}>{editBillId ? `${tText('editing_bill')} (INV-${editBillId})` : tText('checkout')}</h2>
                   </div>
                   
-                  {/* --- NEW GST TOGGLE SLIDER --- */}
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', backgroundColor: isGstBill ? `${t.primary}10` : t.inputBg, padding: '8px 16px', borderRadius: '12px', border: `1px solid ${isGstBill ? t.primary : t.border}`, transition: 'all 0.3s' }}>
-                    <span style={{ fontSize: '14px', fontWeight: 'bold', color: isGstBill ? t.primary : t.textMuted }}>
-                      {isGstBill ? "GST Bill" : "Estimate (No GST)"}
-                    </span>
-                    <button type="button" onClick={() => setIsGstBill(!isGstBill)} style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', color: isGstBill ? t.primary : t.textMuted, display: 'flex', alignItems: 'center' }}>
-                      {isGstBill ? <ToggleRight size={32} /> : <ToggleLeft size={32} />}
-                    </button>
+                  {/* RIGHT SIDE CONTROLS: Margin + GST Toggle */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '15px' }}>
+                    <div style={{ backgroundColor: `${t.success}15`, color: t.success, border: `1px solid ${t.success}50`, padding: '8px 16px', borderRadius: '20px', fontWeight: 'bold', fontSize: '14px', display: 'flex', alignItems: 'center', gap: '6px' }}>{tText('live_margin')}: ₹{currentMargin.toFixed(2)}</div>
+                    
+                    <div style={{ display: 'flex', alignItems: 'center', gap: '10px', backgroundColor: isGstBill ? `${t.primary}10` : t.inputBg, padding: '8px 16px', borderRadius: '12px', border: `1px solid ${isGstBill ? t.primary : t.border}`, transition: 'all 0.3s' }}>
+                      <span style={{ fontSize: '14px', fontWeight: 'bold', color: isGstBill ? t.primary : t.textMuted }}>
+                        {isGstBill ? "GST Bill" : "Estimate (No GST)"}
+                      </span>
+                      <button type="button" onClick={() => setIsGstBill(!isGstBill)} style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', color: isGstBill ? t.primary : t.textMuted, display: 'flex', alignItems: 'center' }}>
+                        {isGstBill ? <ToggleRight size={32} /> : <ToggleLeft size={32} />}
+                      </button>
+                    </div>
                   </div>
                 </div>
                 
