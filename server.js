@@ -13,19 +13,19 @@ const db = new Pool({
 });
 
 // ==========================================
-// ✉️ EMAIL CONFIGURATION (NODEMAILER)
+// ✉️ EMAIL CONFIGURATION (BREVO SMTP)
 // ==========================================
-const YOUR_GMAIL_ID = "bhav.taal.manager@gmail.com"; 
-const YOUR_GMAIL_APP_PASSWORD = "crkoldybzismkzmd"; // <-- Put your NEW 16-letter password here!
+// ⚠️ IMPORTANT: CHANGE THESE TO YOUR BREVO DETAILS
+const SENDER_EMAIL = "ae7d0d001@smtp-brevo.com"; 
+const BREVO_SMTP_KEY = "xsmtpsib-c1e47ad49a278377ec04d390f8a250aa32f1eb5fbba2d5990033df01f0a78559-Vw1JyLKreJUS0RWR"; 
 
-// Upgraded to Explicit SMTP Configuration for better Cloud Server compatibility
 const transporter = nodemailer.createTransport({
-  host: 'smtp.gmail.com',
-  port: 465,
-  secure: true, // Requires SSL/TLS
+  host: 'smtp-relay.brevo.com',
+  port: 587,
+  secure: false, 
   auth: {
-    user: YOUR_GMAIL_ID,
-    pass: YOUR_GMAIL_APP_PASSWORD
+    user: SENDER_EMAIL,
+    pass: BREVO_SMTP_KEY
   }
 });
 
@@ -65,7 +65,7 @@ app.post('/api/send-otp', async (req, res) => {
 
     // A. TRY SENDING THE EMAIL FIRST
     await transporter.sendMail({
-      from: `"Bhav-Taal Security" <${YOUR_GMAIL_ID}>`,
+      from: `"Bhav-Taal Security" <${SENDER_EMAIL}>`,
       to: email,
       subject: type === 'register' ? 'Your Bhav-Taal Verification Code' : 'Bhav-Taal Password Reset OTP',
       html: `
@@ -88,7 +88,7 @@ app.post('/api/send-otp', async (req, res) => {
     res.json({ success: true, message: "OTP sent successfully!" });
   } catch (err) {
     console.error("Mail Error Detail:", err);
-    res.status(500).json({ success: false, message: "Failed to send email. Check your email credentials." });
+    res.status(500).json({ success: false, message: "Failed to send email. Check your Brevo credentials." });
   }
 });
 
