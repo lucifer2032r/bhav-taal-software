@@ -15,12 +15,14 @@ const db = new Pool({
 // ==========================================
 // ✉️ EMAIL CONFIGURATION (NODEMAILER)
 // ==========================================
-// ⚠️ IMPORTANT: CHANGE THESE TWO LINES TO YOUR REAL DETAILS!
 const YOUR_GMAIL_ID = "bhav.taal.manager@gmail.com"; 
-const YOUR_GMAIL_APP_PASSWORD = "imqqunpawixvtjfg"; // <-- The 16-letter App Password from Google Security
+const YOUR_GMAIL_APP_PASSWORD = "crkoldybzismkzmd"; // <-- Put your NEW 16-letter password here!
 
+// Upgraded to Explicit SMTP Configuration for better Cloud Server compatibility
 const transporter = nodemailer.createTransport({
-  service: 'gmail',
+  host: 'smtp.gmail.com',
+  port: 465,
+  secure: true, // Requires SSL/TLS
   auth: {
     user: YOUR_GMAIL_ID,
     pass: YOUR_GMAIL_APP_PASSWORD
@@ -66,7 +68,14 @@ app.post('/api/send-otp', async (req, res) => {
       from: `"Bhav-Taal Security" <${YOUR_GMAIL_ID}>`,
       to: email,
       subject: type === 'register' ? 'Your Bhav-Taal Verification Code' : 'Bhav-Taal Password Reset OTP',
-      html: `<h2>Hello!</h2><p>Your 6-digit verification code is: <b style="font-size:24px; color:#6366f1;">${otp}</b></p><p>This code will expire in 10 minutes.</p>`
+      html: `
+        <div style="font-family: Arial, sans-serif; text-align: center; padding: 20px; color: #333;">
+          <h2 style="color: #6366f1;">Bhav-Taal Security</h2>
+          <p>Your 6-digit verification code is:</p>
+          <div style="font-size: 32px; font-weight: bold; letter-spacing: 5px; color: #10b981; margin: 20px 0;">${otp}</div>
+          <p style="color: #888; font-size: 12px;">This code will expire in 10 minutes. Do not share it with anyone.</p>
+        </div>
+      `
     });
 
     // B. IF EMAIL IS SUCCESSFUL, SAVE TO DATABASE
@@ -79,7 +88,7 @@ app.post('/api/send-otp', async (req, res) => {
     res.json({ success: true, message: "OTP sent successfully!" });
   } catch (err) {
     console.error("Mail Error Detail:", err);
-    res.status(500).json({ success: false, message: "Failed to send email. Check your email credentials lines 20 & 21." });
+    res.status(500).json({ success: false, message: "Failed to send email. Check your email credentials." });
   }
 });
 
