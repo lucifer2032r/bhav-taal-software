@@ -12,10 +12,10 @@ const db = new Pool({
 });
 
 // ==========================================
-// ✉️ EMAIL CONFIGURATION (BREVO DIRECT API)
+// ✉️ EMAIL CONFIGURATION (GOOGLE APPS SCRIPT)
 // ==========================================
-const BREVO_API_KEY = "xsmtpsib-c1e47ad49a278377ec04d390f8a250aa32f1eb5fbba2d5990033df01f0a78559-iwyWakkmW2I7qSOS"; 
-const YOUR_SENDER_EMAIL = "bhav.taal.manager@gmail.com"; // Must be the email you verified on Brevo
+// PASTE THE LONG URL FROM STEP 2 HERE:
+const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyvXXbKWaaNSPOHKyyMsdnz3_VlHavKEdj9cvbpiH7OlwMataQecOSb6HB3dD81O7lhjA/exec"; 
 
 // ==========================================
 // 🚀 DEEP WAKE (FOR CRONJOB)
@@ -51,17 +51,16 @@ app.post('/api/send-otp', async (req, res) => {
       [email, otp, expires_at]
     );
 
-    // 2. Print to Render Console (DEVELOPER BYPASS)
+    // 2. Print to Render Console (Developer Bypass Backup)
     console.log(`\n=========================================`);
-    console.log(`🔑 DEV BYPASS OTP FOR ${email}: ${otp}`);
+    console.log(`🔑 OTP FOR ${email}: ${otp}`);
     console.log(`=========================================\n`);
 
-    // 3. Send email using Brevo REST API (Native Fetch)
+    // 3. Send email using the Google Apps Script Loophole
     const emailPayload = {
-      sender: { name: "Bhav-Taal Security", email: YOUR_SENDER_EMAIL },
-      to: [{ email: email }],
+      email: email,
       subject: type === 'register' ? 'Your Bhav-Taal Verification Code' : 'Bhav-Taal Password Reset OTP',
-      htmlContent: `
+      body: `
         <div style="font-family: Arial, sans-serif; text-align: center; padding: 20px; color: #333;">
           <h2 style="color: #6366f1;">Bhav-Taal Security</h2>
           <p>Your 6-digit verification code is:</p>
@@ -72,27 +71,26 @@ app.post('/api/send-otp', async (req, res) => {
     };
 
     try {
-      const response = await fetch('https://api.brevo.com/v3/smtp/email', {
+      const response = await fetch(GOOGLE_SCRIPT_URL, {
         method: 'POST',
         headers: {
-          'accept': 'application/json',
-          'api-key': BREVO_API_KEY,
-          'content-type': 'application/json'
+          'Content-Type': 'application/json',
         },
-        body: JSON.stringify(emailPayload)
+        body: JSON.stringify(emailPayload),
+        redirect: 'follow' // Required for Google Scripts
       });
 
-      if (!response.ok) {
-        const errorData = await response.json();
-        console.error("Brevo API Rejected the request:", errorData);
-        throw new Error("Brevo API failed");
+      const result = await response.json();
+      
+      if (!result.success) {
+        console.error("Google Script Rejected the request:", result.error);
+        throw new Error("Google Script failed");
       }
 
       res.json({ success: true, message: "OTP sent successfully!" });
     } catch (apiError) {
-      console.error("Failed to reach Brevo:", apiError);
-      // We still return true so the frontend moves to the next screen for Dev Bypass!
-      res.json({ success: true, message: "Email failed, but check Render Logs for your OTP!" });
+      console.error("Failed to reach Google Script:", apiError);
+      res.json({ success: true, message: "Email delayed, but check Render Logs for your OTP!" });
     }
     
   } catch (err) {
