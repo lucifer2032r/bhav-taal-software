@@ -15,12 +15,15 @@ const db = new Pool({
 // ==========================================
 // ✉️ EMAIL CONFIGURATION (NODEMAILER)
 // ==========================================
-// REPLACE WITH YOUR ACTUAL GMAIL AND THE 16-LETTER APP PASSWORD
+// ⚠️ IMPORTANT: CHANGE THESE TWO LINES TO YOUR REAL DETAILS!
+const YOUR_GMAIL_ID = "YOUR_REAL_EMAIL@gmail.com"; 
+const YOUR_GMAIL_APP_PASSWORD = "xxxx xxxx xxxx xxxx"; // <-- The 16-letter App Password from Google Security
+
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
-    user: 'bhav.taal.manager@gmail.com', // <-- PASTE YOUR GMAIL HERE
-    pass: 'imqqunpawixvtjfg' // <-- PASTE YOUR APP PASSWORD HERE (No spaces)
+    user: bhav.taal.manager@gmail.com,
+    pass: imqqunpawixvtjfg
   }
 });
 
@@ -42,7 +45,7 @@ app.get('/api/keepalive', async (req, res) => {
 
 // 1. Send OTP (For Registration OR Forgot Password)
 app.post('/api/send-otp', async (req, res) => {
-  const { email, type } = req.body; // type will be 'register' or 'forgot'
+  const { email, type } = req.body;
   
   try {
     const shopRes = await db.query('SELECT * FROM shops WHERE email = $1', [email]);
@@ -58,56 +61,52 @@ app.post('/api/send-otp', async (req, res) => {
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
     const expires_at = new Date(Date.now() + 10 * 60000); // Expires in 10 minutes
 
-    // Save OTP to database (Updates it if they ask for a new one)
+    // A. TRY SENDING THE EMAIL FIRST
+    await transporter.sendMail({
+      from: `"Bhav-Taal Security" <${YOUR_GMAIL_ID}>`,
+      to: email,
+      subject: type === 'register' ? 'Your Bhav-Taal Verification Code' : 'Bhav-Taal Password Reset OTP',
+      html: `<h2>Hello!</h2><p>Your 6-digit verification code is: <b style="font-size:24px; color:#6366f1;">${otp}</b></p><p>This code will expire in 10 minutes.</p>`
+    });
+
+    // B. IF EMAIL IS SUCCESSFUL, SAVE TO DATABASE
     await db.query(
       `INSERT INTO otps (email, otp, expires_at) VALUES ($1, $2, $3)
        ON CONFLICT (email) DO UPDATE SET otp = $2, expires_at = $3`,
       [email, otp, expires_at]
     );
 
-    // Send the Email
-    await transporter.sendMail({
-      from: '"Bhav-Taal Security" <no-reply@bhav-taal.com>',
-      to: email,
-      subject: type === 'register' ? 'Your Bhav-Taal Verification Code' : 'Bhav-Taal Password Reset OTP',
-      html: `<h2>Hello!</h2><p>Your 6-digit verification code is: <b style="font-size:24px; color:#6366f1;">${otp}</b></p><p>This code will expire in 10 minutes.</p>`
-    });
-
     res.json({ success: true, message: "OTP sent successfully!" });
   } catch (err) {
-    res.status(500).json({ success: false, message: "Failed to send email. Check your email credentials." });
+    console.error("Mail Error Detail:", err);
+    res.status(500).json({ success: false, message: "Failed to send email. Check your email credentials lines 20 & 21." });
   }
 });
 
-// 2. Register (Now requires OTP)
+// 2. Register
 app.post('/api/register', async (req, res) => {
   const { shopName, username, password, email, phone, otp } = req.body;
   
   try {
-    // A. Check OTP
     const otpRes = await db.query('SELECT * FROM otps WHERE email = $1 AND otp = $2', [email, otp]);
     if (otpRes.rows.length === 0) return res.status(400).json({ success: false, message: "Invalid OTP Code." });
     if (new Date(otpRes.rows[0].expires_at) < new Date()) return res.status(400).json({ success: false, message: "OTP has expired. Request a new one." });
 
-    // B. Check if Username Exists
     const existingUser = await db.query('SELECT * FROM shops WHERE username = $1', [username]);
     if (existingUser.rows.length > 0) return res.status(400).json({ success: false, message: "Username already taken." });
 
-    // C. Create Account
     const subEnd = new Date();
-    subEnd.setDate(subEnd.getDate() + 7); // 7-day trial
+    subEnd.setDate(subEnd.getDate() + 7);
 
     const result = await db.query(
       'INSERT INTO shops (shop_name, username, password, email, contact_number, subscription_end) VALUES ($1, $2, $3, $4, $5, $6) RETURNING shop_id, subscription_end',
       [shopName, username, password, email, phone, subEnd]
     );
 
-    // D. Delete the OTP so it can't be reused
     await db.query('DELETE FROM otps WHERE email = $1', [email]);
 
     res.json({ success: true, shop_id: result.rows[0].shop_id, subscription_end: result.rows[0].subscription_end });
   } catch (err) {
-    // If database constraint fails (like unique email)
     if (err.code === '23505') return res.status(400).json({ success: false, message: "Email or Username already exists." });
     res.status(500).json({ success: false, message: "Server error during registration." });
   }
@@ -125,7 +124,7 @@ app.post('/api/login', async (req, res) => {
   }
 });
 
-// 4. Verify OTP for Forgot Password (before showing reset options)
+// 4. Verify OTP for Forgot Password
 app.post('/api/verify-forgot-otp', async (req, res) => {
   const { email, otp } = req.body;
   try {
@@ -140,12 +139,11 @@ app.post('/api/verify-forgot-otp', async (req, res) => {
 app.post('/api/reveal-password', async (req, res) => {
   const { email, otp } = req.body;
   try {
-    // Double check OTP just to be secure
     const otpRes = await db.query('SELECT * FROM otps WHERE email = $1 AND otp = $2', [email, otp]);
     if (otpRes.rows.length === 0) return res.status(400).json({ success: false, message: "Security check failed." });
 
     const userRes = await db.query('SELECT password FROM shops WHERE email = $1', [email]);
-    await db.query('DELETE FROM otps WHERE email = $1', [email]); // Clean up OTP
+    await db.query('DELETE FROM otps WHERE email = $1', [email]);
 
     res.json({ success: true, password: userRes.rows[0].password });
   } catch (err) { res.status(500).json({ success: false, message: "Failed to reveal password." }); }
@@ -155,12 +153,11 @@ app.post('/api/reveal-password', async (req, res) => {
 app.post('/api/reset-password', async (req, res) => {
   const { email, newPassword, otp } = req.body;
   try {
-    // Double check OTP
     const otpRes = await db.query('SELECT * FROM otps WHERE email = $1 AND otp = $2', [email, otp]);
     if (otpRes.rows.length === 0) return res.status(400).json({ success: false, message: "Security check failed." });
 
     await db.query('UPDATE shops SET password = $1 WHERE email = $2', [newPassword, email]);
-    await db.query('DELETE FROM otps WHERE email = $1', [email]); // Clean up OTP
+    await db.query('DELETE FROM otps WHERE email = $1', [email]);
 
     res.json({ success: true, message: "Password updated successfully." });
   } catch (err) { res.status(500).json({ success: false, message: "Failed to reset password." }); }
@@ -171,7 +168,7 @@ app.post('/api/subscribe', async (req, res) => {
   try {
     const shop = await db.query('SELECT subscription_end FROM shops WHERE shop_id = $1', [shop_id]);
     let currentEnd = new Date(shop.rows[0].subscription_end);
-    if (currentEnd < new Date()) currentEnd = new Date(); // Reset if expired
+    if (currentEnd < new Date()) currentEnd = new Date();
     currentEnd.setMonth(currentEnd.getMonth() + parseInt(months));
 
     await db.query('UPDATE shops SET subscription_end = $1 WHERE shop_id = $2', [currentEnd, shop_id]);
