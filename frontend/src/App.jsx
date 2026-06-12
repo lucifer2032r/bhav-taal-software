@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { ReactTransliterate } from 'react-transliterate';
 import "react-transliterate/dist/index.css";
-import { LayoutDashboard, ShoppingCart, PackageSearch, PlusCircle, LogOut, Menu, Moon, Sun, ChevronLeft, Edit3, Trash2, Printer, Search, Download, Settings, Image as ImageIcon, Percent, IndianRupee, X, AlertTriangle, Receipt, Box, Clock, CreditCard, CheckCircle2, Lock, Pencil, FileText, ArrowDownRight, ArrowUpRight, Globe, Eye, EyeOff, Mail, ShieldAlert, KeyRound } from 'lucide-react';
+import { LayoutDashboard, ShoppingCart, PackageSearch, PlusCircle, LogOut, Menu, Moon, Sun, ChevronLeft, Edit3, Trash2, Printer, Search, Download, Settings, Image as ImageIcon, Percent, IndianRupee, X, AlertTriangle, Receipt, Box, Clock, CreditCard, CheckCircle2, Lock, Pencil, FileText, ArrowDownRight, ArrowUpRight, Globe, Eye, EyeOff, Mail, ShieldAlert, KeyRound, ToggleLeft, ToggleRight } from 'lucide-react';
 
 // ==========================================
 // 🚀 CLOUD CONNECTION - PASTE RENDER URL BELOW
@@ -36,21 +36,21 @@ function App() {
   const [regShopName, setRegShopName] = useState(""); const [loginUser, setLoginUser] = useState(""); 
   const [regEmail, setRegEmail] = useState(""); const [regPhone, setRegPhone] = useState("");
   const [loginPass, setLoginPass] = useState(""); const [confirmPass, setConfirmPass] = useState(""); 
-  const [regStep, setRegStep] = useState(1); // 1 = Details form, 2 = Verify OTP
+  const [regStep, setRegStep] = useState(1); 
   const [otpToken, setOtpToken] = useState("");
   
   // Forgot Password Data
-  const [forgotStep, setForgotStep] = useState(1); // 1: email, 2: otp, 3: options, 4: reset, 5: reveal
+  const [forgotStep, setForgotStep] = useState(1); 
   const [revealedPass, setRevealedPass] = useState("");
   const [revealTimer, setRevealTimer] = useState(0);
 
   const [isDarkMode, setIsDarkMode] = useState(false); const [isSidebarOpen, setIsSidebarOpen] = useState(true);
   
-  // UI LANGUAGE STATE (English or Gujarati)
+  // UI LANGUAGE STATE
   const [uiLang, setUiLang] = useState("en");
   const tText = (key) => translations[uiLang]?.[key] || translations['en'][key] || key;
 
-  // RAGE-CLICK SHIELD STATE
+  // SHIELD STATE
   const [isLoading, setIsLoading] = useState(false);
 
   const [subEndDate, setSubEndDate] = useState(null); const [timeLeftStr, setTimeLeftStr] = useState(""); const [timeColor, setTimeColor] = useState(""); const [isExpired, setIsExpired] = useState(false);
@@ -73,6 +73,9 @@ function App() {
   const [searchQuery, setSearchQuery] = useState(""); const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [receiptData, setReceiptData] = useState(null);
   
+  // === NEW GST BILL TOGGLE STATE ===
+  const [isGstBill, setIsGstBill] = useState(true);
+
   const [editBillId, setEditBillId] = useState(null);
   const [editingId, setEditingId] = useState(null); const [editData, setEditData] = useState({ name_english: "", name_regional: "", current_stock: "", min_stock_alert: "", gst_rate: "", hsn_code: "", item_rate: "", purchase_price: "", is_gst_inclusive: true });
 
@@ -213,7 +216,7 @@ function App() {
   };
 
   // ==========================================
-  // DASHBOARD HANDLERS (Untouched)
+  // DASHBOARD HANDLERS
   // ==========================================
   const handlePurchase = async (months) => { setIsLoading(true); try { const res = await axios.post(`${API_URL}/api/subscribe`, { shop_id: currentShopId, months }); setSubEndDate(res.data.new_end); setIsExpired(false); setActiveTab("ledger"); showMessage("🎉 Payment Successful!"); } catch (err) { showMessage("❌ Payment Failed."); } setIsLoading(false); };
   const handleAddToCart = (product) => { const existing = cart.find(c => c.product_id === product.product_id); if (existing) setCart(cart.map(c => c.product_id === product.product_id ? { ...c, qty: c.qty + 1 } : c)); else setCart([...cart, { ...product, qty: 1, rate: parseFloat(product.item_rate) }]); setSearchQuery(""); setIsSearchOpen(false); };
@@ -237,6 +240,8 @@ function App() {
     const loadedCart = tx.receipt_details.cartItems.map(ci => { const invItem = inventory.find(i => i.product_id === ci.product_id); return invItem ? { ...invItem, qty: ci.qty, rate: ci.rate } : { product_id: ci.product_id, name_english: ci.name.split(' (')[0], name_regional: "", qty: ci.qty, rate: ci.rate, gst_rate: 0, purchase_price: 0, is_gst_inclusive: true }; });
     setCart(loadedCart); setPartyName(tx.party_name); setPartyGst(tx.receipt_details.partyGst || ""); setTransType(tx.transaction_type); setDiscountVal(tx.discount_amount || ""); setDiscountType("flat");
     setBillStatus(tx.status || "Settled"); setSettlementDate(tx.settlement_date ? tx.settlement_date.split('T')[0] : "");
+    // Load old GST bill status if it exists, otherwise default to true
+    setIsGstBill(tx.receipt_details.isGstBill !== false);
     setEditBillId(tx.transaction_id); setActiveTab("billing"); showMessage("✏️ Bill loaded. Khata details and stock will update upon saving.");
   };
 
@@ -245,7 +250,7 @@ function App() {
     if (billStatus === 'Unsettled' && !partyName.trim()) return showMessage("❌ Party / Wholesaler Name required for Unsettled bills.");
     setIsLoading(true);
     try {
-      const currentReceiptData = { shopName: profile.shop_name, owner: profile.owner_name, address: profile.address, gstNum: profile.gst_number, logo: profile.logo_url, phone: profile.contact_number, email: profile.email, bank: profile.bank_name, acc: profile.account_no, ifsc: profile.ifsc_code, partyName, partyGst, transType, cartItems: cart.map(item => ({ product_id: item.product_id, name: `${item.name_english} (${item.name_regional})`, hsn: item.hsn_code, qty: item.qty, rate: item.rate, amount: (item.rate * item.qty) })), grossAmount: grossTotal, discount: finalDiscount, taxable: totalTaxable, totalGst: totalGst, cgst: halfGst, sgst: halfGst, finalTotal: finalTotalAmount, date: new Date().toLocaleDateString('en-IN') };
+      const currentReceiptData = { shopName: profile.shop_name, owner: profile.owner_name, address: profile.address, gstNum: profile.gst_number, logo: profile.logo_url, phone: profile.contact_number, email: profile.email, bank: profile.bank_name, acc: profile.account_no, ifsc: profile.ifsc_code, partyName, partyGst, transType, isGstBill, cartItems: cart.map(item => ({ product_id: item.product_id, name: `${item.name_english} (${item.name_regional})`, hsn: item.hsn_code, qty: item.qty, rate: item.rate, amount: (item.rate * item.qty) })), grossAmount: grossTotal, discount: finalDiscount, taxable: totalTaxable, totalGst: totalGst, cgst: halfGst, sgst: halfGst, finalTotal: finalTotalAmount, date: new Date().toLocaleDateString('en-IN') };
       const payload = { shop_id: currentShopId, party_name: partyName, transaction_type: transType, cart_items: cart, total_amount: finalTotalAmount, total_gst: totalGst, discount_amount: finalDiscount, receipt_details: currentReceiptData, status: billStatus, settlement_date: billStatus === 'Unsettled' ? settlementDate : "" };
       let response;
       if (editBillId) { response = await axios.put(`${API_URL}/api/billing/${editBillId}`, payload); setEditBillId(null); } else { response = await axios.post(`${API_URL}/api/billing`, payload); }
@@ -266,8 +271,16 @@ function App() {
   const saveEdit = async (id) => { setIsLoading(true); try { await axios.put(`${API_URL}/api/products/${id}`, editData); showMessage("✅ Material updated!"); setEditingId(null); fetchInventory(); } catch (error) { showMessage("❌ Error updating."); } setIsLoading(false); };
   const deleteMaterial = async (id) => { if (window.confirm("Permanently delete this item?")) { setIsLoading(true); try { await axios.delete(`${API_URL}/api/products/${id}`); showMessage("🗑️ Material deleted."); fetchInventory(); } catch (error) {} setIsLoading(false); } };
 
+  // ==========================================
+  // UPDATED: INVENTORY SEARCH (NOW INCLUDES HSN)
+  // ==========================================
   const sortedInventory = [...inventory].sort((a, b) => { const hsnA = (a.hsn_code || "").toString().trim(); const hsnB = (b.hsn_code || "").toString().trim(); if (hsnA && hsnB) { if (hsnA !== hsnB) { return hsnA.localeCompare(hsnB, undefined, { numeric: true }); } } if (hsnA && !hsnB) return -1; if (!hsnA && hsnB) return 1; const nameA = (a.name_english || "").toString().toLowerCase().trim(); const nameB = (b.name_english || "").toString().toLowerCase().trim(); return nameA.localeCompare(nameB); });
-  const filteredInventory = sortedInventory.filter(item => item.name_english.toLowerCase().includes(searchQuery.toLowerCase()) || item.name_regional.includes(searchQuery));
+  const filteredInventory = sortedInventory.filter(item => 
+    (item.name_english || "").toLowerCase().includes(searchQuery.toLowerCase()) || 
+    (item.name_regional || "").includes(searchQuery) ||
+    (item.hsn_code || "").toString().toLowerCase().includes(searchQuery.toLowerCase())
+  );
+  
   const filteredCategories = businessCategories.filter(cat => cat.toLowerCase().includes(categorySearch.toLowerCase()));
 
   const unsettledBills = transactions.filter(tx => tx.status === 'Unsettled');
@@ -389,7 +402,6 @@ function App() {
                 <div style={{ fontSize: '12px', color: t.textMuted }}>Please check your inbox and spam folder.</div>
               </div>
 
-              {/* INVISIBLE OVERLAY OTP INPUT */}
               <div style={{ marginBottom: '30px', textAlign: 'center' }}>
                 <label style={{...labelStyle, display: 'block', marginBottom: '15px'}}>{tText('enter_otp')}</label>
                 <div style={{ position: 'relative', display: 'flex', justifyContent: 'center', gap: '10px' }}>
@@ -420,7 +432,6 @@ function App() {
             <form onSubmit={handleForgotVerifyOtp}>
               <div style={{ backgroundColor: `${t.primary}10`, border: `1px solid ${t.primary}40`, padding: '15px', borderRadius: '12px', marginBottom: '20px', textAlign: 'center', color: t.text }}><div style={{ fontWeight: 'bold' }}>Recovery OTP Sent to {regEmail}</div></div>
               
-              {/* INVISIBLE OVERLAY OTP INPUT */}
               <div style={{ marginBottom: '30px', textAlign: 'center' }}>
                 <label style={{...labelStyle, display: 'block', marginBottom: '15px'}}>{tText('enter_otp')}</label>
                 <div style={{ position: 'relative', display: 'flex', justifyContent: 'center', gap: '10px' }}>
@@ -494,7 +505,7 @@ function App() {
   }
 
   // ==========================================
-  // DASHBOARD SCREEN RENDER (Untouched)
+  // DASHBOARD SCREEN RENDER
   // ==========================================
   return (
     <div style={{ display: 'flex', height: '100vh', width: '100vw', backgroundColor: t.bg, color: t.text, transition: 'all 0.3s' }}>
@@ -700,19 +711,32 @@ function App() {
 
           {activeTab === "billing" && !isExpired && (
             <div style={{ animation: 'fadeIn 0.4s ease', width: '100%', maxWidth: '1000px', margin: '0 auto' }}>
-              {!profile.gst_number && <div style={{ backgroundColor: `${t.danger}20`, color: t.danger, padding: '15px', borderRadius: '12px', marginBottom: '20px', fontWeight: '600', textAlign: 'center' }}>{tText('warning_gst')}</div>}
+              {isGstBill && !profile.gst_number && <div style={{ backgroundColor: `${t.danger}20`, color: t.danger, padding: '15px', borderRadius: '12px', marginBottom: '20px', fontWeight: '600', textAlign: 'center' }}>{tText('warning_gst')}</div>}
               
               <form onSubmit={processBill} style={cardStyle}>
                 <div style={{ position: 'absolute', top: '25px', right: '30px', backgroundColor: `${t.success}15`, color: t.success, border: `1px solid ${t.success}50`, padding: '8px 16px', borderRadius: '20px', fontWeight: 'bold', fontSize: '14px', display: 'flex', alignItems: 'center', gap: '6px' }}>{tText('live_margin')}: ₹{currentMargin.toFixed(2)}</div>
 
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '30px' }}><ShoppingCart color={t.primary} size={28}/>
-                  <h2 style={{ margin: 0, color: t.text }}>{editBillId ? `${tText('editing_bill')} (INV-${editBillId})` : tText('checkout')}</h2>
+                <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '30px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                    <ShoppingCart color={t.primary} size={28}/>
+                    <h2 style={{ margin: 0, color: t.text }}>{editBillId ? `${tText('editing_bill')} (INV-${editBillId})` : tText('checkout')}</h2>
+                  </div>
+                  
+                  {/* --- NEW GST TOGGLE SLIDER --- */}
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '10px', backgroundColor: isGstBill ? `${t.primary}10` : t.inputBg, padding: '8px 16px', borderRadius: '12px', border: `1px solid ${isGstBill ? t.primary : t.border}`, transition: 'all 0.3s' }}>
+                    <span style={{ fontSize: '14px', fontWeight: 'bold', color: isGstBill ? t.primary : t.textMuted }}>
+                      {isGstBill ? "GST Bill" : "Estimate (No GST)"}
+                    </span>
+                    <button type="button" onClick={() => setIsGstBill(!isGstBill)} style={{ background: 'none', border: 'none', padding: 0, cursor: 'pointer', color: isGstBill ? t.primary : t.textMuted, display: 'flex', alignItems: 'center' }}>
+                      {isGstBill ? <ToggleRight size={32} /> : <ToggleLeft size={32} />}
+                    </button>
+                  </div>
                 </div>
                 
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '20px', marginBottom: '20px' }}>
                   <div><label style={labelStyle}>{tText('tx_type')}</label><select value={transType} onChange={(e) => setTransType(e.target.value)} className="soft-input" style={{ ...inputStyle, fontWeight: 'bold', color: transType === 'SELL' ? t.success : t.danger }}><option value="SELL">{tText('sell')}</option><option value="PURCH">{tText('purch')}</option></select></div>
                   <div><label style={labelStyle}>{transType === 'SELL' ? tText('cust_name') : tText('wholesaler_name')}</label><input type="text" required={billStatus === 'Unsettled'} value={partyName} onChange={(e) => setPartyName(e.target.value)} placeholder="Name" className="soft-input" style={inputStyle} /></div>
-                  <div><label style={labelStyle}>{transType === 'SELL' ? tText('cust_gst') : tText('whole_gst')}</label><input type="text" value={partyGst} onChange={(e) => setPartyGst(e.target.value)} placeholder="GST Number" className="soft-input" style={inputStyle} /></div>
+                  <div><label style={labelStyle}>{transType === 'SELL' ? tText('cust_gst') : tText('whole_gst')}</label><input type="text" value={partyGst} onChange={(e) => setPartyGst(e.target.value)} placeholder="GST Number" className="soft-input" style={inputStyle} disabled={!isGstBill} /></div>
                 </div>
 
                 <div style={{ display: 'flex', gap: '20px', marginBottom: '30px', padding: '15px', backgroundColor: t.bg, borderRadius: '12px', border: `1px dashed ${t.border}` }}>
@@ -732,13 +756,17 @@ function App() {
                 </div>
 
                 <div style={{ position: 'relative', marginBottom: '30px', zIndex: 1000 }}>
-                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}><label style={labelStyle}>{tText('search_add')}</label><div style={{ display: 'flex', alignItems: 'center', gap: '5px', fontSize: '13px', color: t.textMuted }}><span>{tText('kb_mode')}:</span><select value={language} onChange={(e) => setLanguage(e.target.value)} style={{ background: 'transparent', border: 'none', color: t.primary, fontWeight: 'bold', cursor: 'pointer', outline: 'none' }}><option value="en">English</option><option value="gu">Gujarati</option></select></div></div>
-                  <div style={{ position: 'relative' }}><Search color={t.textMuted} size={20} style={{ position: 'absolute', left: '12px', top: '16px', zIndex: 10 }} /><ReactTransliterate value={searchQuery} onChangeText={(text) => { setSearchQuery(text); setIsSearchOpen(true); }} lang={language} renderComponent={(props) => (<input {...props} placeholder="Type name to search..." className="soft-input" style={{ ...inputStyle, paddingLeft: '40px', marginTop: 0 }} onFocus={() => setIsSearchOpen(true)} />)} /></div>
+                  <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '6px' }}><label style={labelStyle}>{tText('search_add')} (By Name or HSN)</label><div style={{ display: 'flex', alignItems: 'center', gap: '5px', fontSize: '13px', color: t.textMuted }}><span>{tText('kb_mode')}:</span><select value={language} onChange={(e) => setLanguage(e.target.value)} style={{ background: 'transparent', border: 'none', color: t.primary, fontWeight: 'bold', cursor: 'pointer', outline: 'none' }}><option value="en">English</option><option value="gu">Gujarati</option></select></div></div>
+                  <div style={{ position: 'relative' }}><Search color={t.textMuted} size={20} style={{ position: 'absolute', left: '12px', top: '16px', zIndex: 10 }} /><ReactTransliterate value={searchQuery} onChangeText={(text) => { setSearchQuery(text); setIsSearchOpen(true); }} lang={language} renderComponent={(props) => (<input {...props} placeholder="Type name or HSN code..." className="soft-input" style={{ ...inputStyle, paddingLeft: '40px', marginTop: 0 }} onFocus={() => setIsSearchOpen(true)} />)} /></div>
                   {isSearchOpen && (
                     <div style={{ position: 'absolute', top: '100%', left: 0, right: 0, backgroundColor: t.card, border: `1px solid ${t.border}`, borderRadius: '12px', marginTop: '8px', maxHeight: '300px', overflowY: 'auto', boxShadow: '0 10px 40px -10px rgba(0,0,0,0.15)', zIndex: 990 }}>
                       {filteredInventory.length === 0 ? (<div style={{ padding: '15px', color: t.textMuted, textAlign: 'center' }}>No materials found.</div>) : (filteredInventory.map((item) => (
                         <div key={item.product_id} onClick={() => handleAddToCart(item)} style={{ padding: '12px 16px', cursor: 'pointer', borderBottom: `1px solid ${t.border}`, display: 'flex', justifyContent: 'space-between', alignItems: 'center', color: t.text }} onMouseEnter={(e) => e.currentTarget.style.backgroundColor = `${t.primary}15`} onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}>
-                          <div><span style={{ fontWeight: '600' }}>{item.name_english}</span><span style={{ color: t.textMuted, marginLeft: '8px', fontSize: '14px' }}>{item.name_regional}</span></div>
+                          <div>
+                            <span style={{ fontWeight: '600' }}>{item.name_english}</span>
+                            <span style={{ color: t.textMuted, marginLeft: '8px', fontSize: '14px' }}>{item.name_regional}</span>
+                            {item.hsn_code && <div style={{ fontSize: '11px', color: t.primary, fontWeight: 'bold', marginTop: '2px' }}>HSN: {item.hsn_code}</div>}
+                          </div>
                           <div style={{ display: 'flex', gap: '10px' }}><span style={{ backgroundColor: `${t.primary}20`, color: t.primary, padding: '4px 10px', borderRadius: '12px', fontSize: '12px', fontWeight: 'bold' }}>₹{item.item_rate}</span><span style={{ backgroundColor: item.current_stock <= item.min_stock_alert ? `${t.danger}20` : `${t.success}20`, color: item.current_stock <= item.min_stock_alert ? t.danger : t.success, padding: '4px 10px', borderRadius: '12px', fontSize: '12px', fontWeight: 'bold' }}>Stock: {item.current_stock}</span></div>
                         </div>
                       )))}
@@ -770,13 +798,15 @@ function App() {
                 </div>
                 <div style={{ backgroundColor: `${t.primary}10`, padding: '20px', borderRadius: '16px', textAlign: 'right', marginBottom: '20px' }}>
                    {finalDiscount > 0 && <div style={{ fontSize: '14px', color: t.danger, marginBottom: '5px' }}>Discount Applied: -₹{finalDiscount.toFixed(2)}</div>}
-                  <span style={{ fontSize: '14px', color: t.textMuted }}>{transType === 'SELL' ? tText('final_pay') : tText('tot_pay')} {tText('gst_inc')}</span>
+                  <span style={{ fontSize: '14px', color: t.textMuted }}>{transType === 'SELL' ? tText('final_pay') : tText('tot_pay')} {isGstBill ? tText('gst_inc') : ""}</span>
                   <div style={{ fontSize: '36px', fontWeight: 'bold', color: t.primary }}>₹{finalTotalAmount.toFixed(2)}</div>
-                  <div style={{ fontSize: '12px', color: t.textMuted, marginTop: '5px' }}>({tText('gross')}: ₹{grossTotal.toFixed(2)} | {tText('taxable')}: ₹{totalTaxable.toFixed(2)} | CGST: ₹{halfGst.toFixed(2)} | SGST: ₹{halfGst.toFixed(2)})</div>
+                  {isGstBill && (
+                    <div style={{ fontSize: '12px', color: t.textMuted, marginTop: '5px' }}>({tText('gross')}: ₹{grossTotal.toFixed(2)} | {tText('taxable')}: ₹{totalTaxable.toFixed(2)} | CGST: ₹{halfGst.toFixed(2)} | SGST: ₹{halfGst.toFixed(2)})</div>
+                  )}
                 </div>
                 <button type="submit" disabled={isLoading} style={{ ...btnPrimary, opacity: isLoading ? 0.7 : 1 }}><Printer size={20}/> {editBillId ? tText('btn_save_print') : tText('btn_gen_inv')}</button>
                 {editBillId && (
-                  <button type="button" onClick={() => { setEditBillId(null); setCart([]); setPartyName(""); setDiscountVal(""); setBillStatus("Settled"); setSettlementDate(""); }} style={{ width: '100%', marginTop: '10px', padding: '10px', background: 'transparent', border: `1px solid ${t.textMuted}`, borderRadius: '12px', color: t.textMuted, cursor: 'pointer', fontWeight: 'bold' }}>{tText('cancel_edit')}</button>
+                  <button type="button" onClick={() => { setEditBillId(null); setCart([]); setPartyName(""); setDiscountVal(""); setBillStatus("Settled"); setSettlementDate(""); setIsGstBill(true); }} style={{ width: '100%', marginTop: '10px', padding: '10px', background: 'transparent', border: `1px solid ${t.textMuted}`, borderRadius: '12px', color: t.textMuted, cursor: 'pointer', fontWeight: 'bold' }}>{tText('cancel_edit')}</button>
                 )}
               </form>
             </div>
@@ -868,7 +898,7 @@ function App() {
         </div>
       )}
 
-      {/* --- ENGLISH PDF RECEIPT SYSTEM (UNTOUCHED) --- */}
+      {/* --- ENGLISH PDF RECEIPT SYSTEM --- */}
       {receiptData && (
         <div className="print-only" style={{ color: 'black', fontFamily: 'Arial, sans-serif' }}>
           {printChunks.map((chunk, index) => (
@@ -880,22 +910,50 @@ function App() {
                   <h1 style={{ margin: '5px 0', fontSize: '18pt', textTransform: 'uppercase' }}>{receiptData.shopName}</h1>
                   <p style={{ margin: '2px 0', fontSize: '10pt' }}>{receiptData.address}</p>
                   <p style={{ margin: '2px 0', fontSize: '10pt' }}>MO - {receiptData.phone}</p>
-                  <p style={{ margin: '2px 0', fontSize: '10pt', fontWeight: 'bold' }}>GSTIN: {receiptData.gstNum || "N/A"}</p>
+                  {receiptData.isGstBill !== false && receiptData.gstNum && <p style={{ margin: '2px 0', fontSize: '10pt', fontWeight: 'bold' }}>GSTIN: {receiptData.gstNum}</p>}
                 </div>
                 <div style={{ display: 'flex', fontSize: '10pt', borderBottom: '1px solid black', paddingBottom: '10px', marginBottom: '10px' }}>
-                  <div style={{ flex: 1, paddingRight: '10px', borderRight: '1px solid black' }}><p style={{ margin: '2px 0', fontWeight: 'bold' }}>BUYER: {receiptData.partyName}</p><p style={{ margin: '2px 0', fontWeight: 'bold' }}>GSTIN: {receiptData.partyGst || ""}</p><p style={{ margin: '2px 0', fontWeight: 'bold' }}>STATE/CODE: 24- GUJARAT</p></div>
-                  <div style={{ flex: 1, paddingLeft: '10px' }}><p style={{ margin: '2px 0', fontWeight: 'bold' }}>INVOICE NO: {receiptData.invoiceNo || "N/A"}</p><p style={{ margin: '2px 0', fontWeight: 'bold' }}>DATE: {receiptData.date}</p></div>
+                  <div style={{ flex: 1, paddingRight: '10px', borderRight: '1px solid black' }}>
+                    <p style={{ margin: '2px 0', fontWeight: 'bold' }}>BUYER: {receiptData.partyName}</p>
+                    {receiptData.isGstBill !== false && receiptData.partyGst && <p style={{ margin: '2px 0', fontWeight: 'bold' }}>GSTIN: {receiptData.partyGst}</p>}
+                    <p style={{ margin: '2px 0', fontWeight: 'bold' }}>STATE/CODE: 24- GUJARAT</p>
+                  </div>
+                  <div style={{ flex: 1, paddingLeft: '10px' }}>
+                    <p style={{ margin: '2px 0', fontWeight: 'bold' }}>INVOICE NO: {receiptData.invoiceNo || "N/A"}</p>
+                    <p style={{ margin: '2px 0', fontWeight: 'bold' }}>DATE: {receiptData.date}</p>
+                  </div>
                 </div>
                 <div style={{ flex: 1 }}>
                   <table className="pdf-table" style={{ margin: 0, border: 'none' }}>
-                    <thead style={{ borderBottom: '1px solid black' }}><tr><th style={{ width: '8%', borderTop: 'none' }}>SR. NO</th><th style={{ width: '42%', borderTop: 'none' }}>DESCRIPTION OF ITEM</th><th style={{ width: '15%', borderTop: 'none' }}>HSN/SAC</th><th style={{ width: '10%', borderTop: 'none' }}>QTY</th><th style={{ width: '10%', borderTop: 'none' }}>RATE</th><th style={{ width: '15%', borderTop: 'none' }}>AMOUNT</th></tr></thead>
+                    <thead style={{ borderBottom: '1px solid black' }}>
+                      <tr>
+                        <th style={{ width: '8%', borderTop: 'none' }}>SR. NO</th>
+                        <th style={{ width: receiptData.isGstBill !== false ? '42%' : '57%', borderTop: 'none' }}>DESCRIPTION OF ITEM</th>
+                        {receiptData.isGstBill !== false && <th style={{ width: '15%', borderTop: 'none' }}>HSN/SAC</th>}
+                        <th style={{ width: '10%', borderTop: 'none' }}>QTY</th>
+                        <th style={{ width: '10%', borderTop: 'none' }}>RATE</th>
+                        <th style={{ width: '15%', borderTop: 'none' }}>AMOUNT</th>
+                      </tr>
+                    </thead>
                     <tbody style={{ verticalAlign: 'top' }}>
                       {chunk.map((item, itemIndex) => (
                         <tr key={itemIndex}>
-                          <td style={{ textAlign: 'center', borderBottom: 'none', borderTop: 'none' }}>{(index * 35) + itemIndex + 1}</td><td style={{ borderBottom: 'none', borderTop: 'none' }}>{item.name}</td><td style={{ textAlign: 'center', borderBottom: 'none', borderTop: 'none' }}>{item.hsn || "-"}</td><td style={{ textAlign: 'center', borderBottom: 'none', borderTop: 'none' }}>{item.qty}</td><td style={{ textAlign: 'center', borderBottom: 'none', borderTop: 'none' }}>{item.rate.toFixed(2)}</td><td style={{ textAlign: 'center', borderBottom: 'none', borderTop: 'none' }}>{item.amount.toFixed(2)}</td>
+                          <td style={{ textAlign: 'center', borderBottom: 'none', borderTop: 'none' }}>{(index * 35) + itemIndex + 1}</td>
+                          <td style={{ borderBottom: 'none', borderTop: 'none' }}>{item.name}</td>
+                          {receiptData.isGstBill !== false && <td style={{ textAlign: 'center', borderBottom: 'none', borderTop: 'none' }}>{item.hsn || "-"}</td>}
+                          <td style={{ textAlign: 'center', borderBottom: 'none', borderTop: 'none' }}>{item.qty}</td>
+                          <td style={{ textAlign: 'center', borderBottom: 'none', borderTop: 'none' }}>{item.rate.toFixed(2)}</td>
+                          <td style={{ textAlign: 'center', borderBottom: 'none', borderTop: 'none' }}>{item.amount.toFixed(2)}</td>
                         </tr>
                       ))}
-                      <tr style={{ height: '100%' }}><td style={{ borderTop: 'none', borderBottom: 'none' }}></td><td style={{ borderTop: 'none', borderBottom: 'none' }}></td><td style={{ borderTop: 'none', borderBottom: 'none' }}></td><td style={{ borderTop: 'none', borderBottom: 'none' }}></td><td style={{ borderTop: 'none', borderBottom: 'none' }}></td><td style={{ borderTop: 'none', borderBottom: 'none' }}></td></tr>
+                      <tr style={{ height: '100%' }}>
+                        <td style={{ borderTop: 'none', borderBottom: 'none' }}></td>
+                        <td style={{ borderTop: 'none', borderBottom: 'none' }}></td>
+                        {receiptData.isGstBill !== false && <td style={{ borderTop: 'none', borderBottom: 'none' }}></td>}
+                        <td style={{ borderTop: 'none', borderBottom: 'none' }}></td>
+                        <td style={{ borderTop: 'none', borderBottom: 'none' }}></td>
+                        <td style={{ borderTop: 'none', borderBottom: 'none' }}></td>
+                      </tr>
                     </tbody>
                   </table>
                 </div>
@@ -909,9 +967,15 @@ function App() {
                     <div style={{ flex: '40%' }}>
                       <div style={{ display: 'flex', borderBottom: '1px solid black' }}><div style={{ flex: 1, padding: '4px 8px', borderRight: '1px solid black', fontWeight: 'bold' }}>TOTAL AMOUNT IN RS.</div><div style={{ width: '100px', padding: '4px 8px', textAlign: 'right' }}>{receiptData.grossAmount.toFixed(2)}</div></div>
                       {receiptData.discount > 0 && <div style={{ display: 'flex', borderBottom: '1px solid black' }}><div style={{ flex: 1, padding: '4px 8px', borderRight: '1px solid black', fontWeight: 'bold' }}>DISCOUNT</div><div style={{ width: '100px', padding: '4px 8px', textAlign: 'right' }}>-{receiptData.discount.toFixed(2)}</div></div>}
-                      <div style={{ display: 'flex', borderBottom: '1px solid black' }}><div style={{ flex: 1, padding: '4px 8px', borderRight: '1px solid black', fontWeight: 'bold' }}>TAXABLE AMOUNT IN RS.</div><div style={{ width: '100px', padding: '4px 8px', textAlign: 'right' }}>{receiptData.taxable.toFixed(2)}</div></div>
-                      <div style={{ display: 'flex', borderBottom: '1px solid black' }}><div style={{ flex: 1, padding: '4px 8px', borderRight: '1px solid black', fontWeight: 'bold' }}>CGST</div><div style={{ width: '100px', padding: '4px 8px', textAlign: 'right' }}>{receiptData.cgst.toFixed(2)}</div></div>
-                      <div style={{ display: 'flex', borderBottom: '1px solid black' }}><div style={{ flex: 1, padding: '4px 8px', borderRight: '1px solid black', fontWeight: 'bold' }}>SGST</div><div style={{ width: '100px', padding: '4px 8px', textAlign: 'right' }}>{receiptData.sgst.toFixed(2)}</div></div>
+                      
+                      {receiptData.isGstBill !== false && (
+                        <>
+                          <div style={{ display: 'flex', borderBottom: '1px solid black' }}><div style={{ flex: 1, padding: '4px 8px', borderRight: '1px solid black', fontWeight: 'bold' }}>TAXABLE AMOUNT IN RS.</div><div style={{ width: '100px', padding: '4px 8px', textAlign: 'right' }}>{receiptData.taxable.toFixed(2)}</div></div>
+                          <div style={{ display: 'flex', borderBottom: '1px solid black' }}><div style={{ flex: 1, padding: '4px 8px', borderRight: '1px solid black', fontWeight: 'bold' }}>CGST</div><div style={{ width: '100px', padding: '4px 8px', textAlign: 'right' }}>{receiptData.cgst.toFixed(2)}</div></div>
+                          <div style={{ display: 'flex', borderBottom: '1px solid black' }}><div style={{ flex: 1, padding: '4px 8px', borderRight: '1px solid black', fontWeight: 'bold' }}>SGST</div><div style={{ width: '100px', padding: '4px 8px', textAlign: 'right' }}>{receiptData.sgst.toFixed(2)}</div></div>
+                        </>
+                      )}
+                      
                       <div style={{ display: 'flex' }}><div style={{ flex: 1, padding: '4px 8px', borderRight: '1px solid black', fontWeight: 'bold', fontSize: '11pt' }}>GRAND TOTAL IN RS.</div><div style={{ width: '100px', padding: '4px 8px', textAlign: 'right', fontWeight: 'bold', fontSize: '11pt' }}>{receiptData.finalTotal.toFixed(2)}</div></div>
                     </div>
                   </div>
