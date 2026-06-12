@@ -16,14 +16,14 @@ const db = new Pool({
 // ✉️ EMAIL CONFIGURATION (NODEMAILER)
 // ==========================================
 // ⚠️ IMPORTANT: CHANGE THESE TWO LINES TO YOUR REAL DETAILS!
-const YOUR_GMAIL_ID = "YOUR_REAL_EMAIL@gmail.com"; 
-const YOUR_GMAIL_APP_PASSWORD = "xxxx xxxx xxxx xxxx"; // <-- The 16-letter App Password from Google Security
+const YOUR_GMAIL_ID = "bhav.taal.manager@gmail.com"; 
+const YOUR_GMAIL_APP_PASSWORD = "imqq unpa wixv tjfg"; // <-- The 16-letter App Password from Google Security
 
 const transporter = nodemailer.createTransport({
   service: 'gmail',
   auth: {
-    user: bhav.taal.manager@gmail.com,
-    pass: imqqunpawixvtjfg
+    user: YOUR_GMAIL_ID,
+    pass: YOUR_GMAIL_APP_PASSWORD
   }
 });
 
