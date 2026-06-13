@@ -14,7 +14,7 @@ const db = new Pool({
 // ==========================================
 // ✉️ EMAIL CONFIGURATION (GOOGLE APPS SCRIPT)
 // ==========================================
-// PASTE THE LONG URL FROM STEP 2 HERE:
+// PASTE THE LONG URL FROM YOUR GOOGLE SCRIPT HERE:
 const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyvXXbKWaaNSPOHKyyMsdnz3_VlHavKEdj9cvbpiH7OlwMataQecOSb6HB3dD81O7lhjA/exec"; 
 
 // ==========================================
@@ -41,7 +41,6 @@ app.post('/api/send-otp', async (req, res) => {
     if (type === 'register' && shopRes.rows.length > 0) return res.status(400).json({ success: false, message: "This email is already registered." });
     if (type === 'forgot' && shopRes.rows.length === 0) return res.status(400).json({ success: false, message: "Email not found in our system." });
 
-    // 1. Generate OTP and save to Database FIRST
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
     const expires_at = new Date(Date.now() + 10 * 60000); 
 
@@ -51,12 +50,10 @@ app.post('/api/send-otp', async (req, res) => {
       [email, otp, expires_at]
     );
 
-    // 2. Print to Render Console (Developer Bypass Backup)
     console.log(`\n=========================================`);
     console.log(`🔑 OTP FOR ${email}: ${otp}`);
     console.log(`=========================================\n`);
 
-    // 3. Send email using the Google Apps Script Loophole
     const emailPayload = {
       email: email,
       subject: type === 'register' ? 'Your Bhav-Taal Verification Code' : 'Bhav-Taal Password Reset OTP',
@@ -73,19 +70,13 @@ app.post('/api/send-otp', async (req, res) => {
     try {
       const response = await fetch(GOOGLE_SCRIPT_URL, {
         method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
+        headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(emailPayload),
-        redirect: 'follow' // Required for Google Scripts
+        redirect: 'follow'
       });
 
       const result = await response.json();
-      
-      if (!result.success) {
-        console.error("Google Script Rejected the request:", result.error);
-        throw new Error("Google Script failed");
-      }
+      if (!result.success) throw new Error("Google Script failed");
 
       res.json({ success: true, message: "OTP sent successfully!" });
     } catch (apiError) {
@@ -166,17 +157,23 @@ app.post('/api/reset-password', async (req, res) => {
 });
 
 app.post('/api/subscribe', async (req, res) => {
-  const { shop_id, months } = req.body;
+  const { shop_id, days } = req.body;
   try {
     const shop = await db.query('SELECT subscription_end FROM shops WHERE shop_id = $1', [shop_id]);
     let currentEnd = new Date(shop.rows[0].subscription_end);
     if (currentEnd < new Date()) currentEnd = new Date();
-    currentEnd.setMonth(currentEnd.getMonth() + parseInt(months));
+    
+    // Exact day calculation
+    currentEnd.setDate(currentEnd.getDate() + parseInt(days));
+    
     await db.query('UPDATE shops SET subscription_end = $1 WHERE shop_id = $2', [currentEnd, shop_id]);
     res.json({ success: true, new_end: currentEnd });
   } catch (err) { res.status(500).json({ success: false, message: "Subscription failed" }); }
 });
 
+// ==========================================
+// PROFILE MANAGEMENT
+// ==========================================
 app.get('/api/shop/:id', async (req, res) => {
   try {
     const result = await db.query('SELECT * FROM shops WHERE shop_id = $1', [req.params.id]);
@@ -195,6 +192,9 @@ app.put('/api/shop/:id', async (req, res) => {
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
+// ==========================================
+// INVENTORY MANAGEMENT
+// ==========================================
 app.get('/api/products/:shopId', async (req, res) => {
   try {
     const result = await db.query('SELECT * FROM products WHERE shop_id = $1 ORDER BY product_id DESC', [req.params.shopId]);
@@ -231,6 +231,9 @@ app.delete('/api/products/:id', async (req, res) => {
   } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
+// ==========================================
+// BILLING & TRANSACTIONS
+// ==========================================
 app.get('/api/transactions/:shopId', async (req, res) => {
   try {
     const result = await db.query('SELECT * FROM transactions WHERE shop_id = $1 ORDER BY transaction_id DESC', [req.params.shopId]);
