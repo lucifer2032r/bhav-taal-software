@@ -114,7 +114,7 @@ function App() {
       setIsExpired(false);
       const days = Math.floor(distance / (1000 * 60 * 60 * 24)); const hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60)); const minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60)); const seconds = Math.floor((distance % (1000 * 60)) / 1000);
       if (days <= 7) { setTimeLeftStr(`${days}d ${hours}h ${minutes}m ${seconds}s`); if (days <= 1) setTimeColor(t.danger); else if (days <= 3) setTimeColor(t.warning); else setTimeColor(t.success); } 
-      else { setTimeLeftStr(`Ends: ${new Date(subEndDate).toLocaleDateString()}`); setTimeColor(t.textMuted); }
+      else { setTimeLeftStr(`Ends: ${new Date(subEndDate).toLocaleDateString('en-IN', { day: '2-digit', month: '2-digit', year: 'numeric' })}`); setTimeColor(t.textMuted); }
     }, 1000);
     return () => clearInterval(interval);
   }, [subEndDate, t]);
