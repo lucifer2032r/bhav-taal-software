@@ -218,7 +218,20 @@ function App() {
   // ==========================================
   // DASHBOARD HANDLERS
   // ==========================================
-  const handlePurchase = async (months) => { setIsLoading(true); try { const res = await axios.post(`${API_URL}/api/subscribe`, { shop_id: currentShopId, months }); setSubEndDate(res.data.new_end); setIsExpired(false); setActiveTab("ledger"); showMessage("🎉 Payment Successful!"); } catch (err) { showMessage("❌ Payment Failed."); } setIsLoading(false); };
+  const handlePurchase = async (days) => { 
+    setIsLoading(true); 
+    try { 
+      const res = await axios.post(`${API_URL}/api/subscribe`, { shop_id: currentShopId, days }); 
+      setSubEndDate(res.data.new_end); 
+      setIsExpired(false); 
+      setActiveTab("ledger"); 
+      showMessage("🎉 Payment Successful!"); 
+    } catch (err) { 
+      showMessage("❌ Payment Failed."); 
+    } 
+    setIsLoading(false); 
+  };
+  
   const handleAddToCart = (product) => { const existing = cart.find(c => c.product_id === product.product_id); if (existing) setCart(cart.map(c => c.product_id === product.product_id ? { ...c, qty: c.qty + 1 } : c)); else setCart([...cart, { ...product, qty: 1, rate: parseFloat(product.item_rate) }]); setSearchQuery(""); setIsSearchOpen(false); };
   const updateCartQty = (id, newQty) => { if (newQty < 1) return; setCart(cart.map(c => c.product_id === id ? { ...c, qty: parseInt(newQty) } : c)); };
   const updateCartRate = (id, newRate) => { setCart(cart.map(c => c.product_id === id ? { ...c, rate: parseFloat(newRate) || 0 } : c)); };
@@ -576,9 +589,40 @@ function App() {
             <div style={{ animation: 'fadeIn 0.4s ease', width: '100%', maxWidth: '1000px', margin: '0 auto' }}>
               <div style={{ textAlign: 'center', marginBottom: '40px' }}><h2 style={{ color: t.text, fontSize: '32px', margin: '0 0 10px 0' }}>{tText('choose_plan')}</h2><p style={{ color: t.textMuted, fontSize: '16px' }}>{tText('sub_subtitle')}</p></div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr 1fr', gap: '24px' }}>
-                <div style={{ backgroundColor: t.card, border: `1px solid ${t.border}`, borderRadius: '20px', padding: '30px', display: 'flex', flexDirection: 'column' }}><h3 style={{ margin: '0 0 10px 0', color: t.text }}>{tText('monthly')}</h3><div style={{ fontSize: '36px', fontWeight: 'bold', color: t.primary, marginBottom: '20px' }}>₹299 <span style={{ fontSize: '16px', color: t.textMuted, fontWeight: 'normal' }}>/mo</span></div><ul style={{ padding: 0, listStyle: 'none', margin: '0 0 30px 0', flex: 1 }}><li style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px', color: t.text }}><CheckCircle2 color={t.success} size={18}/> Full POS Access</li><li style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px', color: t.text }}><CheckCircle2 color={t.success} size={18}/> Email Receipts</li></ul><button onClick={() => handlePurchase(1)} style={{ ...btnPrimary, backgroundColor: t.bg, color: t.primary, border: `1px solid ${t.primary}` }}>{tText('sub_month')}</button></div>
-                <div style={{ backgroundColor: t.card, border: `2px solid ${t.primary}`, borderRadius: '20px', padding: '30px', position: 'relative', display: 'flex', flexDirection: 'column', boxShadow: `0 10px 30px ${t.primary}20` }}><div style={{ position: 'absolute', top: '-15px', left: '50%', transform: 'translateX(-50%)', backgroundColor: t.primary, color: 'white', padding: '5px 15px', borderRadius: '20px', fontSize: '12px', fontWeight: 'bold', letterSpacing: '1px' }}>{tText('most_pop')}</div><h3 style={{ margin: '0 0 10px 0', color: t.text }}>{tText('half_yearly')}</h3><div style={{ fontSize: '36px', fontWeight: 'bold', color: t.primary, marginBottom: '20px' }}>₹1599 <span style={{ fontSize: '16px', color: t.textMuted, fontWeight: 'normal' }}>/6 mo</span></div><ul style={{ padding: 0, listStyle: 'none', margin: '0 0 30px 0', flex: 1 }}><li style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px', color: t.text }}><CheckCircle2 color={t.success} size={18}/> Save ₹195 immediately</li><li style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px', color: t.text }}><CheckCircle2 color={t.success} size={18}/> Full POS Access</li><li style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px', color: t.text }}><CheckCircle2 color={t.success} size={18}/> Priority Support</li></ul><button onClick={() => handlePurchase(6)} style={{ ...btnPrimary, boxShadow: `0 4px 15px ${t.primary}40` }}>{tText('sub_6mo')}</button></div>
-                <div style={{ backgroundColor: t.card, border: `1px solid ${t.border}`, borderRadius: '20px', padding: '30px', display: 'flex', flexDirection: 'column' }}><h3 style={{ margin: '0 0 10px 0', color: t.text }}>{tText('yearly')}</h3><div style={{ fontSize: '36px', fontWeight: 'bold', color: t.primary, marginBottom: '20px' }}>₹2999 <span style={{ fontSize: '16px', color: t.textMuted, fontWeight: 'normal' }}>/yr</span></div><ul style={{ padding: 0, listStyle: 'none', margin: '0 0 30px 0', flex: 1 }}><li style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px', color: t.text }}><CheckCircle2 color={t.success} size={18}/> Save ₹589 immediately</li><li style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px', color: t.text }}><CheckCircle2 color={t.success} size={18}/> Full POS Access</li><li style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px', color: t.text }}><CheckCircle2 color={t.success} size={18}/> Custom Domains</li></ul><button onClick={() => handlePurchase(12)} style={{ ...btnPrimary, backgroundColor: t.bg, color: t.primary, border: `1px solid ${t.primary}` }}>{tText('sub_yr')}</button></div>
+                
+                <div style={{ backgroundColor: t.card, border: `1px solid ${t.border}`, borderRadius: '20px', padding: '30px', display: 'flex', flexDirection: 'column' }}>
+                  <h3 style={{ margin: '0 0 10px 0', color: t.text }}>{tText('monthly')}</h3>
+                  <div style={{ fontSize: '36px', fontWeight: 'bold', color: t.primary, marginBottom: '20px' }}>₹299 <span style={{ fontSize: '16px', color: t.textMuted, fontWeight: 'normal' }}>/mo</span></div>
+                  <ul style={{ padding: 0, listStyle: 'none', margin: '0 0 30px 0', flex: 1 }}>
+                    <li style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px', color: t.text }}><CheckCircle2 color={t.success} size={18}/> Unlimited POS Invoices</li>
+                    <li style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px', color: t.text }}><CheckCircle2 color={t.success} size={18}/> Secure Cloud Auto-Backup</li>
+                    <li style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px', color: t.text }}><CheckCircle2 color={t.success} size={18}/> Standard Email Support</li>
+                  </ul>
+                  <button onClick={() => handlePurchase(30)} style={{ ...btnPrimary, backgroundColor: t.bg, color: t.primary, border: `1px solid ${t.primary}` }}>{tText('sub_month')}</button>
+                </div>
+                
+                <div style={{ backgroundColor: t.card, border: `2px solid ${t.primary}`, borderRadius: '20px', padding: '30px', position: 'relative', display: 'flex', flexDirection: 'column', boxShadow: `0 10px 30px ${t.primary}20` }}>
+                  <div style={{ position: 'absolute', top: '-15px', left: '50%', transform: 'translateX(-50%)', backgroundColor: t.primary, color: 'white', padding: '5px 15px', borderRadius: '20px', fontSize: '12px', fontWeight: 'bold', letterSpacing: '1px' }}>{tText('most_pop')}</div>
+                  <h3 style={{ margin: '0 0 10px 0', color: t.text }}>{tText('half_yearly')}</h3>
+                  <div style={{ fontSize: '36px', fontWeight: 'bold', color: t.primary, marginBottom: '20px' }}>₹1599 <span style={{ fontSize: '16px', color: t.textMuted, fontWeight: 'normal' }}>/6 mo</span></div>
+                  <ul style={{ padding: 0, listStyle: 'none', margin: '0 0 30px 0', flex: 1 }}>
+                    <li style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px', color: t.text }}><CheckCircle2 color={t.success} size={18}/> All Monthly Features</li>
+                    <li style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px', color: t.text }}><CheckCircle2 color={t.success} size={18}/> Advanced GST & Khata Reports</li>
+                    <li style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px', color: t.text }}><CheckCircle2 color={t.success} size={18}/> High Priority Tech Support</li>
+                  </ul>
+                  <button onClick={() => handlePurchase(180)} style={{ ...btnPrimary, boxShadow: `0 4px 15px ${t.primary}40` }}>{tText('sub_6mo')}</button>
+                </div>
+                
+                <div style={{ backgroundColor: t.card, border: `1px solid ${t.border}`, borderRadius: '20px', padding: '30px', display: 'flex', flexDirection: 'column' }}>
+                  <h3 style={{ margin: '0 0 10px 0', color: t.text }}>{tText('yearly')}</h3>
+                  <div style={{ fontSize: '36px', fontWeight: 'bold', color: t.primary, marginBottom: '20px' }}>₹2999 <span style={{ fontSize: '16px', color: t.textMuted, fontWeight: 'normal' }}>/yr</span></div>
+                  <ul style={{ padding: 0, listStyle: 'none', margin: '0 0 30px 0', flex: 1 }}>
+                    <li style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px', color: t.text }}><CheckCircle2 color={t.success} size={18}/> Save ₹589 immediately</li>
+                    <li style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px', color: t.text }}><CheckCircle2 color={t.success} size={18}/> 24/7 Dedicated Support Line</li>
+                    <li style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '10px', color: t.text }}><CheckCircle2 color={t.success} size={18}/> 1-on-1 Software Onboarding</li>
+                  </ul>
+                  <button onClick={() => handlePurchase(360)} style={{ ...btnPrimary, backgroundColor: t.bg, color: t.primary, border: `1px solid ${t.primary}` }}>{tText('sub_yr')}</button>
+                </div>
               </div>
               <div style={{ textAlign: 'center', marginTop: '30px', color: t.textMuted, fontSize: '14px', display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px' }}><CreditCard size={18} /> {tText('secured_by')}</div>
             </div>
@@ -681,7 +725,7 @@ function App() {
                 </div>
 
                 <div style={{ ...cardStyle, overflowX: 'auto', padding: '0', height: 'fit-content' }}>
-                  <div style={{ padding: '25px', borderBottom: `1px solid ${t.border}` }}><h3 style={{ margin: 0, color: t.text }}>{tText('recent_tx')}</h3></div>
+                  <div style={{ padding: '25px', borderBottom: `1px solid ${t.border}` }}><h3 style={{ margin: '0 0 10px 0', color: t.text }}>{tText('recent_tx')}</h3></div>
                   <div style={{ overflowX: 'auto', padding: '0 25px 25px 25px' }}>
                     <table style={{ width: '100%', borderCollapse: 'collapse', textAlign: 'left', marginTop: '15px' }}>
                       <thead><tr style={{ borderBottom: `2px solid ${t.border}` }}><th style={{ padding: '15px', color: t.textMuted }}>{tText('date')}</th><th style={{ padding: '15px', color: t.textMuted }}>{tText('party')}</th><th style={{ padding: '15px', color: t.textMuted }}>{tText('status')}</th><th style={{ padding: '15px', color: t.textMuted, textAlign: 'right' }}>{tText('total')}</th><th style={{ padding: '15px', color: t.textMuted, textAlign: 'center' }}>{tText('actions')}</th></tr></thead>
