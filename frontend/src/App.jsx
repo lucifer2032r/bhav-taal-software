@@ -156,8 +156,8 @@ function App() {
   const handleForgotSendOtp = async (e) => {
     e.preventDefault(); setAuthMessage(""); setAuthSuccess(""); setIsLoading(true);
     try {
-      const res = await axios.post(`${API_URL}/api/send-otp`, { email: regEmail, type: 'forgot' });
-      if (res.data.success) { setForgotStep(2); setAuthSuccess("✅ Recovery OTP sent to your email!"); }
+      const res = await axios.post(`${API_URL}/api/send-otp`, { username: loginUser, type: 'forgot' });
+      if (res.data.success) { setForgotStep(2); setAuthSuccess("✅ " + res.data.message); }
     } catch (err) { setAuthMessage(err.response ? err.response.data.message : "❌ Failed to send OTP."); }
     setIsLoading(false);
   };
@@ -167,7 +167,7 @@ function App() {
     if (otpToken.length < 6) return setAuthMessage("❌ Please enter all 6 digits.");
     setIsLoading(true);
     try {
-      const res = await axios.post(`${API_URL}/api/verify-forgot-otp`, { email: regEmail, otp: otpToken });
+      const res = await axios.post(`${API_URL}/api/verify-forgot-otp`, { username: loginUser, otp: otpToken });
       if (res.data.success) { setForgotStep(3); setAuthSuccess("✅ OTP Verified! Choose an option below."); }
     } catch (err) { setAuthMessage(err.response ? err.response.data.message : "❌ Invalid OTP."); }
     setIsLoading(false);
@@ -176,7 +176,7 @@ function App() {
   const handleRevealPassword = async () => {
     setAuthMessage(""); setAuthSuccess(""); setIsLoading(true);
     try {
-      const res = await axios.post(`${API_URL}/api/reveal-password`, { email: regEmail, otp: otpToken });
+      const res = await axios.post(`${API_URL}/api/reveal-password`, { username: loginUser, otp: otpToken });
       if (res.data.success) { setForgotStep(5); setRevealedPass(res.data.password); setRevealTimer(20); }
     } catch (err) { setAuthMessage("❌ Failed to reveal password."); }
     setIsLoading(false);
@@ -187,7 +187,7 @@ function App() {
     if (loginPass !== confirmPass) return setAuthMessage("❌ Passwords do not match!");
     setIsLoading(true);
     try {
-      const res = await axios.post(`${API_URL}/api/reset-password`, { email: regEmail, newPassword: loginPass, otp: otpToken });
+      const res = await axios.post(`${API_URL}/api/reset-password`, { username: loginUser, newPassword: loginPass, otp: otpToken });
       if (res.data.success) { setAuthMode("login"); resetAuthStates(); setLoginPass(""); setConfirmPass(""); setAuthSuccess("✅ Password updated successfully! Please log in."); }
     } catch (err) { setAuthMessage("❌ Failed to reset password."); }
     setIsLoading(false);
