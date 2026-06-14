@@ -943,10 +943,10 @@ function App() {
                       
                       {/* --- INJECTED QR CODE IN PRINT LAYOUT --- */}
                       {receiptData.upiQr && (
-                         <div style={{ width: '100px', marginLeft: '10px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-                           <img src={receiptData.upiQr} alt="Scan to Pay" style={{ width: '80px', height: '80px', objectFit: 'contain', border: '1px solid #000', padding: '4px', borderRadius: '4px' }} />
-                           <div style={{ fontSize: '8pt', fontWeight: 'bold', marginTop: '6px', textAlign: 'center' }}>SCAN TO PAY</div>
-                         </div>
+                        <div style={{ width: '150px', marginLeft: '15px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+                          <img src={receiptData.upiQr} alt="Scan to Pay" style={{ width: '130px', height: '130px', objectFit: 'contain', border: '1px solid #000', padding: '4px', borderRadius: '4px' }} />
+                          <div style={{ fontSize: '10pt', fontWeight: 'bold', marginTop: '6px', textAlign: 'center' }}>SCAN TO PAY</div>
+                        </div>
                       )}
 
                     </div>
