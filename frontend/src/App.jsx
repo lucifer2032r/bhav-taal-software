@@ -2,25 +2,23 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { ReactTransliterate } from 'react-transliterate';
 import "react-transliterate/dist/index.css";
-import { LayoutDashboard, ShoppingCart, PackageSearch, PlusCircle, LogOut, Menu, Moon, Sun, ChevronLeft, Edit3, Trash2, Printer, Search, Download, Settings, Image as ImageIcon, Percent, IndianRupee, X, AlertTriangle, Receipt, Box, Clock, CreditCard, CheckCircle2, Lock, Pencil, FileText, ArrowDownRight, ArrowUpRight, Globe, Eye, EyeOff, Mail, ShieldAlert, KeyRound, ToggleLeft, ToggleRight } from 'lucide-react';
+import { LayoutDashboard, ShoppingCart, PackageSearch, PlusCircle, LogOut, Menu, Moon, Sun, ChevronLeft, Edit3, Trash2, Printer, Search, Download, Settings, Image as ImageIcon, Percent, IndianRupee, X, AlertTriangle, Receipt, Box, Clock, CreditCard, CheckCircle2, Lock, Pencil, FileText, ArrowDownRight, ArrowUpRight, Globe, Eye, EyeOff, Mail, ShieldAlert, KeyRound, ToggleLeft, ToggleRight, QrCode } from 'lucide-react';
 
 // ==========================================
 // 🚀 CLOUD CONNECTION & RAZORPAY FRONTEND
 // ==========================================
 const API_URL = "https://bhav-taal-software.onrender.com"; 
-const RAZORPAY_KEY_ID = "rzp_test_T13wSE9FIt2rjT"; // Safe to be public in frontend
+const RAZORPAY_KEY_ID = "rzp_test_T13wSE9FIt2rjT"; 
 
 // ==========================================
 // 🌐 TRANSLATION DICTIONARY
 // ==========================================
 const translations = {
   en: {
-    login_title: "Secure License Gateway", reg_title: "Create a New Business", biz_name: "Business Name", user: "Username", pass: "Password", conf_pass: "Confirm Password", btn_trial: "Start 7-Day Free Trial", btn_auth: "Authenticate User", switch_login: "Already have an account? Log In", switch_reg: "Don't have an account? Sign Up", dev: "©Developed by Lakshyadeepsinh Chauhan", auth_wait: "Authenticating...", license_exp: "License Expired", nav_dash: "Dashboard", nav_pos: "Point of Sale", nav_inv: "Inventory", nav_add: "Add Material", nav_shop: "Shop Settings", valid_until: "License Valid Until", upgrade_plan: "Upgrade Plan", alert_due: "Alert: You have {count} Party Payments that are DUE TODAY or OVERDUE!", system_online: "System Online", quick_act: "Quick Action", manage_inv: "Manage Inventory", bills_today: "Bills Today", tot_mat: "Total Materials", to_recv: "To Receive (Khata)", to_pay: "To Pay (Payables)", stock_alerts: "Stock Alerts", all_opt: "All optimal!", left: "Left", alert_at: "Alert at", unsettled_bills: "Unsettled Bills", no_pending: "No pending payments!", due: "Due", recent_tx: "Recent Transactions", date: "Date", party: "Party", status: "Status", total: "Total", actions: "Actions", no_tx: "No transactions yet.", edit: "Edit", print: "Print", old_bill: "Old Bill", warning_gst: "⚠️ Warning: You have not set your GST Number.", live_margin: "Live Margin", checkout: "Checkout Terminal", editing_bill: "Editing Bill", tx_type: "Transaction Type", sell: "SELL (Customer)", purch: "PURCHASE (Wholesaler)", cust_name: "Customer Name", wholesaler_name: "Wholesaler Name", cust_gst: "Customer GSTIN (Optional)", whole_gst: "Wholesaler GSTIN (Optional)", pay_from_cust: "Payment from Customer", pay_to_whole: "Payment to Wholesaler", settled: "Settled (Paid)", unsettled_recv: "Unsettled (Khata / To Receive)", unsettled_pay: "Unsettled (Due / To Pay)", promised_date: "Promised Settlement Date (Optional)", search_add: "Search & Add Material to Cart", kb_mode: "Keyboard", item: "Item", rate: "Rate (₹)", qty: "Qty", amount: "Amount", cart_empty: "Cart is empty.", discount: "Apply Overall Discount (Optional)", final_pay: "Final Amount Payable", tot_pay: "Total Amount to Pay", gst_inc: "(GST Inc.)", gross: "Gross", taxable: "Taxable", btn_save_print: "Save Changes & Re-Print", btn_gen_inv: "Generate Multi-Item Invoice", cancel_edit: "Cancel Editing", inv_mgmt: "Inventory Management", btn_add_new: "+ Add New Item", mat_hsn: "Material (HSN Sorted)", purch_rs: "Purch. (₹)", sell_rs: "Sell Rate (₹)", stock: "Stock", alert: "Alert", btn_save: "Save", btn_cancel: "Cancel", new_mat: "New Material", kb_en: "English (Standard)", kb_gu: "Gujarati (Phonetic Magic)", mat_en: "Material Name (English)", mat_gu: "Regional Name (Gujarati)", pricing: "Pricing & Taxation", rate_inc_gst: "Rate Includes GST?", yes_inc: "Yes (Inclusive)", no_exc: "No (Exclusive)", gst_pct: "GST / Tax (%)", hsn_code: "HSN / SAC Code", stock_ctrl: "Stock Control", init_stock: "Initial Stock", alert_below: "Alert Below", btn_vault: "Save to Vault", biz_prof: "Business Profile Setup", biz_logo: "Business Logo (Optional)", gen_info: "General Information", gst_comp: "GST Number (Optional)", owner_name: "Owner Name", address: "Address", contact: "Contact Number", email: "Email Address", bank_details: "Bank Details (Printed on Bill)", bank_name: "Bank Name", ac_no: "A/C Number", ifsc: "IFSC Code", biz_cat: "Business Category", btn_save_prof: "Save Business Profile", choose_plan: "Choose Your License Plan", sub_subtitle: "Secure, full-stack POS and Inventory management for your business.", monthly: "Monthly Plan", half_yearly: "Half-Yearly", yearly: "Yearly Plan", most_pop: "MOST POPULAR", sub_month: "Subscribe Monthly", sub_6mo: "Subscribe for 6 Months", sub_yr: "Subscribe Yearly", secured_by: "Payments secured by Razorpay", processing: "Processing Task... Please Wait",
-    email_req: "Email Address", phone_req: "Phone Number", get_otp: "Get OTP to Register", enter_otp: "Enter 6-Digit OTP", verify_reg: "Verify OTP & Start Trial", forgot_pass: "Forgot Password?", forgot_title: "Account Recovery", send_recovery: "Send Recovery OTP", verify_recovery: "Verify OTP", opt_reveal: "Reveal Password", opt_reset: "Create New Password", new_pass: "New Password", update_pass: "Update Password", back_login: "Back to Login", pass_hide: "Password hiding in", your_pass: "Your password is:"
+    login_title: "Secure License Gateway", reg_title: "Create a New Business", biz_name: "Business Name", user: "Username", pass: "Password", conf_pass: "Confirm Password", btn_trial: "Start 7-Day Free Trial", btn_auth: "Authenticate User", switch_login: "Already have an account? Log In", switch_reg: "Don't have an account? Sign Up", dev: "©Developed by Lakshyadeepsinh Chauhan", auth_wait: "Authenticating...", license_exp: "License Expired", nav_dash: "Dashboard", nav_pos: "Point of Sale", nav_inv: "Inventory", nav_add: "Add Material", nav_shop: "Shop Settings", valid_until: "License Valid Until", upgrade_plan: "Upgrade Plan", alert_due: "Alert: You have {count} Party Payments that are DUE TODAY or OVERDUE!", system_online: "System Online", quick_act: "Quick Action", manage_inv: "Manage Inventory", bills_today: "Bills Today", tot_mat: "Total Materials", to_recv: "To Receive (Khata)", to_pay: "To Pay (Payables)", stock_alerts: "Stock Alerts", all_opt: "All optimal!", left: "Left", alert_at: "Alert at", unsettled_bills: "Unsettled Bills", no_pending: "No pending payments!", due: "Due", recent_tx: "Recent Transactions", date: "Date", party: "Party", status: "Status", total: "Total", actions: "Actions", no_tx: "No transactions yet.", edit: "Edit", print: "Print", old_bill: "Old Bill", warning_gst: "⚠️ Warning: You have not set your GST Number.", live_margin: "Live Margin", checkout: "Checkout Terminal", editing_bill: "Editing Bill", tx_type: "Transaction Type", sell: "SELL (Customer)", purch: "PURCHASE (Wholesaler)", cust_name: "Customer Name", wholesaler_name: "Wholesaler Name", cust_gst: "Customer GSTIN (Optional)", whole_gst: "Wholesaler GSTIN (Optional)", pay_from_cust: "Payment from Customer", pay_to_whole: "Payment to Wholesaler", settled: "Settled (Paid)", unsettled_recv: "Unsettled (Khata / To Receive)", unsettled_pay: "Unsettled (Due / To Pay)", promised_date: "Promised Settlement Date (Optional)", search_add: "Search & Add Material to Cart", kb_mode: "Keyboard", item: "Item", rate: "Rate (₹)", qty: "Qty", amount: "Amount", cart_empty: "Cart is empty.", discount: "Apply Overall Discount (Optional)", final_pay: "Final Amount Payable", tot_pay: "Total Amount to Pay", gst_inc: "(GST Inc.)", gross: "Gross", taxable: "Taxable", btn_save_print: "Save Changes & Re-Print", btn_gen_inv: "Generate Multi-Item Invoice", cancel_edit: "Cancel Editing", inv_mgmt: "Inventory Management", btn_add_new: "+ Add New Item", mat_hsn: "Material (HSN Sorted)", purch_rs: "Purch. (₹)", sell_rs: "Sell Rate (₹)", stock: "Stock", alert: "Alert", btn_save: "Save", btn_cancel: "Cancel", new_mat: "New Material", kb_en: "English (Standard)", kb_gu: "Gujarati (Phonetic Magic)", mat_en: "Material Name (English)", mat_gu: "Regional Name (Gujarati)", pricing: "Pricing & Taxation", rate_inc_gst: "Rate Includes GST?", yes_inc: "Yes (Inclusive)", no_exc: "No (Exclusive)", gst_pct: "GST / Tax (%)", hsn_code: "HSN / SAC Code", stock_ctrl: "Stock Control", init_stock: "Initial Stock", alert_below: "Alert Below", btn_vault: "Save to Vault", biz_prof: "Business Profile Setup", biz_logo: "Business Logo (Optional)", upi_qr: "UPI QR Code (Optional)", gen_info: "General Information", gst_comp: "GST Number (Optional)", owner_name: "Owner Name", address: "Address", contact: "Contact Number", email: "Email Address", bank_details: "Bank Details (Printed on Bill)", bank_name: "Bank Name", ac_no: "A/C Number", ifsc: "IFSC Code", biz_cat: "Business Category", btn_save_prof: "Save Business Profile", choose_plan: "Choose Your License Plan", sub_subtitle: "Secure, full-stack POS and Inventory management for your business.", monthly: "Monthly Plan", half_yearly: "Half-Yearly", yearly: "Yearly Plan", most_pop: "MOST POPULAR", sub_month: "Subscribe Monthly", sub_6mo: "Subscribe for 6 Months", sub_yr: "Subscribe Yearly", secured_by: "Payments secured by Razorpay", processing: "Processing Task... Please Wait", email_req: "Email Address", phone_req: "Phone Number", get_otp: "Get OTP to Register", enter_otp: "Enter 6-Digit OTP", verify_reg: "Verify OTP & Start Trial", forgot_pass: "Forgot Password?", forgot_title: "Account Recovery", send_recovery: "Send Recovery OTP", verify_recovery: "Verify OTP", opt_reveal: "Reveal Password", opt_reset: "Create New Password", new_pass: "New Password", update_pass: "Update Password", back_login: "Back to Login", pass_hide: "Password hiding in", your_pass: "Your password is:"
   },
   gu: {
-    login_title: "સુરક્ષિત લાયસન્સ ગેટવે", reg_title: "નવો વ્યાપાર બનાવો", biz_name: "વ્યાપારનું નામ", user: "યુઝરનેમ", pass: "પાસવર્ડ", conf_pass: "પાસવર્ડ કન્ફર્મ કરો", btn_trial: "7-દિવસની ફ્રી ટ્રાયલ શરૂ કરો", btn_auth: "લોગિન કરો", switch_login: "પહેલેથી એકાઉન્ટ છે? લોગિન કરો", switch_reg: "એકાઉન્ટ નથી? નવું બનાવો", dev: "©લક્ષ્યદીપસિંહ ચૌહાણ દ્વારા નિર્મિત", auth_wait: "પ્રમાણિત કરી રહ્યા છીએ...", license_exp: "લાયસન્સ સમાપ્ત", nav_dash: "ડેશબોર્ડ", nav_pos: "પોઇન્ટ ઓફ સેલ (બિલિંગ)", nav_inv: "ઇન્વેન્ટરી (સ્ટોક)", nav_add: "નવો માલ ઉમેરો", nav_shop: "દુકાન સેટિંગ્સ", valid_until: "લાયસન્સની માન્યતા", upgrade_plan: "પ્લાન અપગ્રેડ કરો", alert_due: "એલર્ટ: તમારી પાસે {count} પાર્ટીના પેમેન્ટ આજે બાકી છે!", system_online: "સિસ્ટમ ઓનલાઇન", quick_act: "ઝડપી ક્રિયા", manage_inv: "ઇન્વેન્ટરી મેનેજ કરો", bills_today: "આજના બિલ", tot_mat: "કુલ માલ", to_recv: "લેવાના બાકી (ખાતા)", to_pay: "ચૂકવવાના બાકી", stock_alerts: "સ્ટોક એલર્ટ્સ", all_opt: "બધું બરાબર છે!", left: "બાકી", alert_at: "એલર્ટ:", unsettled_bills: "બાકી બિલ", no_pending: "કોઈ બાકી ચૂકવણી નથી!", due: "બાકી:", recent_tx: "તાજેતરના વ્યવહારો", date: "તારીખ", party: "પાર્ટી", status: "સ્થિતિ", total: "કુલ", actions: "ક્રિયાઓ", no_tx: "કોઈ વ્યવહારો નથી.", edit: "એડિટ", print: "પ્રિન્ટ", old_bill: "જૂનું બિલ", warning_gst: "⚠️ ચેતવણી: તમે તમારો GST નંબર સેટ કર્યો નથી.", live_margin: "લાઇવ માર્જિન", checkout: "બિલિંગ ટર્મિનલ", editing_bill: "બિલ એડિટ થઈ રહ્યું છે", tx_type: "વ્યવહારનો પ્રકાર", sell: "વેચાણ (ગ્રાહકને)", purch: "ખરીદી (વેપારી પાસેથી)", cust_name: "ગ્રાહકનું નામ", wholesaler_name: "વેપારીનું નામ", cust_gst: "ગ્રાહકનો GSTIN (વૈકલ્પિક)", whole_gst: "વેપારીનો GSTIN (વૈકલ્પિક)", pay_from_cust: "ગ્રાહક તરફથી ચૂકવણી", pay_to_whole: "વેપારીને ચૂકવણી", settled: "ચૂકવેલ (જમા)", unsettled_recv: "બાકી (લેવાના)", unsettled_pay: "બાકી (ચૂકવવાના)", promised_date: "ચૂકવણીની તારીખ (વૈકલ્પિક)", search_add: "માલ શોધો અને બિલમાં ઉમેરો", kb_mode: "કીબોર્ડ", item: "વસ્તુ", rate: "ભાવ (₹)", qty: "જથ્થો", amount: "રકમ", cart_empty: "કાર્ટ ખાલી છે.", discount: "કુલ ડિસ્કાઉન્ટ (વૈકલ્પિક)", final_pay: "ચૂકવવાપાત્ર અંતિમ રકમ", tot_pay: "કુલ ચૂકવવાની રકમ", gst_inc: "(GST સાથે)", gross: "કુલ", taxable: "કરપાત્ર", btn_save_print: "સાચવો અને પ્રિન્ટ કરો", btn_gen_inv: "બિલ બનાવો", cancel_edit: "એડિટિંગ રદ કરો", inv_mgmt: "ઇન્વેન્ટરી મેનેજમેન્ટ", btn_add_new: "+ નવી વસ્તુ ઉમેરો", mat_hsn: "વસ્તુ (HSN પ્રમાણે)", purch_rs: "ખરીદ કિંમત (₹)", sell_rs: "વેચાણ કિંમત (₹)", stock: "સ્ટોક", alert: "એલર્ટ", btn_save: "સાચવો", btn_cancel: "રદ કરો", new_mat: "નવી વસ્તુ", kb_en: "અંગ્રેજી (સામાન્ય)", kb_gu: "ગુજરાતી (ફોનેટિક)", mat_en: "વસ્તુનું નામ (અંગ્રેજી)", mat_gu: "વસ્તુનું નામ (ગુજરાતી)", pricing: "કિંમત અને ટેક્સ", rate_inc_gst: "શું ભાવમાં GST શામેલ છે?", yes_inc: "હા (શામેલ છે)", no_exc: "ના (શામેલ નથી)", gst_pct: "GST / ટેક્સ (%)", hsn_code: "HSN / SAC કોડ", stock_ctrl: "સ્ટોક કંટ્રોલ", init_stock: "શરૂઆતનો સ્ટોક", alert_below: "સ્ટોક એલર્ટ", btn_vault: "સાચવો", biz_prof: "વ્યાપાર પ્રોફાઇલ સેટઅપ", biz_logo: "વ્યાપારનો લોગો (વૈકલ્પિક)", gen_info: "સામાન્ય માહિતી", gst_comp: "GST નંબર (વૈકલ્પિક)", owner_name: "માલિકનું નામ", address: "સરનામું", contact: "સંપર્ક નંબર", email: "ઈમેલ આઈડી", bank_details: "બેંકની વિગતો (બિલ પર છાપવા માટે)", bank_name: "બેંકનું નામ", ac_no: "એકાઉન્ટ નંબર", ifsc: "IFSC કોડ", biz_cat: "વ્યાપારની શ્રેણી", btn_save_prof: "પ્રોફાઇલ સાચવો", choose_plan: "તમારો લાયસન્સ પ્લાન પસંદ કરો", sub_subtitle: "તમારા વ્યવસાય માટે સુરક્ષિત POS અને ઇન્વેન્ટરી મેનેજમેન્ટ.", monthly: "માસિક પ્લાન", half_yearly: "અર્ધ-વાર્ષિક", yearly: "વાર્ષિક પ્લાન", most_pop: "સૌથી લોકપ્રિય", sub_month: "માસિક સબ્સ્ક્રાઇબ કરો", sub_6mo: "6 મહિના માટે સબ્સ્ક્રાઇબ કરો", sub_yr: "વાર્ષિક સબ્સ્ક્રાઇબ કરો", secured_by: "Payments secured by Razorpay", processing: "Processing Task... Please Wait",
-    email_req: "ઈમેલ આઈડી", phone_req: "ફોન નંબર", get_otp: "OTP મેળવો", enter_otp: "6-અંકનો OTP દાખલ કરો", verify_reg: "ચકાસો અને નોંધણી કરો", forgot_pass: "પાસવર્ડ ભૂલી ગયા છો?", forgot_title: "એકાઉન્ટ પુનઃપ્રાપ્તિ", send_recovery: "OTP મોકલો", verify_recovery: "OTP ચકાસો", opt_reveal: "પાસવર્ડ બતાવો", opt_reset: "નવો પાસવર્ડ બનાવો", new_pass: "નવો પાસવર્ડ", update_pass: "પાસવર્ડ અપડેટ કરો", back_login: "લોગિન પર પાછા ફરો", pass_hide: "પાસવર્ડ છુપાઈ જશે", your_pass: "તમારો પાસવર્ડ છે:"
+    login_title: "સુરક્ષિત લાયસન્સ ગેટવે", reg_title: "નવો વ્યાપાર બનાવો", biz_name: "વ્યાપારનું નામ", user: "યુઝરનેમ", pass: "પાસવર્ડ", conf_pass: "પાસવર્ડ કન્ફર્મ કરો", btn_trial: "7-દિવસની ફ્રી ટ્રાયલ શરૂ કરો", btn_auth: "લોગિન કરો", switch_login: "પહેલેથી એકાઉન્ટ છે? લોગિન કરો", switch_reg: "એકાઉન્ટ નથી? નવું બનાવો", dev: "©લક્ષ્યદીપસિંહ ચૌહાણ દ્વારા નિર્મિત", auth_wait: "પ્રમાણિત કરી રહ્યા છીએ...", license_exp: "લાયસન્સ સમાપ્ત", nav_dash: "ડેશબોર્ડ", nav_pos: "પોઇન્ટ ઓફ સેલ (બિલિંગ)", nav_inv: "ઇન્વેન્ટરી (સ્ટોક)", nav_add: "નવો માલ ઉમેરો", nav_shop: "દુકાન સેટિંગ્સ", valid_until: "લાયસન્સની માન્યતા", upgrade_plan: "પ્લાન અપગ્રેડ કરો", alert_due: "એલર્ટ: તમારી પાસે {count} પાર્ટીના પેમેન્ટ આજે બાકી છે!", system_online: "સિસ્ટમ ઓનલાઇન", quick_act: "ઝડપી ક્રિયા", manage_inv: "ઇન્વેન્ટરી મેનેજ કરો", bills_today: "આજના બિલ", tot_mat: "કુલ માલ", to_recv: "લેવાના બાકી (ખાતા)", to_pay: "ચૂકવવાના બાકી", stock_alerts: "સ્ટોક એલર્ટ્સ", all_opt: "બધું બરાબર છે!", left: "બાકી", alert_at: "એલર્ટ:", unsettled_bills: "બાકી બિલ", no_pending: "કોઈ બાકી ચૂકવણી નથી!", due: "બાકી:", recent_tx: "તાજેતરના વ્યવહારો", date: "તારીખ", party: "પાર્ટી", status: "સ્થિતિ", total: "કુલ", actions: "ક્રિયાઓ", no_tx: "કોઈ વ્યવહારો નથી.", edit: "એડિટ", print: "પ્રિન્ટ", old_bill: "જૂનું બિલ", warning_gst: "⚠️ ચેતવણી: તમે તમારો GST નંબર સેટ કર્યો નથી.", live_margin: "લાઇવ માર્જિન", checkout: "બિલિંગ ટર્મિનલ", editing_bill: "બિલ એડિટ થઈ રહ્યું છે", tx_type: "વ્યવહારનો પ્રકાર", sell: "વેચાણ (ગ્રાહકને)", purch: "ખરીદી (વેપારી પાસેથી)", cust_name: "ગ્રાહકનું નામ", wholesaler_name: "વેપારીનું નામ", cust_gst: "ગ્રાહકનો GSTIN (વૈકલ્પિક)", whole_gst: "વેપારીનો GSTIN (વૈકલ્પિક)", pay_from_cust: "ગ્રાહક તરફથી ચૂકવણી", pay_to_whole: "વેપારીને ચૂકવણી", settled: "ચૂકવેલ (જમા)", unsettled_recv: "બાકી (લેવાના)", unsettled_pay: "બાકી (ચૂકવવાના)", promised_date: "ચૂકવણીની તારીખ (વૈકલ્પિક)", search_add: "માલ શોધો અને બિલમાં ઉમેરો", kb_mode: "કીબોર્ડ", item: "વસ્તુ", rate: "ભાવ (₹)", qty: "જથ્થો", amount: "રકમ", cart_empty: "કાર્ટ ખાલી છે.", discount: "કુલ ડિસ્કાઉન્ટ (વૈકલ્પિક)", final_pay: "ચૂકવવાપાત્ર અંતિમ રકમ", tot_pay: "કુલ ચૂકવવાની રકમ", gst_inc: "(GST સાથે)", gross: "કુલ", taxable: "કરપાત્ર", btn_save_print: "સાચવો અને પ્રિન્ટ કરો", btn_gen_inv: "બિલ બનાવો", cancel_edit: "એડિટિંગ રદ કરો", inv_mgmt: "ઇન્વેન્ટરી મેનેજમેન્ટ", btn_add_new: "+ નવી વસ્તુ ઉમેરો", mat_hsn: "વસ્તુ (HSN પ્રમાણે)", purch_rs: "ખરીદ કિંમત (₹)", sell_rs: "વેચાણ કિંમત (₹)", stock: "સ્ટોક", alert: "એલર્ટ", btn_save: "સાચવો", btn_cancel: "રદ કરો", new_mat: "નવી વસ્તુ", kb_en: "અંગ્રેજી (સામાન્ય)", kb_gu: "ગુજરાતી (ફોનેટિક)", mat_en: "વસ્તુનું નામ (અંગ્રેજી)", mat_gu: "વસ્તુનું નામ (ગુજરાતી)", pricing: "કિંમત અને ટેક્સ", rate_inc_gst: "શું ભાવમાં GST શામેલ છે?", yes_inc: "હા (શામેલ છે)", no_exc: "ના (શામેલ નથી)", gst_pct: "GST / ટેક્સ (%)", hsn_code: "HSN / SAC કોડ", stock_ctrl: "સ્ટોક કંટ્રોલ", init_stock: "શરૂઆતનો સ્ટોક", alert_below: "સ્ટોક એલર્ટ", btn_vault: "સાચવો", biz_prof: "વ્યાપાર પ્રોફાઇલ સેટઅપ", biz_logo: "વ્યાપારનો લોગો (વૈકલ્પિક)", upi_qr: "UPI QR કોડ (વૈકલ્પિક)", gen_info: "સામાન્ય માહિતી", gst_comp: "GST નંબર (વૈકલ્પિક)", owner_name: "માલિકનું નામ", address: "સરનામું", contact: "સંપર્ક નંબર", email: "ઈમેલ આઈડી", bank_details: "બેંકની વિગતો (બિલ પર છાપવા માટે)", bank_name: "બેંકનું નામ", ac_no: "એકાઉન્ટ નંબર", ifsc: "IFSC કોડ", biz_cat: "વ્યાપારની શ્રેણી", btn_save_prof: "પ્રોફાઇલ સાચવો", choose_plan: "તમારો લાયસન્સ પ્લાન પસંદ કરો", sub_subtitle: "તમારા વ્યવસાય માટે સુરક્ષિત POS અને ઇન્વેન્ટરી મેનેજમેન્ટ.", monthly: "માસિક પ્લાન", half_yearly: "અર્ધ-વાર્ષિક", yearly: "વાર્ષિક પ્લાન", most_pop: "સૌથી લોકપ્રિય", sub_month: "માસિક સબ્સ્ક્રાઇબ કરો", sub_6mo: "6 મહિના માટે સબ્સ્ક્રાઇબ કરો", sub_yr: "વાર્ષિક સબ્સ્ક્રાઇબ કરો", secured_by: "Razorpay દ્વારા સુરક્ષિત", processing: "પ્રક્રિયા ચાલુ છે... કૃપા કરીને રાહ જુઓ", email_req: "ઈમેલ આઈડી", phone_req: "ફોન નંબર", get_otp: "OTP મેળવો", enter_otp: "6-અંકનો OTP દાખલ કરો", verify_reg: "ચકાસો અને નોંધણી કરો", forgot_pass: "પાસવર્ડ ભૂલી ગયા છો?", forgot_title: "એકાઉન્ટ પુનઃપ્રાપ્તિ", send_recovery: "OTP મોકલો", verify_recovery: "OTP ચકાસો", opt_reveal: "પાસવર્ડ બતાવો", opt_reset: "નવો પાસવર્ડ બનાવો", new_pass: "નવો પાસવર્ડ", update_pass: "પાસવર્ડ અપડેટ કરો", back_login: "લોગિન પર પાછા ફરો", pass_hide: "પાસવર્ડ છુપાઈ જશે", your_pass: "તમારો પાસવર્ડ છે:"
   }
 };
 
@@ -52,7 +50,9 @@ function App() {
   const [activeTab, setActiveTab] = useState("ledger");
   
   const [inventory, setInventory] = useState([]); const [transactions, setTransactions] = useState([]); const [message, setMessage] = useState("");
-  const [profile, setProfile] = useState({ shop_name: "", gst_number: "", logo_url: "", owner_name: "", address: "", category: "", email: "", contact_number: "", bank_name: "", account_no: "", ifsc_code: "" });
+  
+  // NEW STATE: Added upi_qr_url
+  const [profile, setProfile] = useState({ shop_name: "", gst_number: "", logo_url: "", upi_qr_url: "", owner_name: "", address: "", category: "", email: "", contact_number: "", bank_name: "", account_no: "", ifsc_code: "" });
   const [categorySearch, setCategorySearch] = useState(""); const [isCatSearchOpen, setIsCatSearchOpen] = useState(false);
 
   const businessCategories = [ "Construction Materials Supply", "Hardware Store", "Cement Dealership", "Steel & TMT Bars", "Paints & Chemicals", "Electrical Fittings", "Plumbing & Sanitaryware", "Tiles & Ceramics", "Timber & Plywood", "Glass & Mirrors", "Furniture & Decor", "Electronics & Appliances", "Medical Pharmacy", "Other" ];
@@ -67,7 +67,6 @@ function App() {
   const [discountVal, setDiscountVal] = useState(""); const [discountType, setDiscountType] = useState("percent");
   const [searchQuery, setSearchQuery] = useState(""); const [isSearchOpen, setIsSearchOpen] = useState(false);
   const [receiptData, setReceiptData] = useState(null);
-  
   const [isGstBill, setIsGstBill] = useState(true);
 
   const [editBillId, setEditBillId] = useState(null);
@@ -245,12 +244,7 @@ function App() {
 
       const paymentObject = new window.Razorpay(options);
       paymentObject.open();
-
-      // Handle Modal Close
-      paymentObject.on('payment.failed', function (response) {
-        showMessage("❌ Payment Failed. Please try again.");
-      });
-
+      paymentObject.on('payment.failed', function (response) { showMessage("❌ Payment Failed. Please try again."); });
     } catch (err) { showMessage("❌ Checkout error."); } 
     setIsLoading(false); 
   };
@@ -265,33 +259,29 @@ function App() {
 
   let grossTotal = 0; let totalTaxable = 0; let totalGst = 0; let totalPurchaseCost = 0;
   cart.forEach(item => { 
-    const itemTotal = item.rate * item.qty; 
-    const ppTotal = (parseFloat(item.purchase_price) || 0) * item.qty; 
-    
-    // CRITICAL FIX: If it's an estimate, force GST to 0% for the math engine
+    const itemTotal = item.rate * item.qty; const ppTotal = (parseFloat(item.purchase_price) || 0) * item.qty; 
     const activeGstPercent = isGstBill ? (parseFloat(item.gst_rate) || 0) : 0; 
-    
     let itemTaxable, itemGst; 
-    if (item.is_gst_inclusive && isGstBill) { 
-      itemTaxable = itemTotal / (1 + (activeGstPercent / 100)); 
-      itemGst = itemTotal - itemTaxable; 
-    } else { 
-      itemTaxable = itemTotal; 
-      itemGst = itemTaxable * (activeGstPercent / 100); 
-    } 
-    grossTotal += (item.is_gst_inclusive && isGstBill ? itemTotal : (itemTaxable + itemGst)); 
-    totalTaxable += itemTaxable; 
-    totalGst += itemGst; 
-    totalPurchaseCost += ppTotal; 
+    if (item.is_gst_inclusive && isGstBill) { itemTaxable = itemTotal / (1 + (activeGstPercent / 100)); itemGst = itemTotal - itemTaxable; } else { itemTaxable = itemTotal; itemGst = itemTaxable * (activeGstPercent / 100); } 
+    grossTotal += (item.is_gst_inclusive && isGstBill ? itemTotal : (itemTaxable + itemGst)); totalTaxable += itemTaxable; totalGst += itemGst; totalPurchaseCost += ppTotal; 
   });
-  
   let finalDiscount = 0; if (discountVal && parseFloat(discountVal) > 0) finalDiscount = discountType === 'percent' ? (grossTotal * (parseFloat(discountVal) / 100)) : parseFloat(discountVal);
   const finalTotalAmount = grossTotal - finalDiscount; const halfGst = totalGst / 2; const currentMargin = totalTaxable - totalPurchaseCost - finalDiscount;
 
   const fetchProfile = async (id = currentShopId) => { if (!id) return; try { const res = await axios.get(`${API_URL}/api/shop/${id}`); setProfile(res.data); } catch (e) {} };
   const fetchInventory = async (id = currentShopId) => { if (!id) return; try { const res = await axios.get(`${API_URL}/api/products/${id}`); setInventory(res.data); } catch (e) {} };
   const fetchTransactions = async (id = currentShopId) => { if (!id) return; try { const res = await axios.get(`${API_URL}/api/transactions/${id}`); setTransactions(res.data); } catch (e) {} };
-  const handleLogoUpload = (e) => { const file = e.target.files[0]; if (file) { const reader = new FileReader(); reader.onloadend = () => setProfile({ ...profile, logo_url: reader.result }); reader.readAsDataURL(file); } };
+  
+  // NEW GENERIC IMAGE UPLOAD HANDLER
+  const handleImageUpload = (e, field) => { 
+    const file = e.target.files[0]; 
+    if (file) { 
+      const reader = new FileReader(); 
+      reader.onloadend = () => setProfile({ ...profile, [field]: reader.result }); 
+      reader.readAsDataURL(file); 
+    } 
+  };
+  
   const saveProfile = async (e) => { e.preventDefault(); setIsLoading(true); try { await axios.put(`${API_URL}/api/shop/${currentShopId}`, profile); showMessage("✅ Profile Settings Updated!"); } catch (e) {} setIsLoading(false); };
   const triggerPrint = (invoiceNo, buyerName) => { const cleanBuyerName = buyerName ? buyerName.replace(/[^a-zA-Z0-9]/g, '_') : "Customer"; const originalTitle = document.title; document.title = `${invoiceNo}_to_${cleanBuyerName}`; setTimeout(() => { window.print(); document.title = originalTitle; }, 500); };
 
@@ -308,11 +298,12 @@ function App() {
     if (billStatus === 'Unsettled' && !partyName.trim()) return showMessage("❌ Party / Wholesaler Name required for Unsettled bills.");
     setIsLoading(true);
     try {
-      const currentReceiptData = { shopName: profile.shop_name, owner: profile.owner_name, address: profile.address, gstNum: profile.gst_number, logo: profile.logo_url, phone: profile.contact_number, email: profile.email, bank: profile.bank_name, acc: profile.account_no, ifsc: profile.ifsc_code, partyName, partyGst, transType, isGstBill, cartItems: cart.map(item => ({ product_id: item.product_id, name: `${item.name_english} (${item.name_regional})`, hsn: item.hsn_code, qty: item.qty, rate: item.rate, amount: (item.rate * item.qty) })), grossAmount: grossTotal, discount: finalDiscount, taxable: totalTaxable, totalGst: totalGst, cgst: halfGst, sgst: halfGst, finalTotal: finalTotalAmount, date: new Date().toLocaleDateString('en-IN') };
+      // INJECT UPI QR CODE URL INTO RECEIPT DATA
+      const currentReceiptData = { shopName: profile.shop_name, owner: profile.owner_name, address: profile.address, gstNum: profile.gst_number, logo: profile.logo_url, upiQr: profile.upi_qr_url, phone: profile.contact_number, email: profile.email, bank: profile.bank_name, acc: profile.account_no, ifsc: profile.ifsc_code, partyName, partyGst, transType, isGstBill, cartItems: cart.map(item => ({ product_id: item.product_id, name: `${item.name_english} (${item.name_regional})`, hsn: item.hsn_code, qty: item.qty, rate: item.rate, amount: (item.rate * item.qty) })), grossAmount: grossTotal, discount: finalDiscount, taxable: totalTaxable, totalGst: totalGst, cgst: halfGst, sgst: halfGst, finalTotal: finalTotalAmount, date: new Date().toLocaleDateString('en-IN') };
       const payload = { shop_id: currentShopId, party_name: partyName, transaction_type: transType, cart_items: cart, total_amount: finalTotalAmount, total_gst: totalGst, discount_amount: finalDiscount, receipt_details: currentReceiptData, status: billStatus, settlement_date: billStatus === 'Unsettled' ? settlementDate : "" };
       let response;
       if (editBillId) { response = await axios.put(`${API_URL}/api/billing/${editBillId}`, payload); setEditBillId(null); } else { response = await axios.post(`${API_URL}/api/billing`, payload); }
-      setReceiptData(response.data.receipt); showMessage(`✅ Transaction saved successfully!`); setPartyName(""); setPartyGst(""); setCart([]); setDiscountVal(""); setSearchQuery(""); setBillStatus("Settled"); setSettlementDate(""); fetchInventory(); fetchTransactions(); triggerPrint(response.data.receipt.invoiceNo, response.data.receipt.partyName);
+      setReceiptData(response.data.receipt); showMessage(`✅ Transaction saved successfully!`); setPartyName(""); setPartyGst(""); setCart([]); setDiscountVal(""); setSearchQuery(""); setBillStatus("Settled"); setSettlementDate(""); setIsGstBill(true); fetchInventory(); fetchTransactions(); triggerPrint(response.data.receipt.invoiceNo, response.data.receipt.partyName);
     } catch (error) { showMessage("❌ Error processing bill."); } finally { setIsLoading(false); }
   };
 
@@ -364,6 +355,7 @@ function App() {
       <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', height: '100vh', width: '100vw', backgroundColor: t.bg, fontFamily: "'Inter', sans-serif", transition: 'all 0.3s', position: 'relative' }}>
         <style>{globalStyles}</style>
         
+        {/* Language Toggle for Login Screen */}
         <div style={{ position: 'absolute', top: '20px', right: '20px', display: 'flex', gap: '10px' }}>
           <button onClick={() => setUiLang(uiLang === 'en' ? 'gu' : 'en')} style={{ background: t.card, border: `1px solid ${t.border}`, color: t.text, cursor: 'pointer', padding: '8px 12px', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '6px', fontWeight: 'bold' }}>
             <Globe size={18} /> {uiLang === 'en' ? 'ગુજરાતી' : 'English'}
@@ -388,6 +380,7 @@ function App() {
           {authMessage && <div style={{ backgroundColor: `${t.danger}20`, color: t.danger, padding: '12px', borderRadius: '10px', marginBottom: '20px', textAlign: 'center', fontSize: '14px', fontWeight: '500' }}>{authMessage}</div>}
           {authSuccess && <div style={{ backgroundColor: `${t.success}20`, color: t.success, padding: '12px', borderRadius: '10px', marginBottom: '20px', textAlign: 'center', fontSize: '14px', fontWeight: '500' }}>{authSuccess}</div>}
 
+          {/* === LOGIN MODE === */}
           {authMode === 'login' && (
             <form onSubmit={handleLogin}>
               <div style={{ marginBottom: '15px' }}><label style={labelStyle}>{tText('user')}</label><input type="text" required value={loginUser} onChange={(e) => setLoginUser(e.target.value)} className="soft-input" style={inputStyle} /></div>
@@ -395,28 +388,44 @@ function App() {
                 <label style={labelStyle}>{tText('pass')}</label>
                 <div style={{ position: 'relative' }}>
                   <input type={showPassword ? "text" : "password"} required value={loginPass} onChange={(e) => setLoginPass(e.target.value)} className="soft-input" style={{ ...inputStyle, paddingRight: '40px' }} />
-                  <button type="button" onClick={() => setShowPassword(!showPassword)} style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: t.textMuted, padding: 0, display: 'flex' }}><EyeOff size={20} /></button>
+                  <button type="button" onClick={() => setShowPassword(!showPassword)} style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: t.textMuted, padding: 0, display: 'flex' }}>
+                    {showPassword ? <EyeOff size={20} /> : <Eye size={20} />}
+                  </button>
                 </div>
               </div>
-              <div style={{ textAlign: 'right', marginBottom: '30px' }}><button type="button" onClick={() => { setAuthMode('forgot'); resetAuthStates(); }} style={{ background: 'none', border: 'none', color: t.primary, fontSize: '13px', cursor: 'pointer', fontWeight: '600' }}>{tText('forgot_pass')}</button></div>
+              <div style={{ textAlign: 'right', marginBottom: '30px' }}>
+                <button type="button" onClick={() => { setAuthMode('forgot'); resetAuthStates(); }} style={{ background: 'none', border: 'none', color: t.primary, fontSize: '13px', cursor: 'pointer', fontWeight: '600' }}>{tText('forgot_pass')}</button>
+              </div>
               <button type="submit" disabled={isLoading} style={{ ...btnPrimary, opacity: isLoading ? 0.7 : 1 }}>{tText('btn_auth')}</button>
               <div style={{ textAlign: 'center', marginTop: '20px' }}><button type="button" onClick={() => { setAuthMode('register'); resetAuthStates(); }} style={{ background: 'none', border: 'none', color: t.primary, fontWeight: '600', cursor: 'pointer', fontSize: '14px' }}>{tText('switch_reg')}</button></div>
             </form>
           )}
 
+          {/* === REGISTER MODE === */}
           {authMode === 'register' && regStep === 1 && (
             <form onSubmit={handleRegisterRequestOtp}>
               <div style={{ marginBottom: '15px' }}><label style={labelStyle}>{tText('biz_name')}</label><input type="text" required value={regShopName} onChange={(e) => setRegShopName(e.target.value)} className="soft-input" style={inputStyle} /></div>
               <div style={{ marginBottom: '15px' }}><label style={labelStyle}>{tText('user')}</label><input type="text" required value={loginUser} onChange={(e) => setLoginUser(e.target.value)} className="soft-input" style={inputStyle} /></div>
+              
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px', marginBottom: '15px' }}>
                 <div><label style={labelStyle}>{tText('email_req')}</label><input type="email" required value={regEmail} onChange={(e) => setRegEmail(e.target.value)} className="soft-input" style={inputStyle} /></div>
                 <div><label style={labelStyle}>{tText('phone_req')}</label><input type="tel" required value={regPhone} onChange={(e) => setRegPhone(e.target.value)} className="soft-input" style={inputStyle} /></div>
               </div>
+
               <div style={{ marginBottom: '15px', position: 'relative' }}>
                 <label style={labelStyle}>{tText('pass')}</label>
-                <div style={{ position: 'relative' }}><input type={showPassword ? "text" : "password"} required value={loginPass} onChange={(e) => setLoginPass(e.target.value)} className="soft-input" style={{ ...inputStyle, paddingRight: '40px' }} /><button type="button" onClick={() => setShowPassword(!showPassword)} style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: t.textMuted, padding: 0, display: 'flex' }}><EyeOff size={20} /></button></div>
+                <div style={{ position: 'relative' }}>
+                  <input type={showPassword ? "text" : "password"} required value={loginPass} onChange={(e) => setLoginPass(e.target.value)} className="soft-input" style={{ ...inputStyle, paddingRight: '40px' }} />
+                  <button type="button" onClick={() => setShowPassword(!showPassword)} style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: t.textMuted, padding: 0, display: 'flex' }}>{showPassword ? <EyeOff size={20} /> : <Eye size={20} />}</button>
+                </div>
               </div>
-              <div style={{ marginBottom: '30px', position: 'relative' }}><label style={labelStyle}>{tText('conf_pass')}</label><div style={{ position: 'relative' }}><input type={showPassword ? "text" : "password"} required value={confirmPass} onChange={(e) => setConfirmPass(e.target.value)} className="soft-input" style={{ ...inputStyle, paddingRight: '40px' }} /></div></div>
+              <div style={{ marginBottom: '30px', position: 'relative' }}>
+                <label style={labelStyle}>{tText('conf_pass')}</label>
+                <div style={{ position: 'relative' }}>
+                  <input type={showPassword ? "text" : "password"} required value={confirmPass} onChange={(e) => setConfirmPass(e.target.value)} className="soft-input" style={{ ...inputStyle, paddingRight: '40px' }} />
+                </div>
+              </div>
+
               <button type="submit" disabled={isLoading} style={{ ...btnPrimary, opacity: isLoading ? 0.7 : 1 }}><Mail size={20}/> {tText('get_otp')}</button>
               <div style={{ textAlign: 'center', marginTop: '20px' }}><button type="button" onClick={() => { setAuthMode('login'); resetAuthStates(); }} style={{ background: 'none', border: 'none', color: t.primary, fontWeight: '600', cursor: 'pointer', fontSize: '14px' }}>{tText('switch_login')}</button></div>
             </form>
@@ -424,19 +433,31 @@ function App() {
 
           {authMode === 'register' && regStep === 2 && (
             <form onSubmit={handleRegisterVerify}>
-              <div style={{ backgroundColor: `${t.primary}10`, border: `1px solid ${t.primary}40`, padding: '15px', borderRadius: '12px', marginBottom: '20px', textAlign: 'center', color: t.text }}><Mail color={t.primary} size={30} style={{ marginBottom: '10px' }} /><div style={{ fontWeight: 'bold' }}>OTP Sent to {regEmail}</div><div style={{ fontSize: '12px', color: t.textMuted }}>Please check your inbox and spam folder.</div></div>
+              <div style={{ backgroundColor: `${t.primary}10`, border: `1px solid ${t.primary}40`, padding: '15px', borderRadius: '12px', marginBottom: '20px', textAlign: 'center', color: t.text }}>
+                <Mail color={t.primary} size={30} style={{ marginBottom: '10px' }} />
+                <div style={{ fontWeight: 'bold' }}>OTP Sent to {regEmail}</div>
+                <div style={{ fontSize: '12px', color: t.textMuted }}>Please check your inbox and spam folder.</div>
+              </div>
+
+              {/* INVISIBLE OVERLAY OTP INPUT */}
               <div style={{ marginBottom: '30px', textAlign: 'center' }}>
                 <label style={{...labelStyle, display: 'block', marginBottom: '15px'}}>{tText('enter_otp')}</label>
                 <div style={{ position: 'relative', display: 'flex', justifyContent: 'center', gap: '10px' }}>
-                  {[0, 1, 2, 3, 4, 5].map(i => (<div key={i} style={{ width: '45px', height: '55px', backgroundColor: t.inputBg, border: `2px solid ${otpToken.length === i ? t.primary : t.border}`, borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '24px', fontWeight: 'bold', color: otpToken[i] ? t.text : t.textMuted, transition: 'all 0.2s', boxShadow: otpToken.length === i ? `0 0 0 3px ${t.primary}20` : 'none' }}>{otpToken[i] || '-'}</div>))}
+                  {[0, 1, 2, 3, 4, 5].map(i => (
+                    <div key={i} style={{ width: '45px', height: '55px', backgroundColor: t.inputBg, border: `2px solid ${otpToken.length === i ? t.primary : t.border}`, borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '24px', fontWeight: 'bold', color: otpToken[i] ? t.text : t.textMuted, transition: 'all 0.2s', boxShadow: otpToken.length === i ? `0 0 0 3px ${t.primary}20` : 'none' }}>
+                      {otpToken[i] || '-'}
+                    </div>
+                  ))}
                   <input type="text" value={otpToken} onChange={(e) => setOtpToken(e.target.value.replace(/[^0-9]/g, '').slice(0, 6))} style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', opacity: 0, cursor: 'text', zIndex: 10 }} autoFocus />
                 </div>
               </div>
+
               <button type="submit" disabled={isLoading} style={{ ...btnPrimary, opacity: isLoading ? 0.7 : 1 }}>{tText('verify_reg')}</button>
               <div style={{ textAlign: 'center', marginTop: '20px' }}><button type="button" onClick={() => setRegStep(1)} style={{ background: 'none', border: 'none', color: t.textMuted, cursor: 'pointer', fontSize: '14px' }}>Go Back</button></div>
             </form>
           )}
 
+          {/* === FORGOT PASSWORD MODE === */}
           {authMode === 'forgot' && forgotStep === 1 && (
             <form onSubmit={handleForgotSendOtp}>
               <div style={{ marginBottom: '30px' }}><label style={labelStyle}>{tText('email_req')}</label><input type="email" required value={regEmail} onChange={(e) => setRegEmail(e.target.value)} className="soft-input" style={inputStyle} /></div>
@@ -448,13 +469,20 @@ function App() {
           {authMode === 'forgot' && forgotStep === 2 && (
             <form onSubmit={handleForgotVerifyOtp}>
               <div style={{ backgroundColor: `${t.primary}10`, border: `1px solid ${t.primary}40`, padding: '15px', borderRadius: '12px', marginBottom: '20px', textAlign: 'center', color: t.text }}><div style={{ fontWeight: 'bold' }}>Recovery OTP Sent to {regEmail}</div></div>
+              
+              {/* INVISIBLE OVERLAY OTP INPUT */}
               <div style={{ marginBottom: '30px', textAlign: 'center' }}>
                 <label style={{...labelStyle, display: 'block', marginBottom: '15px'}}>{tText('enter_otp')}</label>
                 <div style={{ position: 'relative', display: 'flex', justifyContent: 'center', gap: '10px' }}>
-                  {[0, 1, 2, 3, 4, 5].map(i => (<div key={i} style={{ width: '45px', height: '55px', backgroundColor: t.inputBg, border: `2px solid ${otpToken.length === i ? t.primary : t.border}`, borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '24px', fontWeight: 'bold', color: otpToken[i] ? t.text : t.textMuted, transition: 'all 0.2s', boxShadow: otpToken.length === i ? `0 0 0 3px ${t.primary}20` : 'none' }}>{otpToken[i] || '-'}</div>))}
+                  {[0, 1, 2, 3, 4, 5].map(i => (
+                    <div key={i} style={{ width: '45px', height: '55px', backgroundColor: t.inputBg, border: `2px solid ${otpToken.length === i ? t.primary : t.border}`, borderRadius: '12px', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '24px', fontWeight: 'bold', color: otpToken[i] ? t.text : t.textMuted, transition: 'all 0.2s', boxShadow: otpToken.length === i ? `0 0 0 3px ${t.primary}20` : 'none' }}>
+                      {otpToken[i] || '-'}
+                    </div>
+                  ))}
                   <input type="text" value={otpToken} onChange={(e) => setOtpToken(e.target.value.replace(/[^0-9]/g, '').slice(0, 6))} style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', opacity: 0, cursor: 'text', zIndex: 10 }} autoFocus />
                 </div>
               </div>
+
               <button type="submit" disabled={isLoading} style={{ ...btnPrimary, opacity: isLoading ? 0.7 : 1 }}>{tText('verify_recovery')}</button>
               <div style={{ textAlign: 'center', marginTop: '20px' }}><button type="button" onClick={() => setForgotStep(1)} style={{ background: 'none', border: 'none', color: t.textMuted, cursor: 'pointer', fontSize: '14px' }}>Go Back</button></div>
             </form>
@@ -472,22 +500,45 @@ function App() {
 
           {authMode === 'forgot' && forgotStep === 4 && (
             <form onSubmit={handleResetPassword}>
-              <div style={{ marginBottom: '15px', position: 'relative' }}><label style={labelStyle}>{tText('new_pass')}</label><div style={{ position: 'relative' }}><input type={showPassword ? "text" : "password"} required value={loginPass} onChange={(e) => setLoginPass(e.target.value)} className="soft-input" style={{ ...inputStyle, paddingRight: '40px' }} /><button type="button" onClick={() => setShowPassword(!showPassword)} style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: t.textMuted, padding: 0, display: 'flex' }}><EyeOff size={20} /></button></div></div>
-              <div style={{ marginBottom: '30px', position: 'relative' }}><label style={labelStyle}>{tText('conf_pass')}</label><div style={{ position: 'relative' }}><input type={showPassword ? "text" : "password"} required value={confirmPass} onChange={(e) => setConfirmPass(e.target.value)} className="soft-input" style={{ ...inputStyle, paddingRight: '40px' }} /></div></div>
+              <div style={{ marginBottom: '15px', position: 'relative' }}>
+                <label style={labelStyle}>{tText('new_pass')}</label>
+                <div style={{ position: 'relative' }}>
+                  <input type={showPassword ? "text" : "password"} required value={loginPass} onChange={(e) => setLoginPass(e.target.value)} className="soft-input" style={{ ...inputStyle, paddingRight: '40px' }} />
+                  <button type="button" onClick={() => setShowPassword(!showPassword)} style={{ position: 'absolute', right: '12px', top: '50%', transform: 'translateY(-50%)', background: 'none', border: 'none', cursor: 'pointer', color: t.textMuted, padding: 0, display: 'flex' }}>{showPassword ? <EyeOff size={20} /> : <Eye size={20} />}</button>
+                </div>
+              </div>
+              <div style={{ marginBottom: '30px', position: 'relative' }}>
+                <label style={labelStyle}>{tText('conf_pass')}</label>
+                <div style={{ position: 'relative' }}>
+                  <input type={showPassword ? "text" : "password"} required value={confirmPass} onChange={(e) => setConfirmPass(e.target.value)} className="soft-input" style={{ ...inputStyle, paddingRight: '40px' }} />
+                </div>
+              </div>
               <button type="submit" disabled={isLoading} style={{ ...btnPrimary, opacity: isLoading ? 0.7 : 1 }}>{tText('update_pass')}</button>
             </form>
           )}
 
           {authMode === 'forgot' && forgotStep === 5 && (
             <div style={{ textAlign: 'center' }}>
-               <div style={{ backgroundColor: t.bg, border: `1px solid ${t.border}`, padding: '20px', borderRadius: '12px', marginBottom: '20px' }}><div style={{ color: t.textMuted, fontSize: '14px', marginBottom: '10px' }}>{tText('your_pass')}</div><div style={{ fontSize: '24px', fontWeight: 'bold', color: t.primary, letterSpacing: '2px' }}>{revealedPass}</div></div>
-               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', color: t.danger, fontWeight: 'bold', fontSize: '15px' }}><Clock size={18}/> {tText('pass_hide')} {revealTimer}s</div>
+               <div style={{ backgroundColor: t.bg, border: `1px solid ${t.border}`, padding: '20px', borderRadius: '12px', marginBottom: '20px' }}>
+                 <div style={{ color: t.textMuted, fontSize: '14px', marginBottom: '10px' }}>{tText('your_pass')}</div>
+                 <div style={{ fontSize: '24px', fontWeight: 'bold', color: t.primary, letterSpacing: '2px' }}>{revealedPass}</div>
+               </div>
+               <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '8px', color: t.danger, fontWeight: 'bold', fontSize: '15px' }}>
+                 <Clock size={18}/> {tText('pass_hide')} {revealTimer}s
+               </div>
             </div>
           )}
 
         </div>
         <div style={{ position: 'absolute', bottom: '20px', color: t.textMuted, fontSize: '13px', fontWeight: '600' }}>{tText('dev')}</div>
-        {isLoading && (<div className="glass-overlay"><span className="loader"></span><div>{tText('auth_wait')}</div></div>)}
+        
+        {/* SHIELD */}
+        {isLoading && (
+          <div className="glass-overlay">
+            <span className="loader"></span>
+            <div>{tText('auth_wait')}</div>
+          </div>
+        )}
       </div>
     );
   }
@@ -559,7 +610,19 @@ function App() {
             <div style={{ animation: 'fadeIn 0.4s ease', width: '100%', maxWidth: '800px', margin: '0 auto' }}>
               <form onSubmit={saveProfile} style={cardStyle}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '30px' }}><Settings color={t.primary} size={28}/><h2 style={{ margin: 0, color: t.text }}>{tText('biz_prof')}</h2></div>
-                <div style={{ marginBottom: '25px', display: 'flex', alignItems: 'center', gap: '20px' }}><div style={{ width: '100px', height: '100px', borderRadius: '12px', border: `2px dashed ${t.border}`, display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', backgroundColor: t.inputBg }}>{profile.logo_url ? <img src={profile.logo_url} alt="Logo" style={{ width: '100%', height: '100%', objectFit: 'contain' }} /> : <ImageIcon color={t.textMuted} size={32} />}</div><div><label style={{ ...labelStyle, display: 'block', marginBottom: '8px' }}>{tText('biz_logo')}</label><input type="file" accept="image/*" onChange={handleLogoUpload} style={{ color: t.textMuted }} /></div></div>
+                
+                {/* LOGO AND QR UPLOAD ROW */}
+                <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '25px' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+                    <div style={{ width: '100px', height: '100px', borderRadius: '12px', border: `2px dashed ${t.border}`, display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', backgroundColor: t.inputBg }}>{profile.logo_url ? <img src={profile.logo_url} alt="Logo" style={{ width: '100%', height: '100%', objectFit: 'contain' }} /> : <ImageIcon color={t.textMuted} size={32} />}</div>
+                    <div><label style={{ ...labelStyle, display: 'block', marginBottom: '8px' }}>{tText('biz_logo')}</label><input type="file" accept="image/*" onChange={(e) => handleImageUpload(e, 'logo_url')} style={{ color: t.textMuted }} /></div>
+                  </div>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
+                    <div style={{ width: '100px', height: '100px', borderRadius: '12px', border: `2px dashed ${t.border}`, display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', backgroundColor: t.inputBg }}>{profile.upi_qr_url ? <img src={profile.upi_qr_url} alt="UPI QR" style={{ width: '100%', height: '100%', objectFit: 'contain' }} /> : <QrCode color={t.textMuted} size={32} />}</div>
+                    <div><label style={{ ...labelStyle, display: 'block', marginBottom: '8px' }}>{tText('upi_qr')}</label><input type="file" accept="image/*" onChange={(e) => handleImageUpload(e, 'upi_qr_url')} style={{ color: t.textMuted }} /></div>
+                  </div>
+                </div>
+
                 <h3 style={{ color: t.text, borderBottom: `1px solid ${t.border}`, paddingBottom: '10px', marginBottom: '20px' }}>{tText('gen_info')}</h3>
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '30px' }}>
                   <div><label style={labelStyle}>{tText('biz_name')}</label><input type="text" required value={profile.shop_name || ""} onChange={(e) => setProfile({...profile, shop_name: e.target.value})} className="soft-input" style={inputStyle} /></div>
@@ -610,7 +673,7 @@ function App() {
                       <div style={{ display: 'flex', flexDirection: 'column', gap: '10px', maxHeight: '300px', overflowY: 'auto' }}>
                         {unsettledBills.map(tx => {
                           const sDate = tx.settlement_date ? new Date(tx.settlement_date) : null; let dateColor = t.textMuted; let dateText = "No Date Set";
-                          if (sDate) { if (sDate <= todayObj) { dateColor = t.danger; dateText = `${tText('due')} ${sDate.toLocaleDateString()}`; } else if (sDate <= fiveDaysFromNow) { dateColor = t.warning; dateText = `${tText('due')} ${sDate.toLocaleDateString()}`; } else { dateColor = t.textMuted; dateText = `${tText('due')} ${sDate.toLocaleDateString()}`; } }
+                          if (sDate) { if (sDate <= todayObj) { dateColor = t.danger; dateText = `${tText('due')} ${sDate.toLocaleDateString('en-IN')}`; } else if (sDate <= fiveDaysFromNow) { dateColor = t.warning; dateText = `${tText('due')} ${sDate.toLocaleDateString('en-IN')}`; } else { dateColor = t.textMuted; dateText = `${tText('due')} ${sDate.toLocaleDateString('en-IN')}`; } }
                           const isReceiving = tx.transaction_type === 'SELL'; const boxColor = isReceiving ? t.success : t.danger;
                           return (<div key={tx.transaction_id} onClick={() => loadBillForEdit(tx)} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '10px', border: `1px solid ${boxColor}40`, backgroundColor: `${boxColor}05`, borderRadius: '10px', cursor: 'pointer' }}><div><div style={{ fontWeight: '600', color: t.text, fontSize: '14px', display: 'flex', alignItems: 'center', gap: '5px' }}>{isReceiving ? <ArrowDownRight size={14} color={t.success}/> : <ArrowUpRight size={14} color={t.danger}/>}{tx.party_name || "Unknown"}</div><div style={{ color: dateColor, fontSize: '12px', fontWeight: 'bold' }}>{dateText}</div></div><div style={{ fontWeight: 'bold', fontSize: '14px', color: boxColor }}>₹{tx.total_amount}</div></div>);
                         })}
@@ -628,7 +691,7 @@ function App() {
                         {transactions.length === 0 ? (<tr><td colSpan="5" style={{ textAlign: 'center', padding: '30px', color: t.textMuted }}>{tText('no_tx')}</td></tr>) : (
                           transactions.map((tx) => (
                             <tr key={tx.transaction_id} style={{ borderBottom: `1px solid ${t.border}` }}>
-                              <td style={{ padding: '15px', color: t.text }}>{new Date(tx.transaction_date).toLocaleDateString()}</td>
+                              <td style={{ padding: '15px', color: t.text }}>{new Date(tx.transaction_date).toLocaleDateString('en-IN')}</td>
                               <td style={{ padding: '15px', fontWeight: '500', color: t.text }}>{tx.party_name || "Cash"}</td>
                               <td style={{ padding: '15px' }}><span style={{ backgroundColor: tx.status === 'Settled' ? `${t.success}20` : `${t.danger}20`, color: tx.status === 'Settled' ? t.success : t.danger, padding: '6px 12px', borderRadius: '20px', fontSize: '12px', fontWeight: 'bold' }}>{tx.status === 'Settled' ? tText('settled') : tText('unsettled_recv')}</span></td>
                               <td style={{ padding: '15px', textAlign: 'right', fontWeight: 'bold', fontSize: '16px', color: t.text }}>₹{tx.total_amount}</td>
@@ -678,7 +741,11 @@ function App() {
                     <div style={{ position: 'absolute', top: '100%', left: 0, right: 0, backgroundColor: t.card, border: `1px solid ${t.border}`, borderRadius: '12px', marginTop: '8px', maxHeight: '300px', overflowY: 'auto', boxShadow: '0 10px 40px -10px rgba(0,0,0,0.15)', zIndex: 990 }}>
                       {filteredInventory.length === 0 ? (<div style={{ padding: '15px', color: t.textMuted, textAlign: 'center' }}>No materials found.</div>) : (filteredInventory.map((item) => (
                         <div key={item.product_id} onMouseDown={(e) => { e.preventDefault(); handleAddToCart(item); }} style={{ padding: '12px 16px', cursor: 'pointer', borderBottom: `1px solid ${t.border}`, display: 'flex', justifyContent: 'space-between', alignItems: 'center', color: t.text }} onMouseEnter={(e) => e.currentTarget.style.backgroundColor = `${t.primary}15`} onMouseLeave={(e) => e.currentTarget.style.backgroundColor = 'transparent'}>
-                          <div><span style={{ fontWeight: '600' }}>{item.name_english}</span><span style={{ color: t.textMuted, marginLeft: '8px', fontSize: '14px' }}>{item.name_regional}</span>{item.hsn_code && <div style={{ fontSize: '11px', color: t.primary, fontWeight: 'bold', marginTop: '2px' }}>HSN: {item.hsn_code}</div>}</div>
+                          <div>
+                            <span style={{ fontWeight: '600' }}>{item.name_english}</span>
+                            <span style={{ color: t.textMuted, marginLeft: '8px', fontSize: '14px' }}>{item.name_regional}</span>
+                            {item.hsn_code && <div style={{ fontSize: '11px', color: t.primary, fontWeight: 'bold', marginTop: '2px' }}>HSN: {item.hsn_code}</div>}
+                          </div>
                           <div style={{ display: 'flex', gap: '10px' }}><span style={{ backgroundColor: `${t.primary}20`, color: t.primary, padding: '4px 10px', borderRadius: '12px', fontSize: '12px', fontWeight: 'bold' }}>₹{item.item_rate}</span><span style={{ backgroundColor: item.current_stock <= item.min_stock_alert ? `${t.danger}20` : `${t.success}20`, color: item.current_stock <= item.min_stock_alert ? t.danger : t.success, padding: '4px 10px', borderRadius: '12px', fontSize: '12px', fontWeight: 'bold' }}>Stock: {item.current_stock}</span></div>
                         </div>
                       )))}
@@ -867,10 +934,21 @@ function App() {
                 </div>
                 {index === printChunks.length - 1 && (
                   <div className="avoid-break" style={{ display: 'flex', borderTop: '1px solid black', fontSize: '10pt', marginTop: 'auto' }}>
-                    <div style={{ flex: '60%', padding: '10px', borderRight: '1px solid black' }}>
-                      <h4 style={{ margin: '0 0 5px 0', textDecoration: 'underline' }}>BANK DETAILS:-</h4>
-                      <p style={{ margin: '2px 0', fontWeight: 'bold' }}>NAME: {receiptData.shopName}</p><p style={{ margin: '2px 0', fontWeight: 'bold' }}>A/C NO: {receiptData.acc || ""}</p><p style={{ margin: '2px 0', fontWeight: 'bold' }}>IFSC: {receiptData.ifsc || ""}</p><p style={{ margin: '2px 0', fontWeight: 'bold' }}>BANK: {receiptData.bank || ""}</p>
-                      <div style={{ marginTop: '30px', fontWeight: 'bold' }}>FOR. {receiptData.shopName.toUpperCase()}</div>
+                    <div style={{ flex: '60%', padding: '10px', borderRight: '1px solid black', display: 'flex' }}>
+                      <div style={{ flex: 1 }}>
+                        <h4 style={{ margin: '0 0 5px 0', textDecoration: 'underline' }}>BANK DETAILS:-</h4>
+                        <p style={{ margin: '2px 0', fontWeight: 'bold' }}>NAME: {receiptData.shopName}</p><p style={{ margin: '2px 0', fontWeight: 'bold' }}>A/C NO: {receiptData.acc || ""}</p><p style={{ margin: '2px 0', fontWeight: 'bold' }}>IFSC: {receiptData.ifsc || ""}</p><p style={{ margin: '2px 0', fontWeight: 'bold' }}>BANK: {receiptData.bank || ""}</p>
+                        <div style={{ marginTop: '30px', fontWeight: 'bold' }}>FOR. {receiptData.shopName.toUpperCase()}</div>
+                      </div>
+                      
+                      {/* --- INJECTED QR CODE IN PRINT LAYOUT --- */}
+                      {receiptData.upiQr && (
+                         <div style={{ width: '100px', marginLeft: '10px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+                           <img src={receiptData.upiQr} alt="Scan to Pay" style={{ width: '80px', height: '80px', objectFit: 'contain', border: '1px solid #000', padding: '4px', borderRadius: '4px' }} />
+                           <div style={{ fontSize: '8pt', fontWeight: 'bold', marginTop: '6px', textAlign: 'center' }}>SCAN TO PAY</div>
+                         </div>
+                      )}
+
                     </div>
                     <div style={{ flex: '40%' }}>
                       <div style={{ display: 'flex', borderBottom: '1px solid black' }}><div style={{ flex: 1, padding: '4px 8px', borderRight: '1px solid black', fontWeight: 'bold' }}>TOTAL AMOUNT IN RS.</div><div style={{ width: '100px', padding: '4px 8px', textAlign: 'right' }}>{receiptData.grossAmount.toFixed(2)}</div></div>
