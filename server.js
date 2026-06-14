@@ -39,21 +39,29 @@ app.get('/api/keepalive', async (req, res) => {
 // 🔐 AUTHENTICATION & OTP
 // ==========================================
 app.post('/api/send-otp', async (req, res) => {
-  const { email, type } = req.body;
+  const { email, username, type } = req.body;
   try {
-    const shopRes = await db.query('SELECT * FROM shops WHERE email = $1', [email]);
-    if (type === 'register' && shopRes.rows.length > 0) return res.status(400).json({ success: false, message: "This email is already registered." });
-    if (type === 'forgot' && shopRes.rows.length === 0) return res.status(400).json({ success: false, message: "Email not found in our system." });
+    let targetEmail = email;
+    
+    // NEW SECURITY: Lookup by exact username first
+    if (type === 'forgot') {
+      const shopRes = await db.query('SELECT email FROM shops WHERE username = $1', [username]);
+      if (shopRes.rows.length === 0) return res.status(400).json({ success: false, message: "Username not found in our system." });
+      targetEmail = shopRes.rows[0].email;
+    } else {
+      const shopRes = await db.query('SELECT * FROM shops WHERE email = $1', [email]);
+      if (shopRes.rows.length > 0) return res.status(400).json({ success: false, message: "This email is already registered." });
+    }
 
     const otp = Math.floor(100000 + Math.random() * 900000).toString();
     const expires_at = new Date(Date.now() + 10 * 60000); 
 
-    await db.query(`INSERT INTO otps (email, otp, expires_at) VALUES ($1, $2, $3) ON CONFLICT (email) DO UPDATE SET otp = $2, expires_at = $3`, [email, otp, expires_at]);
+    await db.query(`INSERT INTO otps (email, otp, expires_at) VALUES ($1, $2, $3) ON CONFLICT (email) DO UPDATE SET otp = $2, expires_at = $3`, [targetEmail, otp, expires_at]);
 
-    console.log(`\n🔑 DEV OTP FOR ${email}: ${otp}\n`);
+    console.log(`\n🔑 DEV OTP FOR ${targetEmail}: ${otp}\n`);
 
     const emailPayload = {
-      email: email,
+      email: targetEmail,
       subject: type === 'register' ? 'Your Bhav-Taal Verification Code' : 'Bhav-Taal Password Reset OTP',
       body: `<div style="font-family:Arial, sans-serif; text-align:center; padding:20px; color:#333;"><h2 style="color:#6366f1;">Bhav-Taal Security</h2><p>Your 6-digit verification code is:</p><div style="font-size:32px; font-weight:bold; letter-spacing:5px; color:#10b981; margin:20px 0;">${otp}</div><p style="color:#888; font-size:12px;">This code will expire in 10 minutes. Do not share it with anyone.</p></div>`
     };
@@ -62,39 +70,24 @@ app.post('/api/send-otp', async (req, res) => {
       const response = await fetch(GOOGLE_SCRIPT_URL, { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(emailPayload), redirect: 'follow' });
       const result = await response.json();
       if (!result.success) throw new Error("Google Script failed");
+      
+      if (type === 'forgot') {
+        const split = targetEmail.split('@');
+        const masked = split[0].substring(0, 2) + "****@" + split[1];
+        return res.json({ success: true, message: `OTP sent securely to registered email (${masked})` });
+      }
       res.json({ success: true, message: "OTP sent successfully!" });
     } catch (apiError) { res.json({ success: true, message: "Email delayed, but check Render Logs for your OTP!" }); }
   } catch (err) { res.status(500).json({ success: false, message: "Database Error." }); }
 });
 
-app.post('/api/register', async (req, res) => {
-  const { shopName, username, password, email, phone, otp } = req.body;
-  try {
-    const otpRes = await db.query('SELECT * FROM otps WHERE email = $1 AND otp = $2', [email, otp]);
-    if (otpRes.rows.length === 0) return res.status(400).json({ success: false, message: "Invalid OTP Code." });
-    if (new Date(otpRes.rows[0].expires_at) < new Date()) return res.status(400).json({ success: false, message: "OTP has expired. Request a new one." });
-    const existingUser = await db.query('SELECT * FROM shops WHERE username = $1', [username]);
-    if (existingUser.rows.length > 0) return res.status(400).json({ success: false, message: "Username already taken." });
-
-    const subEnd = new Date(); subEnd.setDate(subEnd.getDate() + 7);
-    const result = await db.query('INSERT INTO shops (shop_name, username, password, email, contact_number, subscription_end) VALUES ($1, $2, $3, $4, $5, $6) RETURNING shop_id, subscription_end', [shopName, username, password, email, phone, subEnd]);
-    await db.query('DELETE FROM otps WHERE email = $1', [email]);
-    res.json({ success: true, shop_id: result.rows[0].shop_id, subscription_end: result.rows[0].subscription_end });
-  } catch (err) { res.status(500).json({ success: false, message: "Registration failed." }); }
-});
-
-app.post('/api/login', async (req, res) => {
-  const { username, password } = req.body;
-  try {
-    const result = await db.query('SELECT * FROM shops WHERE username = $1 AND password = $2', [username, password]);
-    if (result.rows.length === 0) return res.status(400).json({ success: false, message: "Invalid credentials" });
-    res.json({ success: true, shop_id: result.rows[0].shop_id, subscription_end: result.rows[0].subscription_end });
-  } catch (err) { res.status(500).json({ success: false, message: "Server error" }); }
-});
-
 app.post('/api/verify-forgot-otp', async (req, res) => {
-  const { email, otp } = req.body;
+  const { username, otp } = req.body;
   try {
+    const shopRes = await db.query('SELECT email FROM shops WHERE username = $1', [username]);
+    if (shopRes.rows.length === 0) return res.status(400).json({ success: false, message: "Security check failed." });
+    const email = shopRes.rows[0].email;
+
     const otpRes = await db.query('SELECT * FROM otps WHERE email = $1 AND otp = $2', [email, otp]);
     if (otpRes.rows.length === 0) return res.status(400).json({ success: false, message: "Invalid OTP Code." });
     if (new Date(otpRes.rows[0].expires_at) < new Date()) return res.status(400).json({ success: false, message: "OTP has expired." });
@@ -103,22 +96,32 @@ app.post('/api/verify-forgot-otp', async (req, res) => {
 });
 
 app.post('/api/reveal-password', async (req, res) => {
-  const { email, otp } = req.body;
+  const { username, otp } = req.body;
   try {
+    const shopRes = await db.query('SELECT email, password FROM shops WHERE username = $1', [username]);
+    if (shopRes.rows.length === 0) return res.status(400).json({ success: false, message: "Security check failed." });
+    const { email, password } = shopRes.rows[0];
+
     const otpRes = await db.query('SELECT * FROM otps WHERE email = $1 AND otp = $2', [email, otp]);
     if (otpRes.rows.length === 0) return res.status(400).json({ success: false, message: "Security check failed." });
-    const userRes = await db.query('SELECT password FROM shops WHERE email = $1', [email]);
+    
     await db.query('DELETE FROM otps WHERE email = $1', [email]);
-    res.json({ success: true, password: userRes.rows[0].password });
+    res.json({ success: true, password: password });
   } catch (err) { res.status(500).json({ success: false, message: "Failed to reveal password." }); }
 });
 
 app.post('/api/reset-password', async (req, res) => {
-  const { email, newPassword, otp } = req.body;
+  const { username, newPassword, otp } = req.body;
   try {
+    const shopRes = await db.query('SELECT email FROM shops WHERE username = $1', [username]);
+    if (shopRes.rows.length === 0) return res.status(400).json({ success: false, message: "Security check failed." });
+    const email = shopRes.rows[0].email;
+
     const otpRes = await db.query('SELECT * FROM otps WHERE email = $1 AND otp = $2', [email, otp]);
     if (otpRes.rows.length === 0) return res.status(400).json({ success: false, message: "Security check failed." });
-    await db.query('UPDATE shops SET password = $1 WHERE email = $2', [newPassword, email]);
+    
+    // THE BUG FIX: Target the exact username row, eliminating case-sensitivity mismatches!
+    await db.query('UPDATE shops SET password = $1 WHERE username = $2', [newPassword, username]);
     await db.query('DELETE FROM otps WHERE email = $1', [email]);
     res.json({ success: true, message: "Password updated successfully." });
   } catch (err) { res.status(500).json({ success: false, message: "Failed to reset password." }); }
