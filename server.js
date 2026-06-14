@@ -8,6 +8,9 @@ const app = express();
 app.use(cors());
 app.use(express.json({ limit: '50mb' }));
 
+// ==========================================
+// 🗄️ DATABASE CONNECTION
+// ==========================================
 const db = new Pool({
   connectionString: process.env.DATABASE_URL || 'postgresql://neondb_owner:npg_9mbkZBO3GEpu@ep-twilight-poetry-an5yt2g3.c-6.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require',
   ssl: { rejectUnauthorized: false }
@@ -21,9 +24,8 @@ const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyvXXbKWaaNSP
 // ==========================================
 // 💳 RAZORPAY CONFIGURATION
 // ==========================================
-// Pulls securely from Render Environment Variables
 const razorpayInstance = new Razorpay({
-  key_id: process.env.RAZORPAY_KEY_ID || "rzp_test_T13wSE9FIt2rjT", // Fallback for local testing
+  key_id: process.env.RAZORPAY_KEY_ID || "rzp_test_T13wSE9FIt2rjT", // Uses Live Key from Render Env Variables
   key_secret: process.env.RAZORPAY_KEY_SECRET || "bVdoXv4bkYmMVg5L7oSrpTda"
 });
 
@@ -36,14 +38,14 @@ app.get('/api/keepalive', async (req, res) => {
 });
 
 // ==========================================
-// 🔐 AUTHENTICATION & OTP
+// 🔐 AUTHENTICATION & SECURE OTP ROUTES
 // ==========================================
 app.post('/api/send-otp', async (req, res) => {
   const { email, username, type } = req.body;
   try {
     let targetEmail = email;
     
-    // NEW SECURITY: Lookup by exact username first
+    // Security: Lookup by exact username for forgot password
     if (type === 'forgot') {
       const shopRes = await db.query('SELECT email FROM shops WHERE username = $1', [username]);
       if (shopRes.rows.length === 0) return res.status(400).json({ success: false, message: "Username not found in our system." });
@@ -79,6 +81,34 @@ app.post('/api/send-otp', async (req, res) => {
       res.json({ success: true, message: "OTP sent successfully!" });
     } catch (apiError) { res.json({ success: true, message: "Email delayed, but check Render Logs for your OTP!" }); }
   } catch (err) { res.status(500).json({ success: false, message: "Database Error." }); }
+});
+
+app.post('/api/register', async (req, res) => {
+  const { shopName, username, password, email, phone, otp } = req.body;
+  try {
+    const otpRes = await db.query('SELECT * FROM otps WHERE email = $1 AND otp = $2', [email, otp]);
+    if (otpRes.rows.length === 0) return res.status(400).json({ success: false, message: "Invalid OTP Code." });
+    if (new Date(otpRes.rows[0].expires_at) < new Date()) return res.status(400).json({ success: false, message: "OTP has expired. Request a new one." });
+    
+    const existingUser = await db.query('SELECT * FROM shops WHERE username = $1', [username]);
+    if (existingUser.rows.length > 0) return res.status(400).json({ success: false, message: "Username already taken." });
+
+    const subEnd = new Date(); subEnd.setDate(subEnd.getDate() + 7); // 7 Day Free Trial
+    const result = await db.query('INSERT INTO shops (shop_name, username, password, email, contact_number, subscription_end) VALUES ($1, $2, $3, $4, $5, $6) RETURNING shop_id, subscription_end', [shopName, username, password, email, phone, subEnd]);
+    await db.query('DELETE FROM otps WHERE email = $1', [email]);
+    
+    res.json({ success: true, shop_id: result.rows[0].shop_id, subscription_end: result.rows[0].subscription_end });
+  } catch (err) { res.status(500).json({ success: false, message: "Registration failed." }); }
+});
+
+app.post('/api/login', async (req, res) => {
+  const { username, password } = req.body;
+  try {
+    const result = await db.query('SELECT * FROM shops WHERE username = $1 AND password = $2', [username, password]);
+    if (result.rows.length === 0) return res.status(400).json({ success: false, message: "Invalid credentials." });
+    
+    res.json({ success: true, shop_id: result.rows[0].shop_id, subscription_end: result.rows[0].subscription_end });
+  } catch (err) { res.status(500).json({ success: false, message: "Server error" }); }
 });
 
 app.post('/api/verify-forgot-otp', async (req, res) => {
@@ -120,7 +150,6 @@ app.post('/api/reset-password', async (req, res) => {
     const otpRes = await db.query('SELECT * FROM otps WHERE email = $1 AND otp = $2', [email, otp]);
     if (otpRes.rows.length === 0) return res.status(400).json({ success: false, message: "Security check failed." });
     
-    // THE BUG FIX: Target the exact username row, eliminating case-sensitivity mismatches!
     await db.query('UPDATE shops SET password = $1 WHERE username = $2', [newPassword, username]);
     await db.query('DELETE FROM otps WHERE email = $1', [email]);
     res.json({ success: true, message: "Password updated successfully." });
@@ -134,18 +163,10 @@ app.post('/api/reset-password', async (req, res) => {
 // 1. Create Order
 app.post('/api/create-subscription-order', async (req, res) => {
   const { amount } = req.body; // Amount received in Rupees
-  
-  if (!amount || amount < 1) {
-    return res.status(400).json({ success: false, message: "Invalid amount." });
-  }
+  if (!amount || amount < 1) return res.status(400).json({ success: false, message: "Invalid amount." });
 
   try {
-    const options = {
-      amount: amount * 100, // Convert to paise (Razorpay requirement)
-      currency: "INR",
-      receipt: `rcpt_${Date.now()}`
-    };
-    
+    const options = { amount: amount * 100, currency: "INR", receipt: `rcpt_${Date.now()}` };
     const order = await razorpayInstance.orders.create(options);
     res.json({ success: true, order_id: order.id, amount: order.amount });
   } catch (err) {
@@ -157,32 +178,21 @@ app.post('/api/create-subscription-order', async (req, res) => {
 // 2. Verify Signature & Update Database
 app.post('/api/verify-subscription', async (req, res) => {
   const { shop_id, days, razorpay_payment_id, razorpay_order_id, razorpay_signature } = req.body;
-
-  if (!razorpay_payment_id || !razorpay_order_id || !razorpay_signature) {
-    return res.status(400).json({ success: false, message: "Missing payment fields." });
-  }
+  if (!razorpay_payment_id || !razorpay_order_id || !razorpay_signature) return res.status(400).json({ success: false, message: "Missing payment fields." });
 
   try {
-    // Cryptographic verification
     const secret = process.env.RAZORPAY_KEY_SECRET || "bVdoXv4bkYmMVg5L7oSrpTda";
-    const generated_signature = crypto
-      .createHmac('sha256', secret)
-      .update(razorpay_order_id + "|" + razorpay_payment_id)
-      .digest('hex');
+    const generated_signature = crypto.createHmac('sha256', secret).update(razorpay_order_id + "|" + razorpay_payment_id).digest('hex');
 
-    if (generated_signature !== razorpay_signature) {
-      return res.status(400).json({ success: false, message: "Payment verification failed. Invalid signature." });
-    }
+    if (generated_signature !== razorpay_signature) return res.status(400).json({ success: false, message: "Payment verification failed. Invalid signature." });
 
-    // Payment is valid! Update the database.
     const shop = await db.query('SELECT subscription_end FROM shops WHERE shop_id = $1', [shop_id]);
     let currentEnd = new Date(shop.rows[0].subscription_end);
     
-    if (currentEnd < new Date()) currentEnd = new Date(); // Reset to today if expired
+    if (currentEnd < new Date()) currentEnd = new Date(); 
     currentEnd.setDate(currentEnd.getDate() + parseInt(days));
     
     await db.query('UPDATE shops SET subscription_end = $1 WHERE shop_id = $2', [currentEnd, shop_id]);
-    
     res.json({ success: true, new_end: currentEnd, message: "Subscription activated successfully!" });
   } catch (err) {
     console.error("Verification Error:", err);
@@ -191,7 +201,7 @@ app.post('/api/verify-subscription', async (req, res) => {
 });
 
 // ==========================================
-// PROFILE, INVENTORY & BILLING ROUTES
+// 🏬 PROFILE, INVENTORY & BILLING ROUTES
 // ==========================================
 app.get('/api/shop/:id', async (req, res) => {
   try { const result = await db.query('SELECT * FROM shops WHERE shop_id = $1', [req.params.id]); res.json(result.rows[0] || {}); } catch (err) { res.status(500).json({ error: err.message }); }
@@ -205,9 +215,7 @@ app.put('/api/shop/:id', async (req, res) => {
       [shop_name, gst_number, logo_url, owner_name, address, category, email, contact_number, bank_name, account_no, ifsc_code, upi_qr_url, req.params.id]
     ); 
     res.json({ success: true }); 
-  } catch (err) { 
-    res.status(500).json({ error: err.message }); 
-  }
+  } catch (err) { res.status(500).json({ error: err.message }); }
 });
 
 app.get('/api/products/:shopId', async (req, res) => {
