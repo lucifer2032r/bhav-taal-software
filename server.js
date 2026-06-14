@@ -195,8 +195,16 @@ app.get('/api/shop/:id', async (req, res) => {
 });
 
 app.put('/api/shop/:id', async (req, res) => {
-  const { shop_name, gst_number, logo_url, owner_name, address, category, email, contact_number, bank_name, account_no, ifsc_code } = req.body;
-  try { await db.query(`UPDATE shops SET shop_name=$1, gst_number=$2, logo_url=$3, owner_name=$4, address=$5, category=$6, email=$7, contact_number=$8, bank_name=$9, account_no=$10, ifsc_code=$11 WHERE shop_id=$12`, [shop_name, gst_number, logo_url, owner_name, address, category, email, contact_number, bank_name, account_no, ifsc_code, req.params.id]); res.json({ success: true }); } catch (err) { res.status(500).json({ error: err.message }); }
+  const { shop_name, gst_number, logo_url, upi_qr_url, owner_name, address, category, email, contact_number, bank_name, account_no, ifsc_code } = req.body;
+  try { 
+    await db.query(
+      `UPDATE shops SET shop_name=$1, gst_number=$2, logo_url=$3, owner_name=$4, address=$5, category=$6, email=$7, contact_number=$8, bank_name=$9, account_no=$10, ifsc_code=$11, upi_qr_url=$12 WHERE shop_id=$13`, 
+      [shop_name, gst_number, logo_url, owner_name, address, category, email, contact_number, bank_name, account_no, ifsc_code, upi_qr_url, req.params.id]
+    ); 
+    res.json({ success: true }); 
+  } catch (err) { 
+    res.status(500).json({ error: err.message }); 
+  }
 });
 
 app.get('/api/products/:shopId', async (req, res) => {
