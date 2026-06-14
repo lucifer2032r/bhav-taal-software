@@ -57,7 +57,7 @@ function App() {
 
   const businessCategories = [ "Construction Materials Supply", "Hardware Store", "Cement Dealership", "Steel & TMT Bars", "Paints & Chemicals", "Electrical Fittings", "Plumbing & Sanitaryware", "Tiles & Ceramics", "Timber & Plywood", "Glass & Mirrors", "Furniture & Decor", "Electronics & Appliances", "Medical Pharmacy", "Other" ];
 
-  const [englishName, setEnglishName] = useState(""); const [regionalName, setRegionalName] = useState(""); const [stock, setStock] = useState(""); const [minAlert, setMinAlert] = useState(""); const [gst, setGst] = useState(""); const [hsnCode, setHsnCode] = useState(""); 
+  const [englishName, setEnglishName] = useState(""); const [regionalName, setRegionalName] = useState(""); const [stock, setStock] = useState(""); const [minAlert, setMinAlert] = useState(""); const [gst, setGst] = useState("18"); const [hsnCode, setHsnCode] = useState(""); 
   const [itemRate, setItemRate] = useState(""); const [purchasePrice, setPurchasePrice] = useState(""); const [isGstInclusive, setIsGstInclusive] = useState(true); const [language, setLanguage] = useState("gu");
   
   const [cart, setCart] = useState([]); 
@@ -320,7 +320,7 @@ function App() {
   
   const saveToVault = async (e) => { 
     e.preventDefault(); setIsLoading(true); 
-    try { await axios.post(`${API_URL}/api/products`, { shop_id: currentShopId, name_english: englishName, name_regional: regionalName, current_stock: parseInt(stock), min_stock_alert: parseInt(minAlert), gst_rate: parseFloat(gst), hsn_code: hsnCode, item_rate: parseFloat(itemRate), purchase_price: parseFloat(purchasePrice), is_gst_inclusive: isGstInclusive }); showMessage("✅ Material added!"); setEnglishName(""); setRegionalName(""); setStock(""); setMinAlert(""); setGst(""); setHsnCode(""); setItemRate(""); setPurchasePrice(""); fetchInventory(); } catch (error) { showMessage("❌ Error saving product."); } finally { setIsLoading(false); }
+    try { await axios.post(`${API_URL}/api/products`, { shop_id: currentShopId, name_english: englishName, name_regional: regionalName, current_stock: parseInt(stock), min_stock_alert: parseInt(minAlert), gst_rate: parseFloat(gst), hsn_code: hsnCode, item_rate: parseFloat(itemRate), purchase_price: parseFloat(purchasePrice), is_gst_inclusive: isGstInclusive }); showMessage("✅ Material added!"); setEnglishName(""); setRegionalName(""); setStock(""); setMinAlert(""); setGst("18"); setHsnCode(""); setItemRate(""); setPurchasePrice(""); setIsGstInclusive(true); fetchInventory(); } catch (error) { showMessage("❌ Error saving product."); } finally { setIsLoading(false); }
   };
   
   const saveEdit = async (id) => { setIsLoading(true); try { await axios.put(`${API_URL}/api/products/${id}`, editData); showMessage("✅ Material updated!"); setEditingId(null); fetchInventory(); } catch (error) { showMessage("❌ Error updating."); } setIsLoading(false); };
