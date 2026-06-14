@@ -83,7 +83,7 @@ function App() {
     @media print { 
       @page { size: A4 portrait; margin: 5mm; } html, body { width: 100% !important; height: 100% !important; background: white !important; overflow: visible !important; margin: 0 !important; padding: 0 !important; }
       .no-print { display: none !important; } .print-only { display: block !important; width: 100%; background: white; margin: 0; padding: 0; } 
-      .page-break { page-break-after: always; height: 97vh; width: 100%; box-sizing: border-box; position: relative; display: flex; flex-direction: column; background: white; } .avoid-break { page-break-inside: avoid; } * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
+      .page-break { page-break-after: always; height: 280mm; width: 100%; box-sizing: border-box; position: relative; display: flex; flex-direction: column; background: white; overflow: hidden; } .avoid-break { page-break-inside: avoid; } * { -webkit-print-color-adjust: exact !important; print-color-adjust: exact !important; }
     }
     .print-only { display: none; }
     .soft-input:focus { box-shadow: 0 0 0 3px rgba(99, 102, 241, 0.2); border-color: ${t.primary} !important; }
