@@ -460,7 +460,10 @@ function App() {
           {/* === FORGOT PASSWORD MODE === */}
           {authMode === 'forgot' && forgotStep === 1 && (
             <form onSubmit={handleForgotSendOtp}>
-              <div style={{ marginBottom: '30px' }}><label style={labelStyle}>{tText('email_req')}</label><input type="email" required value={regEmail} onChange={(e) => setRegEmail(e.target.value)} className="soft-input" style={inputStyle} /></div>
+              <div style={{ marginBottom: '30px' }}>
+                <label style={labelStyle}>{tText('user')}</label>
+                <input type="text" required value={loginUser} onChange={(e) => setLoginUser(e.target.value)} className="soft-input" style={inputStyle} />
+              </div>
               <button type="submit" disabled={isLoading} style={{ ...btnPrimary, opacity: isLoading ? 0.7 : 1 }}><ShieldAlert size={20}/> {tText('send_recovery')}</button>
               <div style={{ textAlign: 'center', marginTop: '20px' }}><button type="button" onClick={() => { setAuthMode('login'); resetAuthStates(); }} style={{ background: 'none', border: 'none', color: t.textMuted, cursor: 'pointer', fontSize: '14px' }}>{tText('back_login')}</button></div>
             </form>
@@ -468,7 +471,9 @@ function App() {
 
           {authMode === 'forgot' && forgotStep === 2 && (
             <form onSubmit={handleForgotVerifyOtp}>
-              <div style={{ backgroundColor: `${t.primary}10`, border: `1px solid ${t.primary}40`, padding: '15px', borderRadius: '12px', marginBottom: '20px', textAlign: 'center', color: t.text }}><div style={{ fontWeight: 'bold' }}>Recovery OTP Sent to {regEmail}</div></div>
+              <div style={{ backgroundColor: `${t.primary}10`, border: `1px solid ${t.primary}40`, padding: '15px', borderRadius: '12px', marginBottom: '20px', textAlign: 'center', color: t.text }}>
+                <div style={{ fontWeight: 'bold' }}>Recovery OTP Sent to your Registered Email</div>
+              </div>
               
               {/* INVISIBLE OVERLAY OTP INPUT */}
               <div style={{ marginBottom: '30px', textAlign: 'center' }}>
