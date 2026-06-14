@@ -264,7 +264,27 @@ function App() {
   const removeCartItem = (id) => { setCart(cart.filter(c => c.product_id !== id)); };
 
   let grossTotal = 0; let totalTaxable = 0; let totalGst = 0; let totalPurchaseCost = 0;
-  cart.forEach(item => { const itemTotal = item.rate * item.qty; const ppTotal = (parseFloat(item.purchase_price) || 0) * item.qty; const gstPercent = parseFloat(item.gst_rate) || 0; let itemTaxable, itemGst; if (item.is_gst_inclusive) { itemTaxable = itemTotal / (1 + (gstPercent / 100)); itemGst = itemTotal - itemTaxable; } else { itemTaxable = itemTotal; itemGst = itemTaxable * (gstPercent / 100); } grossTotal += (item.is_gst_inclusive ? itemTotal : (itemTaxable + itemGst)); totalTaxable += itemTaxable; totalGst += itemGst; totalPurchaseCost += ppTotal; });
+  cart.forEach(item => { 
+    const itemTotal = item.rate * item.qty; 
+    const ppTotal = (parseFloat(item.purchase_price) || 0) * item.qty; 
+    
+    // CRITICAL FIX: If it's an estimate, force GST to 0% for the math engine
+    const activeGstPercent = isGstBill ? (parseFloat(item.gst_rate) || 0) : 0; 
+    
+    let itemTaxable, itemGst; 
+    if (item.is_gst_inclusive && isGstBill) { 
+      itemTaxable = itemTotal / (1 + (activeGstPercent / 100)); 
+      itemGst = itemTotal - itemTaxable; 
+    } else { 
+      itemTaxable = itemTotal; 
+      itemGst = itemTaxable * (activeGstPercent / 100); 
+    } 
+    grossTotal += (item.is_gst_inclusive && isGstBill ? itemTotal : (itemTaxable + itemGst)); 
+    totalTaxable += itemTaxable; 
+    totalGst += itemGst; 
+    totalPurchaseCost += ppTotal; 
+  });
+  
   let finalDiscount = 0; if (discountVal && parseFloat(discountVal) > 0) finalDiscount = discountType === 'percent' ? (grossTotal * (parseFloat(discountVal) / 100)) : parseFloat(discountVal);
   const finalTotalAmount = grossTotal - finalDiscount; const halfGst = totalGst / 2; const currentMargin = totalTaxable - totalPurchaseCost - finalDiscount;
 
