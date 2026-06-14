@@ -8,7 +8,7 @@ import { LayoutDashboard, ShoppingCart, PackageSearch, PlusCircle, LogOut, Menu,
 // 🚀 CLOUD CONNECTION & RAZORPAY FRONTEND
 // ==========================================
 const API_URL = "https://bhav-taal-software.onrender.com"; 
-const RAZORPAY_KEY_ID = "rzp_test_T13wSE9FIt2rjT"; 
+const RAZORPAY_KEY_ID = "rzp_live_T1Y0RbuvhwwZdd"; 
 
 // ==========================================
 // 🌐 TRANSLATION DICTIONARY
