@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { ReactTransliterate } from 'react-transliterate';
 import "react-transliterate/dist/index.css";
-import { LayoutDashboard, ShoppingCart, PackageSearch, PlusCircle, LogOut, Menu, Moon, Sun, ChevronLeft, Edit3, Trash2, Printer, Search, Download, Settings, Image as ImageIcon, Percent, IndianRupee, X, AlertTriangle, Receipt, Box, Clock, CreditCard, CheckCircle2, Lock, Pencil, FileText, ArrowDownRight, ArrowUpRight, Globe, Eye, EyeOff, Mail, ShieldAlert, KeyRound, ToggleLeft, ToggleRight, QrCode } from 'lucide-react';
+import { LayoutDashboard, ShoppingCart, PackageSearch, PlusCircle, LogOut, Menu, Moon, Sun, ChevronLeft, Edit3, Trash2, Printer, Search, Download, Settings, Image as ImageIcon, Percent, IndianRupee, X, AlertTriangle, Receipt, Box, Clock, CreditCard, CheckCircle2, Lock, Pencil, FileText, ArrowDownRight, ArrowUpRight, Globe, Eye, EyeOff, Mail, ShieldAlert, KeyRound, ToggleLeft, ToggleRight, QrCode, MessageCircle, Send } from 'lucide-react';
 
 // ==========================================
 // 🚀 CLOUD CONNECTION & RAZORPAY FRONTEND
@@ -51,7 +51,6 @@ function App() {
   
   const [inventory, setInventory] = useState([]); const [transactions, setTransactions] = useState([]); const [message, setMessage] = useState("");
   
-  // NEW STATE: Added upi_qr_url
   const [profile, setProfile] = useState({ shop_name: "", gst_number: "", logo_url: "", upi_qr_url: "", owner_name: "", address: "", category: "", email: "", contact_number: "", bank_name: "", account_no: "", ifsc_code: "" });
   const [categorySearch, setCategorySearch] = useState(""); const [isCatSearchOpen, setIsCatSearchOpen] = useState(false);
 
@@ -71,6 +70,39 @@ function App() {
 
   const [editBillId, setEditBillId] = useState(null);
   const [editingId, setEditingId] = useState(null); const [editData, setEditData] = useState({ name_english: "", name_regional: "", current_stock: "", min_stock_alert: "", gst_rate: "", hsn_code: "", item_rate: "", purchase_price: "", is_gst_inclusive: true });
+
+  // ==========================================
+  // 🤖 NOUPE AI STATE & LOGIC
+  // ==========================================
+  const [isChatOpen, setIsChatOpen] = useState(false);
+  const [chatInput, setChatInput] = useState("");
+  const [chatHistory, setChatHistory] = useState([]);
+  const [isAiLoading, setIsAiLoading] = useState(false);
+
+  const handleSendChat = async (e) => {
+    e.preventDefault();
+    if (!chatInput.trim()) return;
+    
+    const newHistory = [...chatHistory, { role: 'user', text: chatInput }];
+    setChatHistory(newHistory);
+    setChatInput("");
+    setIsAiLoading(true);
+
+    try {
+      const res = await axios.post(`${API_URL}/api/ai-assistant`, {
+        message: chatInput,
+        history: chatHistory
+      });
+      if (res.data.success) {
+        setChatHistory([...newHistory, { role: 'model', text: res.data.reply }]);
+      } else {
+        setChatHistory([...newHistory, { role: 'model', text: "❌ " + res.data.message }]);
+      }
+    } catch (err) {
+      setChatHistory([...newHistory, { role: 'model', text: "❌ Connection error. I cannot reach the server." }]);
+    }
+    setIsAiLoading(false);
+  };
 
   const t = isDarkMode ? { bg: '#0f172a', sidebar: '#1e293b', card: '#1e293b', text: '#f8fafc', textMuted: '#94a3b8', border: '#334155', primary: '#818cf8', inputBg: '#0f172a', success: '#10b981', danger: '#ef4444', warning: '#f39c12' } : { bg: '#f1f5f9', sidebar: '#ffffff', card: '#ffffff', text: '#0f172a', textMuted: '#64748b', border: '#e2e8f0', primary: '#6366f1', inputBg: '#f8fafc', success: '#10b981', danger: '#ef4444', warning: '#f39c12' };
 
@@ -272,7 +304,6 @@ function App() {
   const fetchInventory = async (id = currentShopId) => { if (!id) return; try { const res = await axios.get(`${API_URL}/api/products/${id}`); setInventory(res.data); } catch (e) {} };
   const fetchTransactions = async (id = currentShopId) => { if (!id) return; try { const res = await axios.get(`${API_URL}/api/transactions/${id}`); setTransactions(res.data); } catch (e) {} };
   
-  // NEW GENERIC IMAGE UPLOAD HANDLER
   const handleImageUpload = (e, field) => { 
     const file = e.target.files[0]; 
     if (file) { 
@@ -298,7 +329,6 @@ function App() {
     if (billStatus === 'Unsettled' && !partyName.trim()) return showMessage("❌ Party / Wholesaler Name required for Unsettled bills.");
     setIsLoading(true);
     try {
-      // INJECT UPI QR CODE URL INTO RECEIPT DATA
       const currentReceiptData = { shopName: profile.shop_name, owner: profile.owner_name, address: profile.address, gstNum: profile.gst_number, logo: profile.logo_url, upiQr: profile.upi_qr_url, phone: profile.contact_number, email: profile.email, bank: profile.bank_name, acc: profile.account_no, ifsc: profile.ifsc_code, partyName, partyGst, transType, isGstBill, cartItems: cart.map(item => ({ product_id: item.product_id, name: `${item.name_english} (${item.name_regional})`, hsn: item.hsn_code, qty: item.qty, rate: item.rate, amount: (item.rate * item.qty) })), grossAmount: grossTotal, discount: finalDiscount, taxable: totalTaxable, totalGst: totalGst, cgst: halfGst, sgst: halfGst, finalTotal: finalTotalAmount, date: new Date().toLocaleDateString('en-IN') };
       const payload = { shop_id: currentShopId, party_name: partyName, transaction_type: transType, cart_items: cart, total_amount: finalTotalAmount, total_gst: totalGst, discount_amount: finalDiscount, receipt_details: currentReceiptData, status: billStatus, settlement_date: billStatus === 'Unsettled' ? settlementDate : "" };
       let response;
@@ -355,7 +385,6 @@ function App() {
       <div style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', height: '100vh', width: '100vw', backgroundColor: t.bg, fontFamily: "'Inter', sans-serif", transition: 'all 0.3s', position: 'relative' }}>
         <style>{globalStyles}</style>
         
-        {/* Language Toggle for Login Screen */}
         <div style={{ position: 'absolute', top: '20px', right: '20px', display: 'flex', gap: '10px' }}>
           <button onClick={() => setUiLang(uiLang === 'en' ? 'gu' : 'en')} style={{ background: t.card, border: `1px solid ${t.border}`, color: t.text, cursor: 'pointer', padding: '8px 12px', borderRadius: '8px', display: 'flex', alignItems: 'center', gap: '6px', fontWeight: 'bold' }}>
             <Globe size={18} /> {uiLang === 'en' ? 'ગુજરાતી' : 'English'}
@@ -380,7 +409,6 @@ function App() {
           {authMessage && <div style={{ backgroundColor: `${t.danger}20`, color: t.danger, padding: '12px', borderRadius: '10px', marginBottom: '20px', textAlign: 'center', fontSize: '14px', fontWeight: '500' }}>{authMessage}</div>}
           {authSuccess && <div style={{ backgroundColor: `${t.success}20`, color: t.success, padding: '12px', borderRadius: '10px', marginBottom: '20px', textAlign: 'center', fontSize: '14px', fontWeight: '500' }}>{authSuccess}</div>}
 
-          {/* === LOGIN MODE === */}
           {authMode === 'login' && (
             <form onSubmit={handleLogin}>
               <div style={{ marginBottom: '15px' }}><label style={labelStyle}>{tText('user')}</label><input type="text" required value={loginUser} onChange={(e) => setLoginUser(e.target.value)} className="soft-input" style={inputStyle} /></div>
@@ -401,7 +429,6 @@ function App() {
             </form>
           )}
 
-          {/* === REGISTER MODE === */}
           {authMode === 'register' && regStep === 1 && (
             <form onSubmit={handleRegisterRequestOtp}>
               <div style={{ marginBottom: '15px' }}><label style={labelStyle}>{tText('biz_name')}</label><input type="text" required value={regShopName} onChange={(e) => setRegShopName(e.target.value)} className="soft-input" style={inputStyle} /></div>
@@ -438,8 +465,6 @@ function App() {
                 <div style={{ fontWeight: 'bold' }}>OTP Sent to {regEmail}</div>
                 <div style={{ fontSize: '12px', color: t.textMuted }}>Please check your inbox and spam folder.</div>
               </div>
-
-              {/* INVISIBLE OVERLAY OTP INPUT */}
               <div style={{ marginBottom: '30px', textAlign: 'center' }}>
                 <label style={{...labelStyle, display: 'block', marginBottom: '15px'}}>{tText('enter_otp')}</label>
                 <div style={{ position: 'relative', display: 'flex', justifyContent: 'center', gap: '10px' }}>
@@ -457,7 +482,6 @@ function App() {
             </form>
           )}
 
-          {/* === FORGOT PASSWORD MODE === */}
           {authMode === 'forgot' && forgotStep === 1 && (
             <form onSubmit={handleForgotSendOtp}>
               <div style={{ marginBottom: '30px' }}>
@@ -474,8 +498,6 @@ function App() {
               <div style={{ backgroundColor: `${t.primary}10`, border: `1px solid ${t.primary}40`, padding: '15px', borderRadius: '12px', marginBottom: '20px', textAlign: 'center', color: t.text }}>
                 <div style={{ fontWeight: 'bold' }}>Recovery OTP Sent to your Registered Email</div>
               </div>
-              
-              {/* INVISIBLE OVERLAY OTP INPUT */}
               <div style={{ marginBottom: '30px', textAlign: 'center' }}>
                 <label style={{...labelStyle, display: 'block', marginBottom: '15px'}}>{tText('enter_otp')}</label>
                 <div style={{ position: 'relative', display: 'flex', justifyContent: 'center', gap: '10px' }}>
@@ -537,7 +559,6 @@ function App() {
         </div>
         <div style={{ position: 'absolute', bottom: '20px', color: t.textMuted, fontSize: '13px', fontWeight: '600' }}>{tText('dev')}</div>
         
-        {/* SHIELD */}
         {isLoading && (
           <div className="glass-overlay">
             <span className="loader"></span>
@@ -616,7 +637,6 @@ function App() {
               <form onSubmit={saveProfile} style={cardStyle}>
                 <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '30px' }}><Settings color={t.primary} size={28}/><h2 style={{ margin: 0, color: t.text }}>{tText('biz_prof')}</h2></div>
                 
-                {/* LOGO AND QR UPLOAD ROW */}
                 <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '20px', marginBottom: '25px' }}>
                   <div style={{ display: 'flex', alignItems: 'center', gap: '20px' }}>
                     <div style={{ width: '100px', height: '100px', borderRadius: '12px', border: `2px dashed ${t.border}`, display: 'flex', alignItems: 'center', justifyContent: 'center', overflow: 'hidden', backgroundColor: t.inputBg }}>{profile.logo_url ? <img src={profile.logo_url} alt="Logo" style={{ width: '100%', height: '100%', objectFit: 'contain' }} /> : <ImageIcon color={t.textMuted} size={32} />}</div>
@@ -976,6 +996,71 @@ function App() {
           ))}
         </div>
       )}
+
+      {/* ========================================== */}
+      {/* 🤖 NOUPE AI ASSISTANT (GLOBAL FLOATING UI) */}
+      {/* ========================================== */}
+      {isLoggedIn && (
+        <div className="no-print" style={{ position: 'fixed', bottom: '30px', right: '30px', zIndex: 9999, display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
+          
+          {/* Chat Window */}
+          {isChatOpen && (
+            <div style={{ width: '360px', height: '500px', backgroundColor: t.card, borderRadius: '24px', boxShadow: '0 20px 50px rgba(0,0,0,0.2)', border: `1px solid ${t.border}`, display: 'flex', flexDirection: 'column', overflow: 'hidden', marginBottom: '20px', animation: 'fadeIn 0.3s ease' }}>
+              
+              {/* Header */}
+              <div style={{ backgroundColor: t.primary, padding: '15px 20px', color: 'white', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
+                  <div style={{ width: '10px', height: '10px', backgroundColor: '#10b981', borderRadius: '50%', boxShadow: '0 0 10px #10b981' }}></div>
+                  <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 'bold' }}>Noupe AI Assistant</h3>
+                </div>
+                <button onClick={() => setIsChatOpen(false)} style={{ background: 'none', border: 'none', color: 'white', cursor: 'pointer', display: 'flex' }}><X size={20}/></button>
+              </div>
+
+              {/* Scrollable Chat Area */}
+              <div style={{ flex: 1, padding: '20px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '15px', backgroundColor: `${t.bg}50` }}>
+                
+                {/* Default Greeting */}
+                <div style={{ alignSelf: 'flex-start', backgroundColor: t.inputBg, color: t.text, padding: '12px 16px', borderRadius: '16px 16px 16px 4px', fontSize: '14px', border: `1px solid ${t.border}`, maxWidth: '85%', lineHeight: '1.5' }}>
+                  Namaste! I am <strong>Noupe</strong>, the AI assistant for Bhav-Taal. How can I help you with your billing, Khata, or business growth today?
+                </div>
+                
+                {/* Dynamic Messages */}
+                {chatHistory.map((msg, i) => (
+                  <div key={i} style={{ alignSelf: msg.role === 'user' ? 'flex-end' : 'flex-start', backgroundColor: msg.role === 'user' ? t.primary : t.inputBg, color: msg.role === 'user' ? 'white' : t.text, padding: '12px 16px', borderRadius: msg.role === 'user' ? '16px 16px 4px 16px' : '16px 16px 16px 4px', fontSize: '14px', border: msg.role === 'model' ? `1px solid ${t.border}` : 'none', maxWidth: '85%', lineHeight: '1.5' }}>
+                    {msg.text}
+                  </div>
+                ))}
+                
+                {/* Typing Indicator */}
+                {isAiLoading && (
+                  <div style={{ alignSelf: 'flex-start', backgroundColor: t.inputBg, padding: '12px 16px', borderRadius: '16px 16px 16px 4px', border: `1px solid ${t.border}`, display: 'flex', alignItems: 'center', gap: '8px' }}>
+                    <span style={{ fontSize: '12px', color: t.textMuted, fontWeight: 'bold' }}>Noupe is typing</span>
+                    <span className="loader" style={{ width: '12px', height: '12px', borderWidth: '2px', borderBottomColor: 'transparent', borderColor: t.primary }}></span>
+                  </div>
+                )}
+              </div>
+
+              {/* Input Area */}
+              <div style={{ padding: '15px', borderTop: `1px solid ${t.border}`, backgroundColor: t.card }}>
+                <form onSubmit={handleSendChat} style={{ display: 'flex', gap: '10px' }}>
+                  <input type="text" value={chatInput} onChange={(e) => setChatInput(e.target.value)} placeholder="Ask a question..." style={{ flex: 1, padding: '12px 16px', borderRadius: '24px', border: `1px solid ${t.border}`, backgroundColor: t.inputBg, color: t.text, outline: 'none', fontSize: '14px' }} disabled={isAiLoading} />
+                  <button type="submit" disabled={isAiLoading || !chatInput.trim()} style={{ backgroundColor: t.primary, border: 'none', width: '45px', height: '45px', borderRadius: '50%', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', opacity: (isAiLoading || !chatInput.trim()) ? 0.5 : 1, transition: 'all 0.2s' }}>
+                    <Send size={20} style={{ marginLeft: '4px' }} />
+                  </button>
+                </form>
+              </div>
+            </div>
+          )}
+
+          {/* Chat Bubble Launcher Button */}
+          {!isChatOpen && (
+            <button onClick={() => setIsChatOpen(true)} style={{ width: '65px', height: '65px', backgroundColor: t.primary, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', border: 'none', cursor: 'pointer', boxShadow: `0 10px 25px ${t.primary}60`, transition: 'transform 0.2s' }}>
+              <MessageCircle size={30} />
+            </button>
+          )}
+        </div>
+      )}
+
     </div>
   );
 }
