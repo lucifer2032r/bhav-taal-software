@@ -38,48 +38,6 @@ app.get('/api/keepalive', async (req, res) => {
 });
 
 // ==========================================
-// 🤖 NOUPE AI ASSISTANT ROUTE (GEMINI API)
-// ==========================================
-app.post('/api/ai-assistant', async (req, res) => {
-  const { message, history } = req.body;
-  const apiKey = process.env.GEMINI_API_KEY;
-
-  if (!apiKey) return res.status(500).json({ success: false, message: "API key missing. Check Render environment variables." });
-
-  try {
-    const geminiHistory = history.map(msg => ({
-      role: msg.role === 'user' ? 'user' : 'model',
-      parts: [{ text: msg.text }]
-    }));
-    
-    geminiHistory.push({ role: 'user', parts: [{ text: message }] });
-
-    const payload = {
-      system_instruction: {
-        parts: [{ text: "You are Noupe, the official AI Business and Technical Assistant for the Bhav-Taal POS and Inventory software. Your job is to help the shop owner with using the software (adding materials, billing, Khata/Ledger) and offer business advice (GST, pricing, margins, local retail strategies). Be extremely concise, professional, and friendly. Do not answer questions unrelated to business, retail, or the Bhav-Taal software. If asked about unrelated topics, politely guide them back to Bhav-Taal operations." }]
-      },
-      contents: geminiHistory
-    };
-
-    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload)
-    });
-
-    const data = await response.json();
-    if (data.error) throw new Error(data.error.message);
-
-    const aiText = data.candidates[0].content.parts[0].text;
-    res.json({ success: true, reply: aiText });
-    
-  } catch (err) {
-    console.error("AI Error:", err);
-    res.status(500).json({ success: false, message: "Sorry, my AI brain is offline right now. Please try again later!" });
-  }
-});
-
-// ==========================================
 // 🔐 AUTHENTICATION & SECURE OTP ROUTES
 // ==========================================
 app.post('/api/send-otp', async (req, res) => {
