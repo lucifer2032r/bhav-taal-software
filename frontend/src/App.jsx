@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import axios from 'axios';
 import { ReactTransliterate } from 'react-transliterate';
 import "react-transliterate/dist/index.css";
-import { LayoutDashboard, ShoppingCart, PackageSearch, PlusCircle, LogOut, Menu, Moon, Sun, ChevronLeft, Edit3, Trash2, Printer, Search, Download, Settings, Image as ImageIcon, Percent, IndianRupee, X, AlertTriangle, Receipt, Box, Clock, CreditCard, CheckCircle2, Lock, Pencil, FileText, ArrowDownRight, ArrowUpRight, Globe, Eye, EyeOff, Mail, ShieldAlert, KeyRound, ToggleLeft, ToggleRight, QrCode, MessageCircle, Send } from 'lucide-react';
+import { LayoutDashboard, ShoppingCart, PackageSearch, PlusCircle, LogOut, Menu, Moon, Sun, ChevronLeft, Edit3, Trash2, Printer, Search, Download, Settings, Image as ImageIcon, Percent, IndianRupee, X, AlertTriangle, Receipt, Box, Clock, CreditCard, CheckCircle2, Lock, Pencil, FileText, ArrowDownRight, ArrowUpRight, Globe, Eye, EyeOff, Mail, ShieldAlert, KeyRound, ToggleLeft, ToggleRight, QrCode } from 'lucide-react';
 
 // ==========================================
 // 🚀 CLOUD CONNECTION & RAZORPAY FRONTEND
@@ -70,39 +70,6 @@ function App() {
 
   const [editBillId, setEditBillId] = useState(null);
   const [editingId, setEditingId] = useState(null); const [editData, setEditData] = useState({ name_english: "", name_regional: "", current_stock: "", min_stock_alert: "", gst_rate: "", hsn_code: "", item_rate: "", purchase_price: "", is_gst_inclusive: true });
-
-  // ==========================================
-  // 🤖 NOUPE AI STATE & LOGIC
-  // ==========================================
-  const [isChatOpen, setIsChatOpen] = useState(false);
-  const [chatInput, setChatInput] = useState("");
-  const [chatHistory, setChatHistory] = useState([]);
-  const [isAiLoading, setIsAiLoading] = useState(false);
-
-  const handleSendChat = async (e) => {
-    e.preventDefault();
-    if (!chatInput.trim()) return;
-    
-    const newHistory = [...chatHistory, { role: 'user', text: chatInput }];
-    setChatHistory(newHistory);
-    setChatInput("");
-    setIsAiLoading(true);
-
-    try {
-      const res = await axios.post(`${API_URL}/api/ai-assistant`, {
-        message: chatInput,
-        history: chatHistory
-      });
-      if (res.data.success) {
-        setChatHistory([...newHistory, { role: 'model', text: res.data.reply }]);
-      } else {
-        setChatHistory([...newHistory, { role: 'model', text: "❌ " + res.data.message }]);
-      }
-    } catch (err) {
-      setChatHistory([...newHistory, { role: 'model', text: "❌ Connection error. I cannot reach the server." }]);
-    }
-    setIsAiLoading(false);
-  };
 
   const t = isDarkMode ? { bg: '#0f172a', sidebar: '#1e293b', card: '#1e293b', text: '#f8fafc', textMuted: '#94a3b8', border: '#334155', primary: '#818cf8', inputBg: '#0f172a', success: '#10b981', danger: '#ef4444', warning: '#f39c12' } : { bg: '#f1f5f9', sidebar: '#ffffff', card: '#ffffff', text: '#0f172a', textMuted: '#64748b', border: '#e2e8f0', primary: '#6366f1', inputBg: '#f8fafc', success: '#10b981', danger: '#ef4444', warning: '#f39c12' };
 
@@ -996,71 +963,6 @@ function App() {
           ))}
         </div>
       )}
-
-      {/* ========================================== */}
-      {/* 🤖 NOUPE AI ASSISTANT (GLOBAL FLOATING UI) */}
-      {/* ========================================== */}
-      {isLoggedIn && (
-        <div className="no-print" style={{ position: 'fixed', bottom: '30px', right: '30px', zIndex: 9999, display: 'flex', flexDirection: 'column', alignItems: 'flex-end' }}>
-          
-          {/* Chat Window */}
-          {isChatOpen && (
-            <div style={{ width: '360px', height: '500px', backgroundColor: t.card, borderRadius: '24px', boxShadow: '0 20px 50px rgba(0,0,0,0.2)', border: `1px solid ${t.border}`, display: 'flex', flexDirection: 'column', overflow: 'hidden', marginBottom: '20px', animation: 'fadeIn 0.3s ease' }}>
-              
-              {/* Header */}
-              <div style={{ backgroundColor: t.primary, padding: '15px 20px', color: 'white', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-                  <div style={{ width: '10px', height: '10px', backgroundColor: '#10b981', borderRadius: '50%', boxShadow: '0 0 10px #10b981' }}></div>
-                  <h3 style={{ margin: 0, fontSize: '16px', fontWeight: 'bold' }}>Noupe AI Assistant</h3>
-                </div>
-                <button onClick={() => setIsChatOpen(false)} style={{ background: 'none', border: 'none', color: 'white', cursor: 'pointer', display: 'flex' }}><X size={20}/></button>
-              </div>
-
-              {/* Scrollable Chat Area */}
-              <div style={{ flex: 1, padding: '20px', overflowY: 'auto', display: 'flex', flexDirection: 'column', gap: '15px', backgroundColor: `${t.bg}50` }}>
-                
-                {/* Default Greeting */}
-                <div style={{ alignSelf: 'flex-start', backgroundColor: t.inputBg, color: t.text, padding: '12px 16px', borderRadius: '16px 16px 16px 4px', fontSize: '14px', border: `1px solid ${t.border}`, maxWidth: '85%', lineHeight: '1.5' }}>
-                  Namaste! I am <strong>Noupe</strong>, the AI assistant for Bhav-Taal. How can I help you with your billing, Khata, or business growth today?
-                </div>
-                
-                {/* Dynamic Messages */}
-                {chatHistory.map((msg, i) => (
-                  <div key={i} style={{ alignSelf: msg.role === 'user' ? 'flex-end' : 'flex-start', backgroundColor: msg.role === 'user' ? t.primary : t.inputBg, color: msg.role === 'user' ? 'white' : t.text, padding: '12px 16px', borderRadius: msg.role === 'user' ? '16px 16px 4px 16px' : '16px 16px 16px 4px', fontSize: '14px', border: msg.role === 'model' ? `1px solid ${t.border}` : 'none', maxWidth: '85%', lineHeight: '1.5' }}>
-                    {msg.text}
-                  </div>
-                ))}
-                
-                {/* Typing Indicator */}
-                {isAiLoading && (
-                  <div style={{ alignSelf: 'flex-start', backgroundColor: t.inputBg, padding: '12px 16px', borderRadius: '16px 16px 16px 4px', border: `1px solid ${t.border}`, display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    <span style={{ fontSize: '12px', color: t.textMuted, fontWeight: 'bold' }}>Noupe is typing</span>
-                    <span className="loader" style={{ width: '12px', height: '12px', borderWidth: '2px', borderBottomColor: 'transparent', borderColor: t.primary }}></span>
-                  </div>
-                )}
-              </div>
-
-              {/* Input Area */}
-              <div style={{ padding: '15px', borderTop: `1px solid ${t.border}`, backgroundColor: t.card }}>
-                <form onSubmit={handleSendChat} style={{ display: 'flex', gap: '10px' }}>
-                  <input type="text" value={chatInput} onChange={(e) => setChatInput(e.target.value)} placeholder="Ask a question..." style={{ flex: 1, padding: '12px 16px', borderRadius: '24px', border: `1px solid ${t.border}`, backgroundColor: t.inputBg, color: t.text, outline: 'none', fontSize: '14px' }} disabled={isAiLoading} />
-                  <button type="submit" disabled={isAiLoading || !chatInput.trim()} style={{ backgroundColor: t.primary, border: 'none', width: '45px', height: '45px', borderRadius: '50%', color: 'white', display: 'flex', alignItems: 'center', justifyContent: 'center', cursor: 'pointer', opacity: (isAiLoading || !chatInput.trim()) ? 0.5 : 1, transition: 'all 0.2s' }}>
-                    <Send size={20} style={{ marginLeft: '4px' }} />
-                  </button>
-                </form>
-              </div>
-            </div>
-          )}
-
-          {/* Chat Bubble Launcher Button */}
-          {!isChatOpen && (
-            <button onClick={() => setIsChatOpen(true)} style={{ width: '65px', height: '65px', backgroundColor: t.primary, borderRadius: '50%', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'white', border: 'none', cursor: 'pointer', boxShadow: `0 10px 25px ${t.primary}60`, transition: 'transform 0.2s' }}>
-              <MessageCircle size={30} />
-            </button>
-          )}
-        </div>
-      )}
-
     </div>
   );
 }
