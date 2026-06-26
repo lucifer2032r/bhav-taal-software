@@ -25,7 +25,7 @@ const GOOGLE_SCRIPT_URL = "https://script.google.com/macros/s/AKfycbyvXXbKWaaNSP
 // 💳 RAZORPAY CONFIGURATION
 // ==========================================
 const razorpayInstance = new Razorpay({
-  key_id: process.env.RAZORPAY_KEY_ID || "rzp_test_T13wSE9FIt2rjT", // Uses Live Key from Render Env Variables
+  key_id: process.env.RAZORPAY_KEY_ID || "rzp_live_T1Y0RbuvhwwZdd", 
   key_secret: process.env.RAZORPAY_KEY_SECRET || "bVdoXv4bkYmMVg5L7oSrpTda"
 });
 
@@ -38,6 +38,48 @@ app.get('/api/keepalive', async (req, res) => {
 });
 
 // ==========================================
+// 🤖 NOUPE AI ASSISTANT ROUTE (GEMINI API)
+// ==========================================
+app.post('/api/ai-assistant', async (req, res) => {
+  const { message, history } = req.body;
+  const apiKey = process.env.GEMINI_API_KEY;
+
+  if (!apiKey) return res.status(500).json({ success: false, message: "API key missing. Check Render environment variables." });
+
+  try {
+    const geminiHistory = history.map(msg => ({
+      role: msg.role === 'user' ? 'user' : 'model',
+      parts: [{ text: msg.text }]
+    }));
+    
+    geminiHistory.push({ role: 'user', parts: [{ text: message }] });
+
+    const payload = {
+      system_instruction: {
+        parts: [{ text: "You are Noupe, the official AI Business and Technical Assistant for the Bhav-Taal POS and Inventory software. Your job is to help the shop owner with using the software (adding materials, billing, Khata/Ledger) and offer business advice (GST, pricing, margins, local retail strategies). Be extremely concise, professional, and friendly. Do not answer questions unrelated to business, retail, or the Bhav-Taal software. If asked about unrelated topics, politely guide them back to Bhav-Taal operations." }]
+      },
+      contents: geminiHistory
+    };
+
+    const response = await fetch(`https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=${apiKey}`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+
+    const data = await response.json();
+    if (data.error) throw new Error(data.error.message);
+
+    const aiText = data.candidates[0].content.parts[0].text;
+    res.json({ success: true, reply: aiText });
+    
+  } catch (err) {
+    console.error("AI Error:", err);
+    res.status(500).json({ success: false, message: "Sorry, my AI brain is offline right now. Please try again later!" });
+  }
+});
+
+// ==========================================
 // 🔐 AUTHENTICATION & SECURE OTP ROUTES
 // ==========================================
 app.post('/api/send-otp', async (req, res) => {
@@ -45,7 +87,6 @@ app.post('/api/send-otp', async (req, res) => {
   try {
     let targetEmail = email;
     
-    // Security: Lookup by exact username for forgot password
     if (type === 'forgot') {
       const shopRes = await db.query('SELECT email FROM shops WHERE username = $1', [username]);
       if (shopRes.rows.length === 0) return res.status(400).json({ success: false, message: "Username not found in our system." });
@@ -93,7 +134,7 @@ app.post('/api/register', async (req, res) => {
     const existingUser = await db.query('SELECT * FROM shops WHERE username = $1', [username]);
     if (existingUser.rows.length > 0) return res.status(400).json({ success: false, message: "Username already taken." });
 
-    const subEnd = new Date(); subEnd.setDate(subEnd.getDate() + 7); // 7 Day Free Trial
+    const subEnd = new Date(); subEnd.setDate(subEnd.getDate() + 7);
     const result = await db.query('INSERT INTO shops (shop_name, username, password, email, contact_number, subscription_end) VALUES ($1, $2, $3, $4, $5, $6) RETURNING shop_id, subscription_end', [shopName, username, password, email, phone, subEnd]);
     await db.query('DELETE FROM otps WHERE email = $1', [email]);
     
@@ -159,10 +200,8 @@ app.post('/api/reset-password', async (req, res) => {
 // ==========================================
 // 💳 SUBSCRIPTION & PAYMENT ROUTES (RAZORPAY)
 // ==========================================
-
-// 1. Create Order
 app.post('/api/create-subscription-order', async (req, res) => {
-  const { amount } = req.body; // Amount received in Rupees
+  const { amount } = req.body; 
   if (!amount || amount < 1) return res.status(400).json({ success: false, message: "Invalid amount." });
 
   try {
@@ -175,7 +214,6 @@ app.post('/api/create-subscription-order', async (req, res) => {
   }
 });
 
-// 2. Verify Signature & Update Database
 app.post('/api/verify-subscription', async (req, res) => {
   const { shop_id, days, razorpay_payment_id, razorpay_order_id, razorpay_signature } = req.body;
   if (!razorpay_payment_id || !razorpay_order_id || !razorpay_signature) return res.status(400).json({ success: false, message: "Missing payment fields." });
